@@ -1,0 +1,22 @@
+.row{
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 100px;
+}
+
+.col{
+    flex: 1;
+}
+
+.cell{
+    width: 350x;
+    height: 250px;
+    border: solid green;
+}
+
+#walletButton {
+    text-align: right;
+    float:right;
+    margin-bottom: 50px;
+    line-height: 16px;
+}
