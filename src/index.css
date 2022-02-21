@@ -80,3 +80,12 @@ button {
   background-color: #254cdd;
   color:white;
 }
+
+.nft-image{
+  border-radius: 25px;
+  width: 150px;
+  height: 150px;
+  margin: 5px;
+  border: 1px solid black;
+}
+

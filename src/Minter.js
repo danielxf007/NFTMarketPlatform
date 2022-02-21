@@ -14,12 +14,15 @@ const Minter = (props) => {
   const [file, setFile] = useState(null);
   const [mint_number, setMintNumber] = useState(0);
 
-  useEffect(async () => {
-    const { address, status } = await getCurrentWalletConnected();
-
-    setWallet(address);
-    setStatus(status);
+  useEffect(() => {
+    async function fetchData(){
+      const { address, status } = await getCurrentWalletConnected();
+      setWallet(address);
+      setStatus(status);
+    }
+    fetchData();
     addWalletListener();
+
   }, []);
 
   function addWalletListener() {

@@ -59,31 +59,8 @@ export const pinJSONToIPFS = async(JSONBody) => {
     });
 };
 
-export const getMetadata = async(hash) => {
-    const url = `https://api.pinata.cloud/data/pinList?hashContains=`+ hash;
-    return axios
-        .get(url, {
-            headers: {
-                pinata_api_key: key,
-                pinata_secret_api_key: secret
-            }
-        })
-        .then(function (response) {
-            return {
-                success: true,
-                metadata: response.data.rows[0].metadata
-            };
-        })
-        .catch(function (error) {
-            return {
-                success: false,
-                message: error.message,
-            }
-        });
-};
-
 export const getMarketOffers = async() => {
-    const url = `https://api.pinata.cloud/data/pinList?metadata[name]=NFT_SELL`;
+    const url = `https://api.pinata.cloud/data/pinList?status=pinned&metadata[name]=NFT_SELL`;
     return axios
         .get(url, {
             headers: {
@@ -102,5 +79,45 @@ export const getMarketOffers = async() => {
                 success: false,
                 message: error.message,
             }
+        });
+};
+
+export const getAuctionOffers = async() => {
+    const url = `https://api.pinata.cloud/data/pinList?status=pinned&metadata[name]=NFT_AUCTION`;
+    return axios
+        .get(url, {
+            headers: {
+                pinata_api_key: key,
+                pinata_secret_api_key: secret
+            }
+        })
+        .then(function (response) {
+            return {
+                success: true,
+                data: response.data.rows
+            };
+        })
+        .catch(function (error) {
+            return {
+                success: false,
+                message: error.message,
+            }
+        });
+};
+
+export const removePinFromIPFS = (hashToUnpin) => {
+    const url = `https://api.pinata.cloud/pinning/unpin/${hashToUnpin}`;
+    return axios
+        .delete(url, {
+            headers: {
+                pinata_api_key: key,
+                pinata_secret_api_key: secret
+            }
+        })
+        .then(function (response) {
+            return response;
+        })
+        .catch(function (error) {
+            return error.message;
         });
 };
