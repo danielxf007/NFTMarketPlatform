@@ -2,8 +2,7 @@ import { pinJSONToIPFS, pinFileToIPFS} from "./pinata.js";
 require("dotenv").config();
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const contractABI = require("../contracts/abi.json");
-const contractAddress = "0x0474ef810ac19fae61fc88d7c01cbd350a928cb8";
-const aux = "0xd854f58d9bbf1e00f599cf3011bc30cbe1527d03, ../contract-abi.json";
+const contractAddress = "0x2ec735ce14bd4bd82e562a4522ec6c3e713b5a5f";
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(alchemyKey);
 
@@ -220,9 +219,6 @@ export const publishAuction = async(min_bid, active_time, token_id) => {
   data.pinataContent = {
     uri: token_uri,
     id: token_id,
-    highest_bid: 0,
-    minimun_bid: min_bid,
-    highest_bidder: "0x0"
   };
   const pinataJsonPinResponse = await pinJSONToIPFS(data);
   if (!pinataJsonPinResponse.success) {
@@ -269,7 +265,6 @@ export const BuyNFTOnMarket = async(token_id, token_price) => {
       .buyNFT(token_id)
       .encodeABI(),
   };
-  console.log("here");
   try {
     const txHash = await window.ethereum.request({
       method: "eth_sendTransaction",
@@ -288,7 +283,39 @@ export const BuyNFTOnMarket = async(token_id, token_price) => {
       status: "😥 Something went wrong: " + error.message,
     };
   } 
-} 
+}
+
+export const bidNFT = async(token_id, bid) => {
+  window.contract = await new web3.eth.Contract(contractABI, contractAddress);
+  console.log(window.ethereum.selectedAddress);
+  const transactionParameters = {
+    to: contractAddress, // Required except during contract publications.
+    from: window.ethereum.selectedAddress, // must match user's active address.
+    value: parseInt(bid).toString(16),
+    data: window.contract.methods
+      .bidNFT(token_id)
+      .encodeABI(),
+  };
+  try {
+    const txHash = await window.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [transactionParameters],
+    });
+    
+    return {
+      success: true,
+      status:
+        "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" +
+        txHash,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: "😥 Something went wrong: " + error.message,
+    };
+  } 
+
+}
 
 export const getJSON = async (url) => {
   const response = await fetch(url);

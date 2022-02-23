@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import './Auction.css'
 
 import {
     publishAuction
