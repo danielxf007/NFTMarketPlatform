@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-    publishOnMarket
+    publishSell
   } from "./util/interact.js";
 
 const Auction_creator = (props) => {
@@ -12,7 +12,7 @@ const Auction_creator = (props) => {
     }, []);
 
     const onPublishPressed = async() => {
-        const { success, status } = await publishOnMarket(token_id, price);
+        const { success, status } = await publishSell(token_id, price);
         setStatus(status);
         if (success) {
             setTokenId(0);

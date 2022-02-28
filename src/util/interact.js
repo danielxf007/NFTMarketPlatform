@@ -2,7 +2,7 @@ import { pinJSONToIPFS, pinFileToIPFS} from "./pinata.js";
 require("dotenv").config();
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const contractABI = require("../contracts/abi.json");
-const contractAddress = "0x2ec735ce14bd4bd82e562a4522ec6c3e713b5a5f";
+const contractAddress = "0xf80de0c6d9043a0fc2b63cd75b8d794e28714216";
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(alchemyKey);
 
@@ -145,7 +145,7 @@ export const mintNFT = async (image, token_name, token_description, mint_number)
   }
 };
 
-export const publishOnMarket = async(token_id, token_price) => {
+export const publishSell = async(token_id, token_price) => {
   if (token_price === 0) {
     return {
       success: false,
@@ -180,7 +180,7 @@ export const publishOnMarket = async(token_id, token_price) => {
     to: contractAddress, // Required except during contract publications.
     from: window.ethereum.selectedAddress, // must match user's active address.
     data: window.contract.methods
-      .publishNFT(token_price, token_id)
+      .publishSell(token_price, token_id)
       .encodeABI(),
   };
 
@@ -204,12 +204,13 @@ export const publishOnMarket = async(token_id, token_price) => {
 }
 
 
-export const publishAuction = async(min_bid, active_time, token_id) => {
+export const publishAuction = async(active_time, token_id) => {
   let data = {};
   data.pinataMetadata = {
   name: "NFT_AUCTION"
   };
   const token_uri = await getTokenUri(token_id);
+  console.log(token_uri);
   if(token_uri === null){
     return {
       success: false,
@@ -232,7 +233,7 @@ export const publishAuction = async(min_bid, active_time, token_id) => {
     to: contractAddress,
     from: window.ethereum.selectedAddress,
     data: window.contract.methods
-      .publishNFT(min_bid, active_time, token_id)
+      .publishAuction(active_time, token_id)
       .encodeABI(),
   };
 
