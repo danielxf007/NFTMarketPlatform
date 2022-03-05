@@ -3,16 +3,14 @@ import {
   connectWallet,
   getCurrentWalletConnected,
   mintNFT,
-} from "./util/interact.js";
+} from "../util/interact.js";
 
 const Minter = (props) => {
   const [walletAddress, setWallet] = useState("");
   const [status, setStatus] = useState("");
   const [image_url, setImageURL] = useState("");
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
-  const [mint_number, setMintNumber] = useState(0);
 
   useEffect(() => {
     async function fetchData(){
@@ -22,7 +20,6 @@ const Minter = (props) => {
     }
     fetchData();
     addWalletListener();
-
   }, []);
 
   function addWalletListener() {
@@ -57,13 +54,11 @@ const Minter = (props) => {
   };
 
   const onMintPressed = async () => {
-    const { success, status } = await mintNFT(file, name, description, mint_number);
+    const { success, status } = await mintNFT(file, name);
     setStatus(status);
-    if (success) {
+    if(success) {
       setName("");
-      setDescription("");
       setImageURL("");
-      setMintNumber(0);
     }
   };
 
@@ -81,9 +76,8 @@ const Minter = (props) => {
       </button>
 
       <br></br>
-      <h1 id="title">🧙‍♂️ Alchemy NFT Minter</h1>
       <p>
-        Simply add your asset's link, name, and description, then press "Mint."
+        Simply add your asset's link and name, then press "Mint."
       </p>
       <form>
       <h2>Upload Image:</h2>
@@ -98,19 +92,8 @@ const Minter = (props) => {
         <h2>🤔 Name: </h2>
         <input
           type="text"
-          placeholder="e.g. Bored Monkey #777"
+          value={name}
           onChange={(event) => setName(event.target.value)}
-        />
-        <h2>Description: </h2>
-        <input
-          type="text"
-          placeholder="e.g. Mine"
-          onChange={(event) => setDescription(event.target.value)}
-        />
-        <h2>Enter the quantity you want to mint</h2>
-        <input
-          type="number"
-          onChange={(event) => setMintNumber(event.target.value)}
         />
       </form>
       <button id="mintButton" onClick={onMintPressed}>

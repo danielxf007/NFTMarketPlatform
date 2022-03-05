@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import {
     publishSell
-  } from "./util/interact.js";
+  } from "../util/interact.js";
 
-const Auction_creator = (props) => {
+const SellPublisher = (props) => {
     const [status, setStatus] = useState("");
     const [token_id, setTokenId] = useState(0);
     const [price, setPrice] = useState(0);
@@ -27,12 +27,15 @@ const Auction_creator = (props) => {
                 <h2>Token ID: </h2>
                     <input
                     type="number"
-                    placeholder="0"
+                    value={token_id}
                     onChange={(event) => setTokenId(event.target.value)}
                 />
                 <h2>Set Up Prize </h2>
                     <input
                     type="number"
+                    step={0.0001}
+                    min={0.0}
+                    value={price}
                     onChange={(event) => setPrice(event.target.value)}
                 />
             </form>
@@ -46,4 +49,4 @@ const Auction_creator = (props) => {
     );
 };
 
-export default Auction_creator;
+export default SellPublisher;

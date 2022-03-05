@@ -1,9 +1,9 @@
 import './App.css';
 import { useEffect, useState } from "react";
-import Minter from './Minter'
+import Minter from './components/Minter'
 import Main_menu from './Main-menu';
-import Auction_creator from './Auction-creation';
-import MarketPlace from './components/Market-Place';
+import SellPublisher from './components/Sell-Publish';
+import MarketPlace from './components/Sell-Board';
 import AuctionCreator  from './components/Auction';
 import AuctionBoard from './components/Auction-Board';
 import {getJSON, getTokenUri} from './util/interact';
@@ -11,7 +11,7 @@ var bigInt = require("big-integer");
 function App() {
   const [component, setComponent] = useState("main_menu");
   const components = {"main_menu": <Main_menu/>, "minter": <Minter/>,
-   "sell_creator": <Auction_creator/>, "auction_creator": <AuctionCreator/>, "market_place": <MarketPlace/>,
+   "sell_publisher": <SellPublisher/>, "auction_creator": <AuctionCreator/>, "market_place": <MarketPlace/>,
     "auction_board": <AuctionBoard/>};
 
   const f = async() => {
@@ -27,7 +27,7 @@ function App() {
     return (
       <div>
         <button onClick={() => setComponent("minter")}>Mint NFT</button>
-        <button onClick={() => setComponent("sell_creator")}>Sell</button>
+        <button onClick={() => setComponent("sell_publisher")}>Sell</button>
         <button onClick={() => setComponent("auction_creator")}>Create Auction</button>
         <button onClick={() => setComponent("market_place")}>Market Place</button>
         <button onClick={() => setComponent("auction_board")}>Auction Board</button>

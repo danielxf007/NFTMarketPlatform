@@ -21,11 +21,12 @@ export const pinFileToIPFS = async(image) => {
         .then(function (response) {
            return {
                success: true,
-               pinataUrl: "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash
+               data_hash: response.data.IpfsHash, 
+               pinata_url: "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash,
+               duplicated: response.data.isDuplicate
            };
         })
         .catch(function (error) {
-            console.log(error)
             return {
                 success: false,
                 message: error.message,
@@ -36,7 +37,6 @@ export const pinFileToIPFS = async(image) => {
 
 export const pinJSONToIPFS = async(JSONBody) => {
     const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
-    //making axios POST request to Pinata ⬇️
     return axios 
         .post(url, JSONBody, {
             headers: {
@@ -47,7 +47,8 @@ export const pinJSONToIPFS = async(JSONBody) => {
         .then(function (response) {
            return {
                success: true,
-               pinataUrl: "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash
+               data_hash: response.data.IpfsHash,
+               pinata_url: "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash
            };
         })
         .catch(function (error) {
@@ -58,6 +59,26 @@ export const pinJSONToIPFS = async(JSONBody) => {
 
     });
 };
+
+
+export const getPinList = (query_str) => {
+    const url = `https://api.pinata.cloud/data/pinList?${query_str}`;
+    return axios
+        .get(url, {
+            headers: {
+                pinata_api_key: key,
+                pinata_secret_api_key: secret
+            }
+        })
+        .then(function (response) {
+            console.log(response.data);
+        })
+        .catch(function (error) {
+            console.log(error.message);
+        });
+};
+
+
 
 export const getMarketOffers = async() => {
     const url = `https://api.pinata.cloud/data/pinList?status=pinned&metadata[name]=NFT_SELL`;
@@ -115,9 +136,15 @@ export const removePinFromIPFS = (hashToUnpin) => {
             }
         })
         .then(function (response) {
-            return response;
+            return {
+                success: true,
+                message: response.message,
+            }
         })
         .catch(function (error) {
-            return error.message;
+            return {
+                success: false,
+                message: error.message,
+            }
         });
 };
