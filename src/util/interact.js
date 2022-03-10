@@ -222,15 +222,17 @@ export const publishAuction = async(active_time, token_id) => {
   name: "NFT_AUCTION"
   };
   const token_uri = await getTokenUri(token_id);
-  console.log(token_uri);
   if(token_uri === null){
     return {
       success: false,
       status: "❗This token does not exist",
     };    
   }
+  const token_data = await getJSON(token_uri);
   data.pinataContent = {
-    uri: token_uri,
+    name: token_data.name,
+    image: token_data.image_url,
+    time: active_time,
     id: token_id,
   };
   const pinataJsonPinResponse = await pinJSONToIPFS(data);
@@ -304,7 +306,7 @@ export const bidNFT = async(token_id, bid) => {
   const transactionParameters = {
     to: contractAddress, // Required except during contract publications.
     from: window.ethereum.selectedAddress, // must match user's active address.
-    value: parseInt(bid).toString(16),
+    value: bigInt(parseFloat(bid)*wei).toString(16),
     data: window.contract.methods
       .bidNFT(token_id)
       .encodeABI(),

@@ -40,7 +40,6 @@ const BoardCell = (props) => {
 }
 
 const MarketPlace = (props) => {
-    const [walletAddress, setWallet] = useState("");
     const [sell_items, setSellItems] = useState([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}]);
 
   useEffect(() => {

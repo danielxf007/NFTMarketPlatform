@@ -2,17 +2,19 @@ import { useEffect, useState } from "react";
 import './Board.css';
 
 import {
-    getJSON, bidNFT, connectWallet,
-    getCurrentWalletConnected
+    getJSON, bidNFT
 } from "../util/interact";
 
 import {
-  getAuctionData, getAuctionTimeLeft, getAuctionHighestBid, getAuctionHighestBidder
-} from "../util/contract-views";
+  getAuctionHighestBid
+} from "../util/contract-interactions";
 
 import {
     getAuctionOffers,
   } from "../util/pinata";
+
+var bigInt = require("big-integer");
+const wei = bigInt(1000000000000000000);
 
 const BoardCell = (props) => {
   const [date, setDate] = useState(0);
@@ -57,22 +59,19 @@ const BoardCell = (props) => {
           {props["name"]}
         </div>
         <img className="nft-image" src={props["link"]}/>
-        <div className="nft-bidder">
-          Highest Bidder: {props["highest_bidder"]}
-        </div>
         <div className="nft-bid">
           Highest Bid: {props["highest_bid"]}
         </div>
         <div className="nft-time-left">
-          Time Left: {formatTimeLeft(props["date_end"] - date > 0? props["date_end"] - date: 0)}
+          {formatTimeLeft(props["date_end"] - date > 0? props["date_end"] - date: 0)}
         </div>
         <form>
           <h2>Make Bid: </h2>
-              <input
+              <input className="nft-make-bid"
               type="number"
               placeholder="0"
               onChange={(event) => setBid(event.target.value)}
-          />
+              />
           </form>
         <div>
           <button onClick={onBidPressed}>Bid</button>
@@ -84,111 +83,50 @@ const BoardCell = (props) => {
 const AuctionBoard = (props) => {
   const [auction_items, setAuctionItems] = useState([]);
   const [status, setStatus] = useState("");
-  const [walletAddress, setWallet] = useState("");
 
-  function addWalletListener() {
-    if (window.ethereum) {
-      window.ethereum.on("accountsChanged", (accounts) => {
-        if (accounts.length > 0) {
-          setWallet(accounts[0]);
-          setStatus("👆🏽 Write a message in the text-field above.");
-        } else {
-          setWallet("");
-          setStatus("🦊 Connect to Metamask using the top right button.");
-        }
-      });
-    } else {
-      setStatus(
-        <p>
-          {" "}
-          🦊{" "}
-          <a target="_blank" href={`https://metamask.io/download.html`}>
-            You must install Metamask, a virtual Ethereum wallet, in your
-            browser.
-          </a>
-        </p>
-      );
-    }
-  }
+  const weiToETH = (n_wei) => {
+    return parseFloat(bigInt(n_wei)) / parseFloat(wei);
+  } 
 
   useEffect(() => {
     const fetchAuctionData = async() => {
       const { sucess, data } = await getAuctionOffers();
       const url = "https://gateway.pinata.cloud/ipfs/";
       let nft_auction_data = null;
-      let token_data = null;
       let items = [];
-      let time_left = 0;
       for(let i=0; i<data.length; i++){
         items.push({});
-        nft_auction_data  = await getJSON(url+data[i]["ipfs_pin_hash"]);
-        token_data = await getJSON(nft_auction_data["uri"]);
-        items[i]["pin_hash"] = data[i]["ipfs_pin_hash"];
-        items[i]["token_id"] = nft_auction_data["id"];
-        items[i]["name"] = token_data["name"];
-        items[i]["link"] = token_data["image_url"];
-        items[i]["highest_bidder"] = await getAuctionHighestBidder(nft_auction_data["id"]);
-        items[i]["highest_bid"] = await getAuctionHighestBid(nft_auction_data["id"]);
-        time_left = await getAuctionTimeLeft(nft_auction_data["id"]);
-        items[i]["date_end"] = parseInt(Math.abs(new Date())/1000) + parseInt(time_left);
+        nft_auction_data = await getJSON(url+data[i].ipfs_pin_hash);
+        items[i].pin_hash = data[i].ipfs_pin_hash;
+        items[i].token_id = nft_auction_data.id;
+        items[i].name = nft_auction_data.name;
+        items[i].link = nft_auction_data.image;
+        items[i].highest_bid = await getAuctionHighestBid(nft_auction_data.id);
+        items[i].highest_bid = weiToETH(items[i].highest_bid);
+        items[i].date_end = parseInt(Math.abs(new Date())/1000) + parseInt(nft_auction_data.time);
       }
       setAuctionItems(items);
     }
     fetchAuctionData();
   }, []);
   
-  useEffect(() => {
-      const f = async() => {
-        const { address, status } = await getCurrentWalletConnected();
-        setWallet(address);
-        setStatus(status);
-      }
-      f();
-      addWalletListener();
-    }, []);
-
-    const connectWalletPressed = async () => {
-      const walletResponse = await connectWallet();
-      setStatus(walletResponse.status);
-      setWallet(walletResponse.address);
-    };
-      
-      return (
-
-        <div>
-            <button id="walletButton" onClick={connectWalletPressed}>
-                {walletAddress.length > 0 ? (
-                "Connected: " +
-                String(walletAddress).substring(0, 6) +
-                "..." +
-                String(walletAddress).substring(38)
-                ) : (
-                <span>Connect Wallet</span>
-                )}
-            </button> 
-            <br></br>
-            <div className="nft-item-container">
-              {
-                auction_items.map((item, index) =>{
-                  return <BoardCell
-                          key={String(index)}
-                          pin_hash={item["pin_hash"]}
-                          token_id={item["token_id"]}
-                          name={item["name"]}
-                          link={item["link"]}
-                          min_bid={item["min_bid"] + " WEI"}
-                          highest_bidder={
-                            String(item["highest_bidder"]).substring(0, 6) +
-                            "..." +
-                            String(item["highest_bidder"]).substring(38)}
-                          highest_bid={item["highest_bid"] + " WEI"}
-                          date_end={item["date_end"]}
-                          />
-                })
-              }
-            </div>
-        </div>
-    );
+    return (
+      <div className="nft-item-container">
+        {
+          auction_items.map((item, index) =>{
+            return <BoardCell
+                    key={String(index)}
+                    pin_hash={item.pin_hash}
+                    token_id={item.token_id}
+                    name={item.name}
+                    link={item.link}
+                    highest_bid={item.highest_bid + " ETH"}
+                    date_end={item.date_end}
+                    />
+          })
+        }
+      </div>
+  );
 }
 
 export default AuctionBoard;

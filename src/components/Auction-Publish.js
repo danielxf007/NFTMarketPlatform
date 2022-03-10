@@ -10,7 +10,7 @@ const AuctionCreator = (props) => {
     const [token_id, setTokenId] = useState(0);
     
     useEffect(() => {
-    }, []);
+    }, [date, token_id]);
 
     const onPublishPressed = async() => {
         const date_1 = new Date();
