@@ -27,7 +27,6 @@ const BoardCell = (props) => {
   const onBidPressed = async() => {
     const {success, status} = await bidNFT(props["token_id"], bid);
     if(success){
-      props.highest_bid = bid;
     }
   };
 
