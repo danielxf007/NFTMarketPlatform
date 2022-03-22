@@ -26,6 +26,9 @@ const BoardCell = (props) => {
 
   const onBidPressed = async() => {
     const {success, status} = await bidNFT(props["token_id"], bid);
+    if(success){
+      props.highest_bid = bid;
+    }
   };
 
   const formatTimeLeft = (secs) => {
@@ -50,8 +53,6 @@ const BoardCell = (props) => {
   useEffect(() => {
     setTimeout(fetchDate, 1000);
   }, [date]);
-
-
 
   return (
       <div className="nft-item">
@@ -82,7 +83,6 @@ const BoardCell = (props) => {
 
 const AuctionBoard = (props) => {
   const [auction_items, setAuctionItems] = useState([]);
-  const [status, setStatus] = useState("");
 
   const weiToETH = (n_wei) => {
     return parseFloat(bigInt(n_wei)) / parseFloat(wei);
