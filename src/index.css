@@ -30,7 +30,7 @@ input {
   font-size: 16px;
   width: 100%;
   border-color: rgba(4, 4, 5, 0.1);
-  line-height: 32px;
+  line-height: 16px;
 }
 
 input:focus {
@@ -40,7 +40,7 @@ input:focus {
 
 button {
   padding: 9px 16px;
-  max-height: 40px;
+  max-height: 80px;
   border-color: #254cdd;
   color: #254cdd;
   background-color: white;
