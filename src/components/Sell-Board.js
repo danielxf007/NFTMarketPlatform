@@ -3,8 +3,6 @@ import './Board.css';
 
 
 import {
-    connectWallet,
-    getCurrentWalletConnected,
     BuyNFTOnMarket,
     getJSON
 } from "../util/interact";
@@ -16,8 +14,11 @@ import {
 
 
 const BoardCell = (props) => {
+  const [status, setStatus] = useState("");
+
     const onBuyPressed = async() => {
       const {success, status} = await BuyNFTOnMarket(props.token_id, props.token_price);
+      setStatus(status);
       if(success){
         const unpin_response = await removePinFromIPFS(props.pin_hash);
       }
@@ -35,6 +36,10 @@ const BoardCell = (props) => {
           <div>
             <button onClick={onBuyPressed}>Buy</button>
           </div>
+          <br></br>
+          <p id="status" style={{ color: "red" }}>
+                {status}
+          </p>
         </div>
     );
 }
