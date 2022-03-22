@@ -1,8 +1,7 @@
 import { pinJSONToIPFS, pinFileToIPFS, removePinFromIPFS} from "./pinata.js";
 require("dotenv").config();
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
-const contractABI = require("../contracts/abi.json");
-const contractAddress = "0xa91fa6516ad91d54795aeef110aa0a91f797fbbf";
+const contracts_metadata = require("../contracts/contracts_metadata.json");
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(alchemyKey);
 var bigInt = require("big-integer");
@@ -123,11 +122,13 @@ export const mintNFT = async (image, token_name) => {
     };
   }
   const token_uri = json_res.pinata_url;
+  const contract_metadata = contracts_metadata.minter;
+  
 
-  window.contract = await new web3.eth.Contract(contractABI, contractAddress);
+  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
 
   const transactionParameters = {
-    to: contractAddress, // Required except during contract publications.
+    to: contract_metadata.address, // Required except during contract publications.
     from: window.ethereum.selectedAddress, // must match user's active address.
     data: window.contract.methods
       .mintNFT(window.ethereum.selectedAddress, token_uri)
@@ -163,6 +164,7 @@ export const publishSell = async(token_id, token_price) => {
     };
   }
   const token_uri = await getTokenUri(token_id);
+  
   if(token_uri === null){
     return {
       success: false,
@@ -187,9 +189,10 @@ export const publishSell = async(token_id, token_price) => {
       status: "😢 Something went wrong while publishing your sell.",
     };
   }
-  window.contract = await new web3.eth.Contract(contractABI, contractAddress);
+  const contract_metadata = contracts_metadata.shop;
+  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
-    to: contractAddress, // Required except during contract publications.
+    to: contract_metadata.address, // Required except during contract publications.
     from: window.ethereum.selectedAddress, // must match user's active address.
     data: window.contract.methods
       .publishSell(bigInt(parseFloat(token_price)*wei).toString(), token_id)
@@ -242,12 +245,13 @@ export const publishAuction = async(active_time, token_id) => {
       status: "😢 Something went wrong while publishing your NFT.",
     };
   }
-  window.contract = await new web3.eth.Contract(contractABI, contractAddress);
+  const contract_metadata = contracts_metadata.auction;
+  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
-    to: contractAddress,
+    to: contract_metadata.address, 
     from: window.ethereum.selectedAddress,
     data: window.contract.methods
-      .publishAuction(active_time, token_id)
+      .createAuction(active_time, token_id)
       .encodeABI(),
   };
 
@@ -271,13 +275,14 @@ export const publishAuction = async(active_time, token_id) => {
 }
 
 export const BuyNFTOnMarket = async(token_id, token_price) => {
-  window.contract = await new web3.eth.Contract(contractABI, contractAddress);
+  const contract_metadata = contracts_metadata.shop;
+  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
-    to: contractAddress, // Required except during contract publications.
+    to: contract_metadata.address, // Required except during contract publications.
     from: window.ethereum.selectedAddress, // must match user's active address.
     value: bigInt(parseFloat(token_price)*wei).toString(16),
     data: window.contract.methods
-      .buyNFT(token_id)
+      .buy(token_id)
       .encodeABI(),
   };
   try {
@@ -289,26 +294,25 @@ export const BuyNFTOnMarket = async(token_id, token_price) => {
     return {
       success: true,
       status:
-        "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" +
-        txHash,
+        "Purchased"
     };
   } catch (error) {
     return {
       success: false,
-      status: "😥 Something went wrong: " + error.message,
+      status: "😥 Something went wrong "
     };
   } 
 }
 
 export const bidNFT = async(token_id, bid) => {
-  window.contract = await new web3.eth.Contract(contractABI, contractAddress);
-  console.log(window.ethereum.selectedAddress);
+  const contract_metadata = contracts_metadata.auction;
+  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
-    to: contractAddress, // Required except during contract publications.
-    from: window.ethereum.selectedAddress, // must match user's active address.
+    to: contract_metadata.address,
+    from: window.ethereum.selectedAddress,
     value: bigInt(parseFloat(bid)*wei).toString(16),
     data: window.contract.methods
-      .bidNFT(token_id)
+      .bid(token_id)
       .encodeABI(),
   };
   try {
@@ -331,6 +335,94 @@ export const bidNFT = async(token_id, bid) => {
   } 
 
 }
+
+export const collectAuction = async(token_id) => {
+  const contract_metadata = contracts_metadata.auction;
+  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+  const transactionParameters = {
+    to: contract_metadata.address,
+    from: window.ethereum.selectedAddress,
+    data: window.contract.methods
+      .collectAuction(token_id)
+      .encodeABI()
+  };
+  try {
+    const txHash = await window.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [transactionParameters],
+    });
+    return {
+      success: true,
+      status:
+        "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" +
+        txHash,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: "😥 Something went wrong: " + error.message,
+    };
+  }
+}
+
+export const withdrawBid = async(token_id) => {
+  const contract_metadata = contracts_metadata.auction;
+  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+  const transactionParameters = {
+    to: contract_metadata.address,
+    from: window.ethereum.selectedAddress,
+    data: window.contract.methods
+      .withdrawBid(token_id)
+      .encodeABI()
+  };
+  try {
+    const txHash = await window.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [transactionParameters],
+    });
+    return {
+      success: true,
+      status:
+        "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" +
+        txHash,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: "😥 Something went wrong: " + error.message,
+    };
+  }
+}
+
+export const renewAuction = async(token_id, active_time) => {
+  const contract_metadata = contracts_metadata.auction;
+  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+  const transactionParameters = {
+    to: contract_metadata.address,
+    from: window.ethereum.selectedAddress,
+    data: window.contract.methods
+      .renew(token_id, active_time)
+      .encodeABI()
+  };
+  try {
+    const txHash = await window.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [transactionParameters],
+    });
+    return {
+      success: true,
+      status:
+        "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" +
+        txHash,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: "😥 Something went wrong: " + error.message,
+    };
+  }
+}
+
 
 export const getJSON = async (url) => {
   const response = await fetch(url);
@@ -338,19 +430,12 @@ export const getJSON = async (url) => {
 }
 
 export const getTokenUri = async(token_id) => {
-  const contract = await new web3.eth.Contract(contractABI, contractAddress);
+  const contract_metadata = contracts_metadata.minter;
+  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+  const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   try{
     return contract.methods.tokenURI(token_id).call();
   }catch(err){
     return null;
   }
-}
-
-export const getTimeLeft = async(token_id) => {
-  const contract = await new web3.eth.Contract(contractABI, contractAddress);
-  try{
-    return contract.methods.getAuctionTimeLeft(token_id).call();
-  }catch(err){
-    return null;
-  }  
 }
