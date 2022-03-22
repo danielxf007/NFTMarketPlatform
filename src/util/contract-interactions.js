@@ -1,12 +1,12 @@
 require("dotenv").config();
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
-const contractABI = require("../contracts/abi.json");
-const contractAddress = "0xa91fa6516ad91d54795aeef110aa0a91f797fbbf";
+const contracts_metadata = require("../contracts/contracts_metadata.json");
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(alchemyKey);
 
 export const getAuctionTimeLeft = async(token_id) => {
-  const contract = await new web3.eth.Contract(contractABI, contractAddress);
+  const contract_metadata = contracts_metadata.auction;
+  const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   let time_left = 0;
   try{
     time_left = contract.methods.getAuctionTimeLeft(token_id).call();
@@ -17,10 +17,11 @@ export const getAuctionTimeLeft = async(token_id) => {
 };
 
 export const getAuctionHighestBid = async(token_id) => {
-  const contract = await new web3.eth.Contract(contractABI, contractAddress);
+  const contract_metadata = contracts_metadata.auction;
+  const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   let highest_bid = 0;
   try{
-    highest_bid = contract.methods.getAuctionHighestBid(token_id).call();
+    highest_bid = contract.methods.getHighestBid(token_id).call();
     return highest_bid;
   }catch(err){
     return highest_bid;
@@ -28,7 +29,8 @@ export const getAuctionHighestBid = async(token_id) => {
 };
 
 export const getAuctionHighestBidder = async(token_id) => {
-  const contract = await new web3.eth.Contract(contractABI, contractAddress);
+  const contract_metadata = contracts_metadata.auction;
+  const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   let highest_bidder = 0;
   try{
     highest_bidder = contract.methods.getAuctionHighestBidder(token_id).call();
@@ -39,7 +41,8 @@ export const getAuctionHighestBidder = async(token_id) => {
 };
 
 export const getAuctionData = async(token_id) => {
-    const contract = await new web3.eth.Contract(contractABI, contractAddress);
+  const contract_metadata = contracts_metadata.auction;
+  const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
     let auction_data = {};
     try{
         auction_data["highest_bid"] = await contract.methods.getAuctionHighestBid(token_id).call();
@@ -51,12 +54,13 @@ export const getAuctionData = async(token_id) => {
 };
 
 export const getAuctionReturn = async(token_id) => {
-  window.contract = await new web3.eth.Contract(contractABI, contractAddress);
+  const contract_metadata = contracts_metadata.auction;
+  const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
-    to: contractAddress,
+    to: contract_metadata.address,
     from: window.ethereum.selectedAddress,
     data: window.contract.methods
-      .getAuctionReturn(token_id)
+      .getReturn(token_id)
       .encodeABI(),
   };
   try {
