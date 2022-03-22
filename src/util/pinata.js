@@ -71,10 +71,11 @@ export const getPinList = (query_str) => {
             }
         })
         .then(function (response) {
-            console.log(response.data);
+            return response.data.rows
         })
         .catch(function (error) {
             console.log(error.message);
+            return [];
         });
 };
 
@@ -148,3 +149,12 @@ export const removePinFromIPFS = (hashToUnpin) => {
             }
         });
 };
+
+export const clearPinata = async () => {
+    const data = await getPinList("status=pinned");
+    let x;
+    for(let i=0; i<data.length; i++){
+        x = await removePinFromIPFS(data[i].ipfs_pin_hash);
+    }
+    console.log("finished")
+}
