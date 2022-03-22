@@ -251,7 +251,7 @@ export const publishAuction = async(active_time, token_id) => {
     to: contract_metadata.address, 
     from: window.ethereum.selectedAddress,
     data: window.contract.methods
-      .createAuction(active_time, token_id)
+      .publish(active_time, token_id)
       .encodeABI(),
   };
 
