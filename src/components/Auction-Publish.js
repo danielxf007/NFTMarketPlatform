@@ -4,45 +4,68 @@ import {
     publishAuction
 } from "../util/interact";
 
+import { giveRights } from "../util/contract-interactions.js";
+
+const contracts_metadata = require("../contracts/contracts_metadata.json");
+
 const AuctionCreator = (props) => {
-    const [status, setStatus] = useState("");
     const [date, setDate] = useState("");
-    const [token_id, setTokenId] = useState(0);
+    const [token_name, setTokenName] = useState("");
+
+    useEffect(() => {
+    }, [token_name, date]);
+
+    const onGiveRights = async() => {
+        const success = await giveRights(token_name, contracts_metadata.auction.address);
+        if(success){
+            alert("Wait until your transactions is confirmed");
+        }
+    };
 
     const onPublishPressed = async() => {
         const date_1 = new Date();
         const date_2 = new Date(date);
-        const active_time = parseInt(Math.abs(date_2 - date_1)/1000);
-        const { success, status } = await publishAuction(active_time, token_id);
-        setStatus(status);
-        if(success){
-            setDate("");     
-            setTokenId(0);
+        if(date_2 - date_1 < 0){
+            alert("This date has already expired");
+        }else{
+            const active_time = parseInt(Math.abs(date_2 - date_1)/1000);
+            const { success, status } = await publishAuction(token_name, date, active_time);
+            if(success){
+                setDate("");     
+                setTokenName("");
+                alert(status);
+            }
         }
     };
     
     return (
-        <div className="AuctionCreator">
+        <div className="Auction-Publisher">
             <h1 id="title">NFT AUCTION CREATION</h1>
+            <br></br>
             <form>
-                <h2>Token ID: </h2>
+                <h2>Token Name:</h2>
+                <br></br>
                     <input
-                    type="number"
-                    placeholder="0"
-                    onChange={(event) => setTokenId(event.target.value)}
+                    type="Text"
+                    value={token_name}
+                    required
+                    onChange={(event) => setTokenName(event.target.value)}
                     />
                 <h2>Set Up When the Auction Finishes</h2>
+                <br></br>
                     <input
                         type="datetime-local"
+                        required
                         onChange={(event) => setDate(event.target.value)}
                     />
             </form>
+            <br></br>
+            <button onClick={onGiveRights}>
+                Give Rights
+            </button>
             <button id="PublishButton" onClick={onPublishPressed}>
                 Publish
             </button><br></br>
-            <p id="status" style={{ color: "red" }}>
-                {status}
-            </p>
         </div>        
 
     );

@@ -17,7 +17,7 @@ const AuctionBidWithdrawer = (props) => {
     };
     
     return (
-        <div className="AuctionBidWithdrawer">
+        <div className="Bid-Withdrawer">
             <h1 id="title">Withdraw Your Bid</h1>
             <form>
                 <h2>Token ID: </h2>

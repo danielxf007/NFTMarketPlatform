@@ -3,34 +3,49 @@ import {
     publishSell
   } from "../util/interact.js";
 
+import { giveRights } from "../util/contract-interactions.js";
+
+const contracts_metadata = require("../contracts/contracts_metadata.json");
+
 const SellPublisher = (props) => {
     const [status, setStatus] = useState("");
-    const [token_id, setTokenId] = useState(0);
+    const [token_name, setTokenName] = useState("");
     const [price, setPrice] = useState(0);
 
     useEffect(() => {
-    }, []);
+    }, [token_name, price]);
+
+    const onGiveRights = async() => {
+        const success = await giveRights(token_name, contracts_metadata.shop.address);
+        if(success){
+            alert("Wait until your transactions is confirmed");
+        }
+    };
 
     const onPublishPressed = async() => {
-        const { success, status } = await publishSell(token_id, price);
+        const { success, status } = await publishSell(token_name, price);
         setStatus(status);
         if (success) {
-            setTokenId(0);
+            setTokenName("");
             setPrice(0);
-        }        
+        }       
     };
 
     return (
-        <div className="AuctionCreator">
-            <h1 id="title">NFT AUCTION CREATION</h1>
+        <div className="Sell-Publisher">
+            <h1 id="title">Publish Sell</h1>
+            <br></br>
             <form>
-                <h2>Token ID: </h2>
+                <h2>Token Name: </h2>
+                <br></br>
                     <input
-                    type="number"
-                    value={token_id}
-                    onChange={(event) => setTokenId(event.target.value)}
+                    type="text"
+                    value={token_name}
+                    required
+                    onChange={(event) => setTokenName(event.target.value)}
                 />
                 <h2>Set Up Prize </h2>
+                <br></br>
                     <input
                     type="number"
                     step={0.0001}
@@ -38,10 +53,16 @@ const SellPublisher = (props) => {
                     value={price}
                     onChange={(event) => setPrice(event.target.value)}
                 />
+                <br></br>
             </form>
-            <button id="PublishButton" onClick={onPublishPressed}>
+            <br></br>
+            <button onClick={onGiveRights}>
+                Give Rights
+            </button>
+            <button onClick={onPublishPressed}>
                 Publish
-            </button><br></br>
+            </button>
+            <br></br>
             <p id="status" style={{ color: "red" }}>
                 {status}
             </p>

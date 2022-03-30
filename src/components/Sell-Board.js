@@ -13,13 +13,14 @@ import {
 } from "../util/pinata";
 
 
+import ReactPaginate from 'react-paginate';
+
 const BoardCell = (props) => {
-  const [status, setStatus] = useState("");
 
     const onBuyPressed = async() => {
-      const {success, status} = await BuyNFTOnMarket(props.token_id, props.token_price);
-      setStatus(status);
+      const {success, status} = await BuyNFTOnMarket(props.name, props.token_price);
       if(success){
+        alert(status);
         const unpin_response = await removePinFromIPFS(props.pin_hash);
       }
     };
@@ -33,28 +34,46 @@ const BoardCell = (props) => {
           <div className="nft_price">
             {props.price}
           </div>
-          <div>
-            <button onClick={onBuyPressed}>Buy</button>
-          </div>
-          <br></br>
-          <p id="status" style={{ color: "red" }}>
-                {status}
-          </p>
+          <button onClick={onBuyPressed}>Buy</button>
         </div>
     );
 }
 
-const MarketPlace = (props) => {
-    const [sell_items, setSellItems] = useState([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}]);
+const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+
+function Items({ currentItems }) {
+  return (
+    <>
+      {
+        currentItems && currentItems.map((item, index) =>{
+          return <BoardCell
+                  key={String(index)}
+                  pin_hash={item.pin_hash}
+                  token_id={item.token_id}
+                  token_price={item.price}
+                  name={item.name}
+                  link={item.link}
+                  price={item.price + " ETH"}/>
+        })
+      }
+    </>
+  );
+}
+
+function PaginatedItems({ itemsPerPage }) {
+
+  const [currentItems, setCurrentItems] = useState([]);
+  const [pageCount, setPageCount] = useState(0);
+  const [itemOffset, setItemOffset] = useState(0);
 
   useEffect(() => {
-      const fetchSellData = async() => {
-        const { sucess, data } = await getMarketOffers();
-        if(!sucess)
-          setSellItems([]);
+    const endOffset = itemOffset + itemsPerPage;
+    const fetchSellData = async() => {
+      const { success, data } = await getMarketOffers();
+      let items = [];
+      if(success){
         const url = "https://gateway.pinata.cloud/ipfs/";
         let sell_data = null;
-        let items = []
         for(let i=0; i<data.length; i++){
           items.push({});
           sell_data = await getJSON(url+data[i].ipfs_pin_hash);
@@ -64,27 +83,52 @@ const MarketPlace = (props) => {
           items[i].price = sell_data.price;
           items[i].token_id = sell_data.id;
         }
-        setSellItems(items);
       }
-      fetchSellData();
-    }, []);
+      setCurrentItems(items.slice(itemOffset, endOffset));
+      setPageCount(Math.ceil(items.length / itemsPerPage));
+    }
+    fetchSellData();
+    
+  }, [itemOffset, itemsPerPage]);
 
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % items.length;
+    setItemOffset(newOffset);
+  };
+
+  return (
+    <>
+    <div className="nft-item-container">
+    <Items currentItems={currentItems} />
+    </div>
+      <ReactPaginate
+        nextLabel="next >"
+        onPageChange={handlePageClick}
+        pageRangeDisplayed={3}
+        marginPagesDisplayed={2}
+        pageCount={pageCount}
+        previousLabel="< previous"
+        pageClassName="page-item"
+        pageLinkClassName="page-link"
+        previousClassName="page-item"
+        previousLinkClassName="page-link"
+        nextClassName="page-item"
+        nextLinkClassName="page-link"
+        breakLabel="..."
+        breakClassName="page-item"
+        breakLinkClassName="page-link"
+        containerClassName="pagination"
+        activeClassName="active"
+        renderOnZeroPageCount={null}
+      />
+    </>
+  );
+}
+
+const MarketPlace = (props) => {
     return (
         <div>
-            <div className="nft-item-container">
-              {
-                sell_items.map((item, index) =>{
-                  return <BoardCell
-                          key={String(index)}
-                          pin_hash={item.pin_hash}
-                          token_id={item.token_id}
-                          token_price={item.price}
-                          name={item.name}
-                          link={item.link}
-                          price={item.price + " ETH"}/>
-                })
-              }
-            </div>
+              <PaginatedItems itemsPerPage={10} />
         </div>
     );
 }

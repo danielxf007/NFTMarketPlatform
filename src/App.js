@@ -33,7 +33,7 @@ function App() {
         <button onClick={() => setComponent("auction_board")}>Auction Board</button>
         <button onClick={() => setComponent("auction_bid_withdrawer")}>Withdraw Auction Bid</button>
         <button onClick={() => setComponent("auction_collector")}>Collect Auction</button>
-        <button onClick={() => setComponent("auction_renwer")}>Renew Auction</button>
+        <button onClick={() => setComponent("auction_renewer")}>Renew Auction</button>
         <button onClick={clearPinata}>clearPinata</button>
       </div>
     );    

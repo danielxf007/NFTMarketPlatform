@@ -1,4 +1,5 @@
-import { pinJSONToIPFS, pinFileToIPFS, removePinFromIPFS} from "./pinata.js";
+import { pinJSONToIPFS, pinFileToIPFS, removePinFromIPFS, getPinList} from "./pinata.js";
+import {getTokenUri} from "./contract-interactions"; 
 require("dotenv").config();
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const contracts_metadata = require("../contracts/contracts_metadata.json");
@@ -85,6 +86,8 @@ export const getCurrentWalletConnected = async () => {
   }
 };
 
+
+
 export const mintNFT = async (image, token_name) => {
   if (token_name.trim() === "") {
     return {
@@ -92,7 +95,14 @@ export const mintNFT = async (image, token_name) => {
       status: "❗Please make sure all fields are completed before minting.",
     };
   }
-  const file_res = await pinFileToIPFS(image);
+  const query_res = await getPinList("status=pinned&metadata[name]=" + token_name);
+  if(query_res.length){
+    return{
+      success: false,
+      status: "❗ This name has already been used"
+    }
+  }
+  const file_res = await pinFileToIPFS(image, token_name);
   if (!file_res.success){
     return {
       success: false,
@@ -102,39 +112,18 @@ export const mintNFT = async (image, token_name) => {
   if(file_res.duplicated){
     return{
       success: false,
-      status: "❗ This image has already been minted",
+      status: "❗ This image has already been minted"
     };
   }
-  let data = {};
-  data.pinataMetadata = {
-  name: token_name
-  };
-  data.pinataContent = {
-  name: token_name,
-  image_url: file_res.pinata_url
-  };
-  const json_res = await pinJSONToIPFS(data);
-  if (!json_res.success) {
-    const remove_file_res = await removePinFromIPFS(file_res.data_hash);
-    return {
-      success: false,
-      status: "😢 Something went wrong while uploading your tokenURI. " + json_res.message,
-    };
-  }
-  const token_uri = json_res.pinata_url;
   const contract_metadata = contracts_metadata.minter;
-  
-
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
-
   const transactionParameters = {
     to: contract_metadata.address, // Required except during contract publications.
     from: window.ethereum.selectedAddress, // must match user's active address.
     data: window.contract.methods
-      .mintNFT(window.ethereum.selectedAddress, token_uri)
+      .mintNFT(token_name, window.ethereum.selectedAddress, file_res.pinata_url)
       .encodeABI(),
   };
-
   try {
     const txHash = await window.ethereum.request({
       method: "eth_sendTransaction",
@@ -148,7 +137,6 @@ export const mintNFT = async (image, token_name) => {
     };
   } catch (error) {
     const remove_file_res = await removePinFromIPFS(file_res.data_hash);
-    const remove_json_res = await removePinFromIPFS(json_res.data_hash);
     return {
       success: false,
       status: "😥 Something went wrong: " + error.message,
@@ -156,30 +144,27 @@ export const mintNFT = async (image, token_name) => {
   }
 };
 
-export const publishSell = async(token_id, token_price) => {
+export const publishSell = async(token_name, token_price) => {
   if (parseFloat(token_price) === 0.0) {
     return {
       success: false,
       status: "❗The price cannot be zero.",
     };
   }
-  const token_uri = await getTokenUri(token_id);
-  
+  const token_uri = await getTokenUri(token_name);
   if(token_uri === null){
     return {
       success: false,
       status: "❗This token does not exist",
     };    
   }
-  const token_data = await getJSON(token_uri);
   let data = {};
   data.pinataMetadata = {
   name: "NFT_SELL"
   };
   data.pinataContent = {
-    name: token_data.name,
-    image: token_data.image_url,
-    id: token_id,
+    name: token_name,
+    image: token_uri,
     price: token_price
   };
   const json_res = await pinJSONToIPFS(data);
@@ -195,7 +180,7 @@ export const publishSell = async(token_id, token_price) => {
     to: contract_metadata.address, // Required except during contract publications.
     from: window.ethereum.selectedAddress, // must match user's active address.
     data: window.contract.methods
-      .publishSell(bigInt(parseFloat(token_price)*wei).toString(), token_id)
+      .publishSell(token_name, bigInt(parseFloat(token_price)*wei).toString())
       .encodeABI(),
   };
   try {
@@ -219,30 +204,29 @@ export const publishSell = async(token_id, token_price) => {
 }
 
 
-export const publishAuction = async(active_time, token_id) => {
+export const publishAuction = async(token_name, end_date, active_time) => {
+  console.log(active_time);
   let data = {};
   data.pinataMetadata = {
   name: "NFT_AUCTION"
   };
-  const token_uri = await getTokenUri(token_id);
+  const token_uri = await getTokenUri(token_name);
   if(token_uri === null){
     return {
       success: false,
       status: "❗This token does not exist",
     };    
   }
-  const token_data = await getJSON(token_uri);
   data.pinataContent = {
-    name: token_data.name,
-    image: token_data.image_url,
-    time: active_time,
-    id: token_id,
+    name: token_name,
+    image: token_uri,
+    date: end_date,
   };
   const pinataJsonPinResponse = await pinJSONToIPFS(data);
   if (!pinataJsonPinResponse.success) {
     return {
       success: false,
-      status: "😢 Something went wrong while publishing your NFT.",
+      status: "😢 Something went wrong while publishing your auction.",
     };
   }
   const contract_metadata = contracts_metadata.auction;
@@ -251,7 +235,7 @@ export const publishAuction = async(active_time, token_id) => {
     to: contract_metadata.address, 
     from: window.ethereum.selectedAddress,
     data: window.contract.methods
-      .publish(active_time, token_id)
+      .publish(token_name, active_time)
       .encodeABI(),
   };
 
@@ -263,7 +247,7 @@ export const publishAuction = async(active_time, token_id) => {
     return {
       success: true,
       status:
-        "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" +
+        "Your auction was accepted, wait until the transaction finishes" +
         txHash,
     };
   } catch (error) {
@@ -274,7 +258,8 @@ export const publishAuction = async(active_time, token_id) => {
   }
 }
 
-export const BuyNFTOnMarket = async(token_id, token_price) => {
+export const BuyNFTOnMarket = async(token_name, token_price) => {
+  console.log(token_name)
   const contract_metadata = contracts_metadata.shop;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
@@ -282,7 +267,7 @@ export const BuyNFTOnMarket = async(token_id, token_price) => {
     from: window.ethereum.selectedAddress, // must match user's active address.
     value: bigInt(parseFloat(token_price)*wei).toString(16),
     data: window.contract.methods
-      .buy(token_id)
+      .buy(token_name)
       .encodeABI(),
   };
   try {
@@ -304,7 +289,7 @@ export const BuyNFTOnMarket = async(token_id, token_price) => {
   } 
 }
 
-export const bidNFT = async(token_id, bid) => {
+export const bidNFT = async(token_name, bid) => {
   const contract_metadata = contracts_metadata.auction;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
@@ -312,7 +297,7 @@ export const bidNFT = async(token_id, bid) => {
     from: window.ethereum.selectedAddress,
     value: bigInt(parseFloat(bid)*wei).toString(16),
     data: window.contract.methods
-      .bid(token_id)
+      .bid(token_name)
       .encodeABI(),
   };
   try {
@@ -324,13 +309,12 @@ export const bidNFT = async(token_id, bid) => {
     return {
       success: true,
       status:
-        "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" +
-        txHash,
+        "Your bid was accepted wait until is confirmed"
     };
   } catch (error) {
     return {
       success: false,
-      status: "😥 Something went wrong: " + error.message,
+      status: "😥 Something went wrong",
     };
   } 
 
@@ -429,13 +413,3 @@ export const getJSON = async (url) => {
   return response.json(); // get JSON from the response 
 }
 
-export const getTokenUri = async(token_id) => {
-  const contract_metadata = contracts_metadata.minter;
-  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
-  const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
-  try{
-    return contract.methods.tokenURI(token_id).call();
-  }catch(err){
-    return null;
-  }
-}

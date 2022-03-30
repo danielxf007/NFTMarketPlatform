@@ -22,21 +22,25 @@ const AuctionRenewer = (props) => {
     };
     
     return (
-        <div className="AuctionRenewer">
+        <div className="Auction-Renewer">
             <h1 id="title">Renew Auction</h1>
+            <br></br>
             <form>
                 <h2>Token ID: </h2>
+                <br></br>
                     <input
                     type="number"
                     placeholder="0"
                     onChange={(event) => setTokenId(event.target.value)}
                     />
                 <h2>Set Up When the Auction Finishes</h2>
+                <br></br>
                     <input
                         type="datetime-local"
                         onChange={(event) => setDate(event.target.value)}
                     />
             </form>
+            <br></br>
             <button id="PublishButton" onClick={onRenewPressed}>
                 Renew
             </button><br></br>

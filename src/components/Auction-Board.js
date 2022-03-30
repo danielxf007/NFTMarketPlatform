@@ -13,19 +13,25 @@ import {
     getAuctionOffers,
   } from "../util/pinata";
 
+
+import ReactPaginate from 'react-paginate';
+
+
 var bigInt = require("big-integer");
 const wei = bigInt(1000000000000000000);
+const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
 const BoardCell = (props) => {
   const [date, setDate] = useState(0);
   const [bid, setBid] = useState(0);
 
   const fetchDate = () => {
-    setDate(parseInt(Math.abs(new Date())/1000));
+    console.log(props.end_date);
+    setDate(parseInt(Math.abs(new Date(props.end_date) - new Date())/1000));
   };
 
   const onBidPressed = async() => {
-    const {success, status} = await bidNFT(props["token_id"], bid);
+    const {success, status} = await bidNFT(props.name, bid);
     if(success){
     }
   };
@@ -56,14 +62,14 @@ const BoardCell = (props) => {
   return (
       <div className="nft-item">
         <div className="nft-name">
-          {props["name"]}
+          {props.name}
         </div>
-        <img className="nft-image" src={props["link"]}/>
+        <img className="nft-image" src={props.link}/>
         <div className="nft-bid">
-          Highest Bid: {props["highest_bid"]}
+          Highest Bid: {props.highest_bid}
         </div>
         <div className="nft-time-left">
-          {formatTimeLeft(props["date_end"] - date > 0? props["date_end"] - date: 0)}
+          {formatTimeLeft(date)}
         </div>
         <form>
           <h2>Make Bid: </h2>
@@ -80,50 +86,100 @@ const BoardCell = (props) => {
   );    
 }
 
-const AuctionBoard = (props) => {
-  const [auction_items, setAuctionItems] = useState([]);
-
-  const weiToETH = (n_wei) => {
-    return parseFloat(bigInt(n_wei)) / parseFloat(wei);
-  } 
-
-  useEffect(() => {
-    const fetchAuctionData = async() => {
-      const { sucess, data } = await getAuctionOffers();
-      const url = "https://gateway.pinata.cloud/ipfs/";
-      let nft_auction_data = null;
-      let items = [];
-      for(let i=0; i<data.length; i++){
-        items.push({});
-        nft_auction_data = await getJSON(url+data[i].ipfs_pin_hash);
-        items[i].pin_hash = data[i].ipfs_pin_hash;
-        items[i].token_id = nft_auction_data.id;
-        items[i].name = nft_auction_data.name;
-        items[i].link = nft_auction_data.image;
-        items[i].highest_bid = await getAuctionHighestBid(nft_auction_data.id);
-        items[i].highest_bid = weiToETH(items[i].highest_bid);
-        items[i].date_end = parseInt(Math.abs(new Date())/1000) + parseInt(nft_auction_data.time);
-      }
-      setAuctionItems(items);
-    }
-    fetchAuctionData();
-  }, []);
-  
-    return (
-      <div className="nft-item-container">
-        {
-          auction_items.map((item, index) =>{
-            return <BoardCell
+function Items({ currentItems }) {
+  return (
+    <>
+      {
+        currentItems && currentItems.map((item, index) =>{
+          return <BoardCell
                     key={String(index)}
                     pin_hash={item.pin_hash}
                     token_id={item.token_id}
                     name={item.name}
                     link={item.link}
                     highest_bid={item.highest_bid + " ETH"}
-                    date_end={item.date_end}
-                    />
-          })
+                    end_date={item.end_date}
+                  />
+        })
+      }
+    </>
+  );
+}
+
+function PaginatedItems({ itemsPerPage }) {
+
+  const [currentItems, setCurrentItems] = useState([]);
+  const [pageCount, setPageCount] = useState(0);
+  const [itemOffset, setItemOffset] = useState(0);
+
+  const weiToETH = (n_wei) => {
+    return parseFloat(bigInt(n_wei)) / parseFloat(wei);
+  } 
+
+  useEffect(() => {
+    const endOffset = itemOffset + itemsPerPage;
+    const fetchAuctionData = async() => {
+      const { success, data } = await getAuctionOffers();
+      let items = [];
+      if(success){
+        const url = "https://gateway.pinata.cloud/ipfs/";
+        let nft_auction_data = null;
+        for(let i=0; i<data.length; i++){
+          items.push({});
+          nft_auction_data = await getJSON(url+data[i].ipfs_pin_hash);
+          items[i].pin_hash = data[i].ipfs_pin_hash;
+          items[i].name = nft_auction_data.name;
+          items[i].link = nft_auction_data.image;
+          items[i].highest_bid = await getAuctionHighestBid(nft_auction_data.name);
+          items[i].highest_bid = weiToETH(items[i].highest_bid);
+          items[i].end_date = nft_auction_data.date;
         }
+      }
+      setCurrentItems(items.slice(itemOffset, endOffset));
+      setPageCount(Math.ceil(items.length / itemsPerPage));
+    }
+    fetchAuctionData();
+    
+  }, [itemOffset, itemsPerPage]);
+
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % items.length;
+    setItemOffset(newOffset);
+  };
+
+  return (
+    <>
+    <div className="nft-item-container">
+    <Items currentItems={currentItems} />
+    </div>
+      <ReactPaginate
+        nextLabel="next >"
+        onPageChange={handlePageClick}
+        pageRangeDisplayed={3}
+        marginPagesDisplayed={2}
+        pageCount={pageCount}
+        previousLabel="< previous"
+        pageClassName="page-item"
+        pageLinkClassName="page-link"
+        previousClassName="page-item"
+        previousLinkClassName="page-link"
+        nextClassName="page-item"
+        nextLinkClassName="page-link"
+        breakLabel="..."
+        breakClassName="page-item"
+        breakLinkClassName="page-link"
+        containerClassName="pagination"
+        activeClassName="active"
+        renderOnZeroPageCount={null}
+      />
+    </>
+  );
+}
+
+const AuctionBoard = (props) => {
+    return (
+      <div>
+        <PaginatedItems itemsPerPage={10} />
       </div>
   );
 }

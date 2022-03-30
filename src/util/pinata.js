@@ -5,10 +5,14 @@ const secret = process.env.REACT_APP_PINATA_SECRET;
 
 const axios = require('axios');
 
-export const pinFileToIPFS = async(image) => {
+export const pinFileToIPFS = async(file, file_name) => {
     const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
     let data = new FormData();
-    data.append('file', image);
+    data.append('file', file);
+    const metadata = JSON.stringify({
+        name: file_name
+    });
+    data.append('pinataMetadata', metadata);
     return axios 
         .post(url, data, {
             maxBodyLength: 'Infinity', //this is needed to prevent axios from erroring out with large files
@@ -74,15 +78,12 @@ export const getPinList = (query_str) => {
             return response.data.rows
         })
         .catch(function (error) {
-            console.log(error.message);
             return [];
         });
 };
 
-
-
 export const getMarketOffers = async() => {
-    const url = `https://api.pinata.cloud/data/pinList?status=pinned&metadata[name]=NFT_SELL`;
+    const url = `https://api.pinata.cloud/data/pinList?status=pinned&metadata[name]=NFT_SELL&pageLimit=140`;
     return axios
         .get(url, {
             headers: {

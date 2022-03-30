@@ -2,10 +2,8 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-import "./minter.sol";
+import "./nft_storage.sol";
 contract NFTAuction  is IERC721Receiver{
-
-
     string private ERR_AUCTION_GOING_ON = "The Auction has not ended";
     string private ERR_AUCTION_FINISHED = "The Auction has ended";
     string private ERR_NOT_ENOUGH = "The bid is not enough";
@@ -30,13 +28,13 @@ contract NFTAuction  is IERC721Receiver{
 
     mapping (uint256 => AuctionData) private _auction_book;
     mapping (uint256 => mapping (address => uint256)) private _pending_returns;
-    MarketMinter private _token_storage;
+    TokenStorage private _token_storage;
     AuctionData private _empty_auction = AuctionData(address(0), address(0), 0, 0, false);
 
     constructor(address token_storage)
         public
     {
-        _token_storage = MarketMinter(token_storage);
+        _token_storage = TokenStorage(token_storage);
     }
 
     /**
@@ -46,24 +44,27 @@ contract NFTAuction  is IERC721Receiver{
         return this.onERC721Received.selector;
     }
 
-    function publish(uint256 active_time, uint256 token_id)
+    function publish(string memory token_name, uint256 active_time)
         external
     {
+        uint256 token_id = _token_storage.getTokenId(token_name);
         _token_storage.safeTransferFrom(msg.sender, address(this), token_id);
         _auction_book[token_id] = AuctionData(msg.sender, address(0), 0, block.timestamp + active_time, false);
     }
 
-    function withdraw(uint256 token_id)
+    function withdraw(string memory token_name)
         public
     {
+        uint256 token_id = _token_storage.getTokenId(token_name);
         AuctionData memory auction_data = _auction_book[token_id];
         require(block.timestamp <= auction_data._active_time, ERR_AUCTION_GOING_ON);
         _auction_book[token_id] = _empty_auction;
     }
 
-    function renew(uint256 token_id, uint256 active_time)
+    function renew(string memory token_name, uint256 active_time)
         external
     {
+        uint256 token_id = _token_storage.getTokenId(token_name);
         AuctionData memory auction_data = _auction_book[token_id];
         require(block.timestamp <= auction_data._active_time, ERR_AUCTION_GOING_ON);
         require(!auction_data._has_winner, ERR_AUCTION_WON);
@@ -71,10 +72,11 @@ contract NFTAuction  is IERC721Receiver{
         _auction_book[token_id] = auction_data;
     }
 
-    function bid(uint256 token_id)
+    function bid(string memory token_name)
         external
         payable
     {
+        uint256 token_id = _token_storage.getTokenId(token_name);
         AuctionData memory auction_data = _auction_book[token_id];
         address bidder = msg.sender;
         require(block.timestamp <= auction_data._active_time, ERR_AUCTION_FINISHED);
@@ -95,82 +97,88 @@ contract NFTAuction  is IERC721Receiver{
         _auction_book[token_id] = auction_data;
     }
 
-    function collectedMoney(uint256 token_id)
+    function collectedMoney(string memory token_name)
         public
     {
+        uint256 token_id = _token_storage.getTokenId(token_name);
         AuctionData memory auction_data = _auction_book[token_id];
         auction_data._seller = address(0);
         _auction_book[token_id] = auction_data;
     }
 
-    function collectedNFT(uint256 token_id)
+    function collectedNFT(string memory token_name)
         public
     {
+        uint256 token_id = _token_storage.getTokenId(token_name);
         AuctionData memory auction_data = _auction_book[token_id];
         auction_data._highest_bidder = address(0);
         _auction_book[token_id] = auction_data;       
     }
 
-    function collectAuction(uint256 token_id)
+    function collectAuction(string memory token_name)
         external
     {
-        require(msg.sender == getAuctionSeller(token_id) || 
-        msg.sender == getHighestBidder(token_id), ERR_CANNOT_COLLECT);
-        uint256 highest_bid = getHighestBid(token_id);
-        if(msg.sender == getAuctionSeller(token_id)){
+        uint256 token_id = _token_storage.getTokenId(token_name);
+        require(msg.sender == getAuctionSeller(token_name) || 
+        msg.sender == getHighestBidder(token_name), ERR_CANNOT_COLLECT);
+        uint256 highest_bid = getHighestBid(token_name);
+        if(msg.sender == getAuctionSeller(token_name)){
             if(highest_bid > 0){
                 address payable seller = payable(msg.sender);
-                seller.transfer(getHighestBid(token_id));
-                collectedMoney(token_id);
+                seller.transfer(getHighestBid(token_name));
+                collectedMoney(token_name);
             }else{
                 _token_storage.safeTransferFrom(address(this), msg.sender, token_id);
-                withdraw(token_id);
+                withdraw(token_name);
             }
         }else{
             _token_storage.safeTransferFrom(address(this), msg.sender, token_id);
-            collectedNFT(token_id);
+            collectedNFT(token_name);
         }
     }
 
-
-    function withdrawBid(uint256 token_id)
+    function withdrawBid(string memory token_name)
         external
     {
-        require(msg.sender != getHighestBidder(token_id), ERR_HIGHEST_BIDDER_UNBIDDING);
-        uint256 return_bid = getReturn(token_id, msg.sender);
+        require(msg.sender != getHighestBidder(token_name), ERR_HIGHEST_BIDDER_UNBIDDING);
+        uint256 return_bid = getReturn(token_name, msg.sender);
         require(return_bid > 0, ERR_NO_BID);
         address payable bidder = payable(msg.sender);
         bidder.transfer(return_bid);
     }
 
-    function getAuctionSeller(uint256 token_id)
+    function getAuctionSeller(string memory token_name)
         public
         view
         returns(address)
     {
+        uint256 token_id = _token_storage.getTokenId(token_name);
         return _auction_book[token_id]._seller;
     }
 
-    function getHighestBidder(uint256 token_id)
+    function getHighestBidder(string memory token_name)
         public 
         view
         returns(address)
     {
+        uint256 token_id = _token_storage.getTokenId(token_name);
         return _auction_book[token_id]._highest_bidder;
     }
 
-    function getHighestBid(uint256 token_id)
+    function getHighestBid(string memory token_name)
         public
         view
         returns(uint256)
     {
+        uint256 token_id = _token_storage.getTokenId(token_name);
         return _auction_book[token_id]._highest_bid;
     }
 
-    function getReturn(uint256 token_id, address bidder)
+    function getReturn(string memory token_name, address bidder)
         public
         returns(uint256)
     {
+        uint256 token_id = _token_storage.getTokenId(token_name);
         uint256 value = _pending_returns[token_id][bidder];
         _pending_returns[token_id][bidder] = 0;
         return value;

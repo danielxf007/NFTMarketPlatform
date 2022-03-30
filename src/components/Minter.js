@@ -76,9 +76,6 @@ const Minter = (props) => {
       </button>
 
       <br></br>
-      <p>
-        Simply add your asset's link and name, then press "Mint."
-      </p>
       <form>
       <h2>Upload Image:</h2>
       <img src={image_url} width="75" height="75"/>
@@ -96,9 +93,11 @@ const Minter = (props) => {
           onChange={(event) => setName(event.target.value)}
         />
       </form>
+      <br></br>
       <button id="mintButton" onClick={onMintPressed}>
         Mint NFT
       </button>
+      <br></br>
       <p id="status" style={{ color: "red" }}>
         {status}
       </p>

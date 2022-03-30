@@ -17,15 +17,18 @@ const AuctionCollector = (props) => {
     };
     
     return (
-        <div className="AuctionCollector">
+        <div className="Auction-Collector">
             <h1 id="title">Collect Auction</h1>
+            <br></br>
             <form>
                 <h2>Token ID: </h2>
+                <br></br>
                     <input
                     type="number"
                     onChange={(event) => setTokenId(event.target.value)}
                     />
             </form>
+            <br></br>
             <button id="PublishButton" onClick={onCollectPressed}>
                 Collect
             </button><br></br>
