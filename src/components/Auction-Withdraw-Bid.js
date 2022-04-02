@@ -19,13 +19,16 @@ const AuctionBidWithdrawer = (props) => {
     return (
         <div className="Bid-Withdrawer">
             <h1 id="title">Withdraw Your Bid</h1>
+            <br></br>
             <form>
                 <h2>Token ID: </h2>
+                <br></br>
                     <input
                     type="number"
                     onChange={(event) => setTokenId(event.target.value)}
                     />
             </form>
+            <br></br>
             <button id="PublishButton" onClick={onWithdrawPressed}>
                 Withdraw
             </button><br></br>

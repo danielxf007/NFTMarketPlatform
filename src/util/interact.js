@@ -4,6 +4,7 @@ require("dotenv").config();
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const contracts_metadata = require("../contracts/contracts_metadata.json");
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
+const getRevertReason = require('eth-revert-reason');
 const web3 = createAlchemyWeb3(alchemyKey);
 var bigInt = require("big-integer");
 const wei = bigInt(1000000000000000000);
@@ -137,6 +138,7 @@ export const mintNFT = async (image, token_name) => {
     };
   } catch (error) {
     const remove_file_res = await removePinFromIPFS(file_res.data_hash);
+    console.log(error.data);
     return {
       success: false,
       status: "😥 Something went wrong: " + error.message,
@@ -188,6 +190,7 @@ export const publishSell = async(token_name, token_price) => {
       method: "eth_sendTransaction",
       params: [transactionParameters],
     });
+    console.log(await getRevertReason(txHash)); 
     return {
       success: true,
       status:
@@ -196,6 +199,7 @@ export const publishSell = async(token_name, token_price) => {
     };
   } catch (error) {
     const remove_json_res = await removePinFromIPFS(json_res.data_hash);
+    console.log(error.data);
     return {
       success: false,
       status: "😥 Something went wrong: " + error.message
