@@ -13,7 +13,7 @@ const AuctionCreator = (props) => {
     const [token_name, setTokenName] = useState("");
 
     useEffect(() => {
-    }, [token_name, date]);
+    }, [token_name]);
 
     const onGiveRights = async() => {
         const success = await giveRights(token_name, contracts_metadata.auction.address);

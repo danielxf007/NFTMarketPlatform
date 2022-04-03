@@ -1,5 +1,7 @@
 import { pinJSONToIPFS, pinFileToIPFS, removePinFromIPFS, getPinList} from "./pinata.js";
-import {getTokenUri} from "./contract-interactions"; 
+import {getTokenUri} from "./contract-interactions";
+import {usedName} from "./validations";
+
 require("dotenv").config();
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const contracts_metadata = require("../contracts/contracts_metadata.json");
@@ -96,12 +98,12 @@ export const mintNFT = async (image, token_name) => {
       status: "❗Please make sure all fields are completed before minting.",
     };
   }
-  const query_res = await getPinList("status=pinned&metadata[name]=" + token_name);
-  if(query_res.length){
+  const used_name = await usedName(token_name);
+  if(used_name){
     return{
       success: false,
       status: "❗ This name has already been used"
-    }
+    }    
   }
   const file_res = await pinFileToIPFS(image, token_name);
   if (!file_res.success){
@@ -138,7 +140,6 @@ export const mintNFT = async (image, token_name) => {
     };
   } catch (error) {
     const remove_file_res = await removePinFromIPFS(file_res.data_hash);
-    console.log(error.data);
     return {
       success: false,
       status: "😥 Something went wrong: " + error.message,

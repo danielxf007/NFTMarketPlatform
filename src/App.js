@@ -8,6 +8,7 @@ import AuctionCollector from './components/Auction-Collect';
 import AuctionCreator  from './components/Auction-Publish';
 import AuctionRenewer from './components/Auction-Renew';
 import AuctionBidWithdrawer from './components/Auction-Withdraw-Bid';
+import detectEthereumProvider from '@metamask/detect-provider';
 import {
   clearPinata
 } from "./util/pinata";
@@ -21,7 +22,6 @@ function App() {
     "auction_creator": <AuctionCreator/>, "market_place": <MarketPlace/>,
     "auction_board": <AuctionBoard/>, "auction_bid_withdrawer": <AuctionBidWithdrawer />,
     "auction_collector": <AuctionCollector />, "auction_renewer": <AuctionRenewer />};
-  
 
   if(component === "main_menu"){
     return (
