@@ -1,6 +1,7 @@
 const path = require('path');
 const socketIO = require('socket.io');
 const express = require('express');
+const axios = require('axios');
 const app = express();
 const publicPath = path.join(__dirname, 'build');
 const port = process.env.PORT || 3000;
@@ -30,7 +31,7 @@ io.on('connection', (socket) => {
 });
 
 // notification received from Alchemy from the webhook. Let the clients know.
-function notificationReceived(req) {
+async function notificationReceived(req) {
   io.emit('notification', JSON.stringify(req.body));
 }
 
