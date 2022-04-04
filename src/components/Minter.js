@@ -4,8 +4,6 @@ import {
   getCurrentWalletConnected,
   mintNFT,
 } from "../util/interact.js";
-import { useContext } from 'react';
-import { SocketContext } from "./sockets.js";
 
 const Minter = (props) => {
   const [walletAddress, setWallet] = useState("");
@@ -13,7 +11,6 @@ const Minter = (props) => {
   const [image_url, setImageURL] = useState("");
   const [name, setName] = useState("");
   const [file, setFile] = useState(null);
-  const socket = useContext(SocketContext);
 
   useEffect(() => {
     async function fetchData(){
@@ -23,7 +20,7 @@ const Minter = (props) => {
     }
     fetchData();
     addWalletListener();
-    socket.on('connect', ()=>console.log(socket.id));
+    props.on('connect', ()=>console.log(socket.id));
   }, []);
 
   function addWalletListener() {
