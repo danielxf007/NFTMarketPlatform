@@ -15,7 +15,6 @@ import {
 const socket = require('socket.io');
 
 function App() {
-  var socket = socketClient(server);
   const [component, setComponent] = useState("main_menu");
   const components = {
     "minter": <Minter/>, "sell_publisher": <SellPublisher/>,
