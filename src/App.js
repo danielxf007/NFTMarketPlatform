@@ -12,8 +12,7 @@ import {
   clearPinata
 } from "./util/pinata";
 
-import socketClient  from "socket.io-client";
-const server = "https://salty-everglades-98832.herokuapp.com";
+const socket = require('socket.io');
 
 function App() {
   var socket = socketClient(server);
