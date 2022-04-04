@@ -1,9 +1,8 @@
 const path = require('path');
 const socketIO = require('socket.io');
 const express = require('express');
-const app = express().post('/alchemyhook', (req, res) => {
-   notificationReceived(req); res.status(200).end() 
-});
+const { consumers } = require('stream');
+const app = express();
 const publicPath = path.join(__dirname, 'build');
 const port = process.env.PORT || 3000;
 
@@ -11,12 +10,20 @@ app.use(express.static(publicPath));
 app.use(express.static("public"));
 app.use(express.json());
 
+app.post('/alchemyhook', (req, res) => {
+   notificationReceived(req); res.status(200).end() 
+});
+
 app.get('/', (req, res) => {
    res.sendFile(path.join(publicPath, 'index.html'));
 });
 
+const server = app.listen(port, () => {
+   console.log('Server is up!');
+});
+
 // start the websocket server
-const io = socketIO(app);
+const io = socketIO(server);
 
 // listen for client connections/calls on the WebSocket server
 io.on('connection', (socket) => {
@@ -28,6 +35,3 @@ function notificationReceived(req) {
   io.emit('notification', JSON.stringify(req.body));
 }
 
-app.listen(port, () => {
-   console.log('Server is up!');
-});
