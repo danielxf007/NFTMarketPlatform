@@ -1,6 +1,5 @@
-require('dotenv').config();
-const key = process.env.PENDING_PINATA_KEY;
-const secret = process.env.PENDING_PINATA_SECRET;
+const key = "d06bce897807d4bfb874";
+const secret = "2486212df0e46d664db0614cd7f9ff2a4790156a7b5e885a5f55a84a3941974d";
 const path = require('path');
 const socketIO = require('socket.io');
 const express = require('express');
