@@ -21,11 +21,7 @@ function App() {
     "auction_creator": <AuctionCreator/>, "market_place": <MarketPlace/>,
     "auction_board": <AuctionBoard/>, "auction_bid_withdrawer": <AuctionBidWithdrawer />,
     "auction_collector": <AuctionCollector />, "auction_renewer": <AuctionRenewer />};
-
-  socket.on('connection', () => {
-    console.log(`I'm connected with the back-end`);
-  });
-
+    
   socket.on('notification', (notificationBody) => {
     alert(notificationBody);
   });
