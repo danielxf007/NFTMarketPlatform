@@ -1,5 +1,5 @@
 import './App.css';
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import Minter from './components/Minter'
 import SellPublisher from './components/Sell-Publish';
 import MarketPlace from './components/Sell-Board';
@@ -12,13 +12,25 @@ import {
   clearPinata
 } from "./util/pinata";
 
+import socketClient  from "socket.io-client";
+const server = "https://salty-everglades-98832.herokuapp.com";
+
 function App() {
+  var socket = socketClient(server);
   const [component, setComponent] = useState("main_menu");
   const components = {
     "minter": <Minter/>, "sell_publisher": <SellPublisher/>,
     "auction_creator": <AuctionCreator/>, "market_place": <MarketPlace/>,
     "auction_board": <AuctionBoard/>, "auction_bid_withdrawer": <AuctionBidWithdrawer />,
     "auction_collector": <AuctionCollector />, "auction_renewer": <AuctionRenewer />};
+
+  socket.on('connection', () => {
+    console.log(`I'm connected with the back-end`);
+  });
+
+  socket.on('notification', (notificationBody) => {
+    alert(notificationBody);
+  });
 
   if(component === "main_menu"){
     return (
