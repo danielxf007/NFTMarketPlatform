@@ -23,8 +23,8 @@ function App() {
     "auction_collector": <AuctionCollector />, "auction_renewer": <AuctionRenewer />};
 
     useEffect(() => {
-      /*
       socket.on('connect', ()=>console.log(socket.id));
+      /*
       socket.on('connect_error', ()=>{
         setTimeout(()=>socket.connect(),'https://salty-everglades-98832.herokuapp.com/')
       });
