@@ -1,5 +1,5 @@
 import './App.css';
-import {useState } from "react";
+import {useEffect, useState } from "react";
 import Minter from './components/Minter'
 import SellPublisher from './components/Sell-Publish';
 import MarketPlace from './components/Sell-Board';
@@ -12,7 +12,7 @@ import {
   clearPinata
 } from "./util/pinata";
 
-const socket = require('socket.io');
+import {io} from 'socket.io-client'
 
 function App() {
   const [component, setComponent] = useState("main_menu");
@@ -21,6 +21,14 @@ function App() {
     "auction_creator": <AuctionCreator/>, "market_place": <MarketPlace/>,
     "auction_board": <AuctionBoard/>, "auction_bid_withdrawer": <AuctionBidWithdrawer />,
     "auction_collector": <AuctionCollector />, "auction_renewer": <AuctionRenewer />};
+
+    useEffect(() => {
+      const socket = io('http://localhost:5000');
+      socket.on('connect', ()=>console.log(socket.id));
+      socket.on('connect_error', ()=>{
+        setTimeout(()=>socket.connect(),5000)
+      });
+    }, []);
 
   if(component === "main_menu"){
     return (
