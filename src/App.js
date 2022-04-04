@@ -21,10 +21,6 @@ function App() {
     "auction_creator": <AuctionCreator/>, "market_place": <MarketPlace/>,
     "auction_board": <AuctionBoard/>, "auction_bid_withdrawer": <AuctionBidWithdrawer />,
     "auction_collector": <AuctionCollector />, "auction_renewer": <AuctionRenewer />};
-    
-  socket.on('notification', (notificationBody) => {
-    alert(notificationBody);
-  });
 
   if(component === "main_menu"){
     return (
