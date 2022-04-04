@@ -4,7 +4,7 @@ import {
   getCurrentWalletConnected,
   mintNFT,
 } from "../util/interact.js";
-
+import { useContext } from 'react';
 import { SocketContext } from "./sockets.js";
 
 const Minter = (props) => {
