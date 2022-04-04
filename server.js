@@ -1,17 +1,15 @@
 const path = require('path');
 const socketIO = require('socket.io');
 const express = require('express');
-const app = express();
+const app = express().post('/alchemyhook', (req, res) => {
+   notificationReceived(req); res.status(200).end() 
+});
 const publicPath = path.join(__dirname, 'build');
 const port = process.env.PORT || 3000;
 
 app.use(express.static(publicPath));
 app.use(express.static("public"));
 app.use(express.json());
-
-app.post('/alchemyhook', (req, res) => {
-   notificationReceived(req); res.status(200).end() 
-});
 
 app.get('/', (req, res) => {
    res.sendFile(path.join(publicPath, 'index.html'));
