@@ -55,11 +55,12 @@ const Minter = (props) => {
   };
 
   const onMintPressed = async () => {
-    const { success, status } = await mintNFT(file, name);
+    const { success, status, tx} = await mintNFT(file, name);
     setStatus(status);
     if(success) {
       setName("");
       setImageURL("");
+      props.socket.emit('minted', tx);
     }
   };
 

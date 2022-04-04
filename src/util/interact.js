@@ -134,15 +134,21 @@ export const mintNFT = async (image, token_name) => {
     });
     return {
       success: true,
-      status:
-        "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" +
-        txHash,
+      tx:{
+        pinataMetadata: {
+            name: String(txHash)
+        },
+        pinataContent: {
+            nft_name: token_name,
+            data_hash: file_res.data_hash
+        }
+    },
+      status: "Your transaction was sent"
     };
   } catch (error) {
-    const remove_file_res = await removePinFromIPFS(file_res.data_hash);
     return {
       success: false,
-      status: "😥 Something went wrong: " + error.message,
+      status: error.message,
     };
   }
 };
