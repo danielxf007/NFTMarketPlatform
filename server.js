@@ -115,10 +115,9 @@ function rejectedMint(token_name){
 }
 
 async function txMined(req) {
-   const tx = await req.json();
-   const tx_hash = tx["hash"];
-   io.emit('mined-tx-mint', tx_hash);
-   const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx_hash);
+   const tx = JSON.stringify(req.body);
+   io.emit('mined-tx-mint', tx.hash);
+   //const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx_hash);
    
    /*
    let res;
