@@ -31,6 +31,7 @@ function App() {
         setTimeout(()=>socket.connect(),'https://salty-everglades-98832.herokuapp.com/')
       });
       socket.on('notification', (notificationBody)=>console.log(notificationBody));*/
+      return () => socket.disconnect();
     }, []);
 
   if(component === "main_menu"){
