@@ -46,7 +46,7 @@ function App() {
         <button onClick={() => setComponent("auction_bid_withdrawer")}>Withdraw Auction Bid</button>
         <button onClick={() => setComponent("auction_collector")}>Collect Auction</button>
         <button onClick={() => setComponent("auction_renewer")}>Renew Auction</button>
-        <button onClick={pinata.clearPinata}>clearPinata</button>
+        <button onClick={clearPinata}>clearPinata</button>
       </div>
     );    
   }else{
