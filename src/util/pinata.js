@@ -160,3 +160,4 @@ export const getPinataJSON = async(ipfs_pin_hash) => {
     const response = await fetch("https://gateway.pinata.cloud/ipfs/"+ipfs_pin_hash);
     return response.json();
 }
+
