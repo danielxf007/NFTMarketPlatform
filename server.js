@@ -13,13 +13,13 @@ app.use(express.static(publicPath));
 app.use(express.static("public"));
 app.use(express.json());
 
-app.post('/tx-mined', (req, res) => {
-   txMined(req);
+app.post('/tx-mined', async (req, res) => {
+   const res = txMined(req);
    res.status(200).end(); 
 });
 
-app.post('/tx-rejected', (req, res) => {
-   txRejected(req);
+app.post('/tx-rejected', async(req, res) => {
+   const res = txRejected(req);
    res.status(200).end(); 
 });
 
