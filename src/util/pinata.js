@@ -1,11 +1,7 @@
-require('dotenv').config();
 const FormData = require('form-data');
-const key = process.env.REACT_APP_PINATA_KEY;
-const secret = process.env.REACT_APP_PINATA_SECRET;
-
 const axios = require('axios');
 
-export const pinFileToIPFS = async(file, file_name) => {
+export const pinFileToIPFS = async(file, file_name, key, secret) => {
     const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
     let data = new FormData();
     data.append('file', file);
@@ -39,7 +35,7 @@ export const pinFileToIPFS = async(file, file_name) => {
     });
 }
 
-export const pinJSONToIPFS = async(JSONBody) => {
+export const pinJSONToIPFS = async(JSONBody, key, secret) => {
     const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
     return axios 
         .post(url, JSONBody, {
@@ -65,7 +61,7 @@ export const pinJSONToIPFS = async(JSONBody) => {
 };
 
 
-export const getPinList = (query_str) => {
+export const getPinList = (query_str, key, secret) => {
     const url = `https://api.pinata.cloud/data/pinList?${query_str}`;
     return axios
         .get(url, {
@@ -75,14 +71,14 @@ export const getPinList = (query_str) => {
             }
         })
         .then(function (response) {
-            return response.data.rows
+            return response.data.rows;
         })
         .catch(function (error) {
             return [];
         });
 };
 
-export const getMarketOffers = async() => {
+export const getMarketOffers = async(key, secret) => {
     const url = `https://api.pinata.cloud/data/pinList?status=pinned&metadata[name]=NFT_SELL&pageLimit=140`;
     return axios
         .get(url, {
@@ -105,7 +101,7 @@ export const getMarketOffers = async() => {
         });
 };
 
-export const getAuctionOffers = async() => {
+export const getAuctionOffers = async(key, secret) => {
     const url = `https://api.pinata.cloud/data/pinList?status=pinned&metadata[name]=NFT_AUCTION`;
     return axios
         .get(url, {
@@ -128,7 +124,7 @@ export const getAuctionOffers = async() => {
         });
 };
 
-export const removePinFromIPFS = (hashToUnpin) => {
+export const removePinFromIPFS = (hashToUnpin, key, secret) => {
     const url = `https://api.pinata.cloud/pinning/unpin/${hashToUnpin}`;
     return axios
         .delete(url, {
@@ -151,11 +147,16 @@ export const removePinFromIPFS = (hashToUnpin) => {
         });
 };
 
-export const clearPinata = async () => {
+export const clearPinata = async (key, secret) => {
     const data = await getPinList("status=pinned");
     let x;
     for(let i=0; i<data.length; i++){
-        x = await removePinFromIPFS(data[i].ipfs_pin_hash);
+        x = await removePinFromIPFS(data[i].ipfs_pin_hash, key, secret);
     }
     console.log("finished")
+}
+
+export const getPinataJSON = async(ipfs_pin_hash) => {
+    const response = await fetch("https://gateway.pinata.cloud/ipfs/"+ipfs_pin_hash);
+    return response.json();
 }

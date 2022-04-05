@@ -20,7 +20,6 @@ const Minter = (props) => {
     }
     fetchData();
     addWalletListener();
-    props.socket.on('connect', ()=>console.log(props.socket.id));
   }, []);
 
   function addWalletListener() {

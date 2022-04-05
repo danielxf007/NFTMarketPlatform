@@ -24,6 +24,12 @@ function App() {
 
     useEffect(() => {
       socket.on('connect', ()=>console.log(socket.id));
+      socket.on('mined-tx-mint', (mssg) => {
+        alert(mssg);
+      });
+      socket.on('rejected-tx-mint', (mssg) => {
+        alert(mssg);
+      });
       /*
       socket.on('connect_error', ()=>{
         setTimeout(()=>socket.connect(),'https://salty-everglades-98832.herokuapp.com/')
@@ -33,19 +39,17 @@ function App() {
 
   if(component === "main_menu"){
     return (
-      <SocketContext.Provider value={socket}>
-        <div className="main-menu-options-container">
-          <button onClick={() => setComponent("minter")}>Mint NFT</button>
-          <button onClick={() => setComponent("sell_publisher")}>Sell</button>
-          <button onClick={() => setComponent("auction_creator")}>Create Auction</button>
-          <button onClick={() => setComponent("market_place")}>Market Place</button>
-          <button onClick={() => setComponent("auction_board")}>Auction Board</button>
-          <button onClick={() => setComponent("auction_bid_withdrawer")}>Withdraw Auction Bid</button>
-          <button onClick={() => setComponent("auction_collector")}>Collect Auction</button>
-          <button onClick={() => setComponent("auction_renewer")}>Renew Auction</button>
-          <button onClick={clearPinata}>clearPinata</button>
-        </div>
-      </SocketContext.Provider>
+      <div className="main-menu-options-container">
+        <button onClick={() => setComponent("minter")}>Mint NFT</button>
+        <button onClick={() => setComponent("sell_publisher")}>Sell</button>
+        <button onClick={() => setComponent("auction_creator")}>Create Auction</button>
+        <button onClick={() => setComponent("market_place")}>Market Place</button>
+        <button onClick={() => setComponent("auction_board")}>Auction Board</button>
+        <button onClick={() => setComponent("auction_bid_withdrawer")}>Withdraw Auction Bid</button>
+        <button onClick={() => setComponent("auction_collector")}>Collect Auction</button>
+        <button onClick={() => setComponent("auction_renewer")}>Renew Auction</button>
+        <button onClick={clearPinata}>clearPinata</button>
+      </div>
     );    
   }else{
     return (

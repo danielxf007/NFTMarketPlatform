@@ -1,8 +1,9 @@
-import { pinJSONToIPFS, pinFileToIPFS, removePinFromIPFS, getPinList} from "./pinata.js";
+import { pinJSONToIPFS, pinFileToIPFS, removePinFromIPFS, getPinList, getPinataJSON} from "./pinata.js";
 import {getTokenUri} from "./contract-interactions";
 import {usedName} from "./validations";
-
 require("dotenv").config();
+const key = process.env.REACT_APP_PINATA_KEY;
+const secret = process.env.REACT_APP_PINATA_SECRET;
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const contracts_metadata = require("../contracts/contracts_metadata.json");
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
@@ -105,24 +106,24 @@ export const mintNFT = async (image, token_name) => {
       status: "❗ This name has already been used"
     }    
   }
-  const file_res = await pinFileToIPFS(image, token_name);
+  const file_res = await pinFileToIPFS(image, token_name, key, secret);
   if (!file_res.success){
     return {
       success: false,
-      status: "😢 Something went wrong while uploading your file.",
+      status: "Something went wrong while uploading your file.",
     };
   }
   if(file_res.duplicated){
     return{
       success: false,
-      status: "❗ This image has already been minted"
+      status: "This image has already been minted"
     };
   }
   const contract_metadata = contracts_metadata.minter;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
-    to: contract_metadata.address, // Required except during contract publications.
-    from: window.ethereum.selectedAddress, // must match user's active address.
+    to: contract_metadata.address,
+    from: window.ethereum.selectedAddress,
     data: window.contract.methods
       .mintNFT(token_name, window.ethereum.selectedAddress, file_res.pinata_url)
       .encodeABI(),
@@ -130,7 +131,7 @@ export const mintNFT = async (image, token_name) => {
   try {
     const txHash = await window.ethereum.request({
       method: "eth_sendTransaction",
-      params: [transactionParameters],
+      params: [transactionParameters]
     });
     return {
       success: true,
@@ -140,7 +141,8 @@ export const mintNFT = async (image, token_name) => {
         },
         pinataContent: {
             nft_name: token_name,
-            data_hash: file_res.data_hash
+            data_hash: file_res.data_hash,
+            type: "mint"
         }
     },
       status: "Your transaction was sent"
@@ -419,8 +421,8 @@ export const renewAuction = async(token_id, active_time) => {
 }
 
 
-export const getJSON = async (url) => {
-  const response = await fetch(url);
+export const getJSON = async(ipfs_pin_hash) => {
+  const response = await fetch("https://gateway.pinata.cloud/ipfs/"+ipfs_pin_hash);
   return response.json(); // get JSON from the response 
 }
 
