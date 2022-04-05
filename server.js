@@ -96,6 +96,15 @@ const removePinFromIPFS = (hashToUnpin) => {
        });
 };
 
+const getPinataJSON = async(ipfs_pin_hash) => {
+   const response = await fetch("https://gateway.pinata.cloud/ipfs/"+ipfs_pin_hash);
+   try{
+      return response.json();
+   }catch(err){
+      return err;
+   } 
+}
+
 const io = socketIO(server);
 
 io.on('connection', (socket) => {
@@ -118,18 +127,16 @@ async function txMined(req) {
    const tx = req.body;
    const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx.hash);
    let res;
-   io.emit('mined-tx-mint', pinata_tx[0].ipfs_pin_hash);
-   /*
    if(pinata_tx.length > 0){
       const pinata_tx_data = await getPinataJSON(pinata_tx[0].ipfs_pin_hash);
+      io.emit('mined-tx-mint', pinata_tx_data);
       switch(pinata_tx_data.type){
          case "mint":
-            minedMint(pinata_tx_data.token_name);
+            minedMint(pinata_tx_data.nft_name);
             res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
             break;
       }
    }
-   */
 }
 
 async function txRejected(req) {
