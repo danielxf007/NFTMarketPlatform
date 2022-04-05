@@ -14,12 +14,12 @@ app.use(express.static("public"));
 app.use(express.json());
 
 app.post('/tx-mined', async (req, res) => {
-   const res = await txMined(req);
+   const _res = await txMined(req);
    res.status(200).end(); 
 });
 
 app.post('/tx-rejected', async(req, res) => {
-   const res = await txRejected(req);
+   const _res = await txRejected(req);
    res.status(200).end(); 
 });
 
