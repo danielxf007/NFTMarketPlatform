@@ -116,14 +116,14 @@ function rejectedMint(token_name){
 async function txMined(req) {
    const tx = JSON.stringify(req.body);
    const tx_hash = tx.fullTransaction.hash;
-   const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx_hash, key, secret);
+   const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx_hash);
    let res;
    if(pinata_tx.length > 0){
       const pinata_tx_data = await getPinataJSON(pinata_tx[0].ipfs_pin_hash);
       switch(pinata_tx_data.type){
          case "mint":
             minedMint(pinata_tx_data.token_name);
-            res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash, key, secret);
+            res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
             break;
       }
    }
@@ -132,14 +132,14 @@ async function txMined(req) {
 async function txRejected(req) {
    const tx = JSON.stringify(req.body);
    const tx_hash = tx.fullTransaction.hash;
-   const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx_hash, key, secret);
+   const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx_hash);
    let res;
    if(pinata_tx.length > 0){
       const pinata_tx_data = await pinatagetPinataJSON(pinata_tx[0].ipfs_pin_hash);
       switch(pinata_tx_data.type){
          case "mint":
             rejectedMint(pinata_tx_data.token_name);
-            res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash, key, secret);
+            res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
             break;
       }
    }
