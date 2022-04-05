@@ -14,8 +14,7 @@ app.use(express.static("public"));
 app.use(express.json());
 
 app.post('/tx-mined', async (req, res) => {
-   minedMint("Hello");
-   //const _res = await txMined(req);
+   const _res = await txMined(req);
    res.status(200).end(); 
 });
 
@@ -124,7 +123,6 @@ async function txMined(req) {
       const pinata_tx_data = await getPinataJSON(pinata_tx[0].ipfs_pin_hash);
       switch(pinata_tx_data.type){
          case "mint":
-            minedMint(pinata_tx_data.token_name);
             res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
             break;
       }
