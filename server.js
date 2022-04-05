@@ -101,6 +101,7 @@ const io = socketIO(server);
 
 io.on('connection', (socket) => {
    socket.emit('Greeting', 'Welcome');
+   socket.on('disconnect', () => console.log('Client disconnected'));
    socket.on('minted', async (mint_tx) => {
       const res = await pinJSONToIPFS(mint_tx);
    });
