@@ -14,7 +14,7 @@ app.use(express.static("public"));
 app.use(express.json());
 
 app.post('/tx-mined', async (req, res) => {
-   const _res = await txMined(req);
+   txMined(req);
    res.status(200).end(); 
 });
 
@@ -116,6 +116,8 @@ function rejectedMint(token_name){
 
 async function txMined(req) {
    const tx = JSON.stringify(req.body);
+   socket.emit('mined-tx-mint', tx);
+   /*
    const tx_hash = tx.fullTransaction.hash;
    const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx_hash);
    let res;
@@ -127,6 +129,7 @@ async function txMined(req) {
             break;
       }
    }
+   */
 }
 
 async function txRejected(req) {
