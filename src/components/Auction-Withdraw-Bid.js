@@ -1,10 +1,7 @@
 import { useState } from "react";
 
-import {
-    withdrawBid
-} from "../util/interact";
-
 const AuctionBidWithdrawer = (props) => {
+    /*
     const [status, setStatus] = useState("");
     const [token_id, setTokenId] = useState(0);
 
@@ -38,6 +35,7 @@ const AuctionBidWithdrawer = (props) => {
         </div>        
 
     );
+    */
 };
 
 export default AuctionBidWithdrawer;
