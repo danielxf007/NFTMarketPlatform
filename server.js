@@ -118,6 +118,8 @@ async function txMined(req) {
    const tx = JSON.stringify(req.body);
    const tx_hash = tx.hash;
    const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx_hash);
+   io.emit('mined-tx-mint', pinata_tx);
+   /*
    let res;
    if(pinata_tx.length > 0){
       const pinata_tx_data = await getPinataJSON(pinata_tx[0].ipfs_pin_hash);
@@ -128,6 +130,7 @@ async function txMined(req) {
             break;
       }
    }
+   */
 }
 
 async function txRejected(req) {
