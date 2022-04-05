@@ -8,7 +8,8 @@ import AuctionCollector from './components/Auction-Collect';
 import AuctionCreator  from './components/Auction-Publish';
 import AuctionRenewer from './components/Auction-Renew';
 import AuctionBidWithdrawer from './components/Auction-Withdraw-Bid';
-import {SocketContext, socket} from './components/sockets';
+import {socket} from './components/sockets';
+import { clearPinata } from './util/pinata.js';
 
 const pinata = require("./util/pinata.js");
 
