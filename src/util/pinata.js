@@ -161,4 +161,4 @@ const getPinataJSON = async(ipfs_pin_hash) => {
     return response.json();
 }
 
-module.exports =  {pinFileToIPFS, pinJSONToIPFS, getPinList, getMarketOffers, getAuctionOffers, removePinFromIPFS };
+export{pinFileToIPFS, pinJSONToIPFS, getPinList, getMarketOffers, getAuctionOffers, removePinFromIPFS };
