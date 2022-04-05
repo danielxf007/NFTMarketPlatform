@@ -23,12 +23,6 @@ function App() {
 
     useEffect(() => {
       socket.on('connect', ()=>console.log(socket.id));
-      socket.on('mined-tx-mint', (mssg) => {
-        alert(mssg);
-      });
-      socket.on('rejected-tx-mint', (mssg) => {
-        alert(mssg);
-      });
       /*
       socket.on('connect_error', ()=>{
         setTimeout(()=>socket.connect(),'https://salty-everglades-98832.herokuapp.com/')

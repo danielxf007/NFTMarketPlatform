@@ -20,6 +20,9 @@ const Minter = (props) => {
     }
     fetchData();
     addWalletListener();
+    props.socket.on('mined-tx-mint', (mssg) => {
+      alert(mssg);
+    });
   }, []);
 
   function addWalletListener() {
