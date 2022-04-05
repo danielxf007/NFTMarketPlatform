@@ -9,10 +9,8 @@ import AuctionCreator  from './components/Auction-Publish';
 import AuctionRenewer from './components/Auction-Renew';
 import AuctionBidWithdrawer from './components/Auction-Withdraw-Bid';
 import {SocketContext, socket} from './components/sockets';
-import {
-  clearPinata
-} from "./util/pinata"; 
 
+const pinata = require("./util/pinata.js");
 
 function App() {
   const [component, setComponent] = useState("main_menu");
@@ -48,7 +46,7 @@ function App() {
         <button onClick={() => setComponent("auction_bid_withdrawer")}>Withdraw Auction Bid</button>
         <button onClick={() => setComponent("auction_collector")}>Collect Auction</button>
         <button onClick={() => setComponent("auction_renewer")}>Renew Auction</button>
-        <button onClick={clearPinata}>clearPinata</button>
+        <button onClick={pinata.clearPinata}>clearPinata</button>
       </div>
     );    
   }else{

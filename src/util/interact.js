@@ -1,4 +1,3 @@
-import { pinJSONToIPFS, pinFileToIPFS, removePinFromIPFS, getPinList, getPinataJSON} from "./pinata.js";
 import {getTokenUri} from "./contract-interactions";
 import {usedName} from "./validations";
 require("dotenv").config();
@@ -8,6 +7,7 @@ const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const contracts_metadata = require("../contracts/contracts_metadata.json");
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const getRevertReason = require('eth-revert-reason');
+const pinata = require("./pinata");
 const web3 = createAlchemyWeb3(alchemyKey);
 var bigInt = require("big-integer");
 const wei = bigInt(1000000000000000000);
@@ -106,7 +106,7 @@ export const mintNFT = async (image, token_name) => {
       status: "❗ This name has already been used"
     }    
   }
-  const file_res = await pinFileToIPFS(image, token_name, key, secret);
+  const file_res = await pinata.pinFileToIPFS(image, token_name, key, secret);
   if (!file_res.success){
     return {
       success: false,
@@ -156,6 +156,7 @@ export const mintNFT = async (image, token_name) => {
 };
 
 export const publishSell = async(token_name, token_price) => {
+  /*
   if (parseFloat(token_price) === 0.0) {
     return {
       success: false,
@@ -214,10 +215,12 @@ export const publishSell = async(token_name, token_price) => {
       status: "😥 Something went wrong: " + error.message
     };
   }
+  */
 }
 
 
 export const publishAuction = async(token_name, end_date, active_time) => {
+  /*
   console.log(active_time);
   let data = {};
   data.pinataMetadata = {
@@ -269,9 +272,11 @@ export const publishAuction = async(token_name, end_date, active_time) => {
       status: "😥 Something went wrong: " + error.message,
     };
   }
+  */
 }
 
 export const BuyNFTOnMarket = async(token_name, token_price) => {
+  /*
   console.log(token_name)
   const contract_metadata = contracts_metadata.shop;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
@@ -300,9 +305,11 @@ export const BuyNFTOnMarket = async(token_name, token_price) => {
       status: "😥 Something went wrong "
     };
   } 
+  */
 }
 
 export const bidNFT = async(token_name, bid) => {
+  /*
   const contract_metadata = contracts_metadata.auction;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
@@ -330,10 +337,11 @@ export const bidNFT = async(token_name, bid) => {
       status: "😥 Something went wrong",
     };
   } 
-
+*/
 }
 
 export const collectAuction = async(token_id) => {
+  /*
   const contract_metadata = contracts_metadata.auction;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
@@ -389,9 +397,11 @@ export const withdrawBid = async(token_id) => {
       status: "😥 Something went wrong: " + error.message,
     };
   }
+  */
 }
 
 export const renewAuction = async(token_id, active_time) => {
+  /*
   const contract_metadata = contracts_metadata.auction;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
@@ -418,11 +428,14 @@ export const renewAuction = async(token_id, active_time) => {
       status: "😥 Something went wrong: " + error.message,
     };
   }
+  */
 }
 
 
 export const getJSON = async(ipfs_pin_hash) => {
+  /*
   const response = await fetch("https://gateway.pinata.cloud/ipfs/"+ipfs_pin_hash);
-  return response.json(); // get JSON from the response 
+  return response.json(); // get JSON from the response
+  */ 
 }
 
