@@ -101,7 +101,7 @@ const io = socketIO(server);
 io.on('connection', (socket) => {
    socket.emit('Greeting', 'Welcome');
    socket.on('minted', async (mint_tx) => {
-      const res = await pinFileToIPFS(mint_tx, key, secret);
+      const res = await pinJSONToIPFS(mint_tx);
    });
 });
 
