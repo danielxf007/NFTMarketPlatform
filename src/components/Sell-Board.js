@@ -7,15 +7,10 @@ import {
     getJSON
 } from "../util/interact";
 
-import {
-  getMarketOffers,
-  removePinFromIPFS
-} from "../util/pinata";
-
-
 import ReactPaginate from 'react-paginate';
 
 const BoardCell = (props) => {
+  /*
 
     const onBuyPressed = async() => {
       const {success, status} = await BuyNFTOnMarket(props.name, props.token_price);
@@ -37,6 +32,7 @@ const BoardCell = (props) => {
           <button onClick={onBuyPressed}>Buy</button>
         </div>
     );
+    */
 }
 
 const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
@@ -67,6 +63,7 @@ function PaginatedItems({ itemsPerPage }) {
   const [itemOffset, setItemOffset] = useState(0);
 
   useEffect(() => {
+    /*
     const endOffset = itemOffset + itemsPerPage;
     const fetchSellData = async() => {
       const { success, data } = await getMarketOffers();
@@ -88,7 +85,7 @@ function PaginatedItems({ itemsPerPage }) {
       setPageCount(Math.ceil(items.length / itemsPerPage));
     }
     fetchSellData();
-    
+    */
   }, [itemOffset, itemsPerPage]);
 
   const handlePageClick = (event) => {

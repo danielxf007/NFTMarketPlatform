@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
-import {
-    publishSell
-  } from "../util/interact.js";
-
 import { giveRights } from "../util/contract-interactions.js";
 
 const contracts_metadata = require("../contracts/contracts_metadata.json");
 
 const SellPublisher = (props) => {
+    /*
     const [status, setStatus] = useState("");
     const [token_name, setTokenName] = useState("");
     const [price, setPrice] = useState(0);
@@ -68,6 +65,7 @@ const SellPublisher = (props) => {
             </p>
         </div>
     );
+    */
 };
 
 export default SellPublisher;

@@ -9,10 +9,6 @@ import {
   getAuctionHighestBid
 } from "../util/contract-interactions";
 
-import {
-    getAuctionOffers,
-  } from "../util/pinata";
-
 
 import ReactPaginate from 'react-paginate';
 
@@ -20,8 +16,9 @@ import ReactPaginate from 'react-paginate';
 var bigInt = require("big-integer");
 const wei = bigInt(1000000000000000000);
 const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-
+  /*
 const BoardCell = (props) => {
+
   const [date, setDate] = useState(0);
   const [bid, setBid] = useState(0);
 
@@ -175,13 +172,18 @@ function PaginatedItems({ itemsPerPage }) {
     </>
   );
 }
-
+*/
 const AuctionBoard = (props) => {
+  return (
+    <div></div>
+  );
+  /*
     return (
       <div>
         <PaginatedItems itemsPerPage={10} />
       </div>
   );
+  */
 }
 
 export default AuctionBoard;
