@@ -4,7 +4,7 @@ const secret = process.env.PENDING_PINATA_SECRET;
 const path = require('path');
 const socketIO = require('socket.io');
 const express = require('express');
-const pinata = require("./src/util/pinata.js");
+const axios = require('axios');
 const app = express();
 const publicPath = path.join(__dirname, 'build');
 const port = process.env.PORT || 3000;
@@ -31,12 +31,77 @@ const server = app.listen(port, () => {
    console.log('Server is up!');
 });
 
+const pinJSONToIPFS = async(JSONBody) => {
+   const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
+   return axios 
+       .post(url, JSONBody, {
+           headers: {
+               pinata_api_key: key,
+               pinata_secret_api_key: secret,
+           }
+       })
+       .then(function (response) {
+          return {
+              success: true,
+              data_hash: response.data.IpfsHash,
+              pinata_url: "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash
+          };
+       })
+       .catch(function (error) {
+           return {
+               success: false,
+               message: error.message,
+           }
+
+   });
+};
+
+const getPinList = (query_str) => {
+   const url = `https://api.pinata.cloud/data/pinList?${query_str}`;
+   return axios
+       .get(url, {
+           headers: {
+               pinata_api_key: key,
+               pinata_secret_api_key: secret
+           }
+       })
+       .then(function (response) {
+           return response.data.rows;
+       })
+       .catch(function (error) {
+           return [];
+       });
+};
+
+const removePinFromIPFS = (hashToUnpin) => {
+   const url = `https://api.pinata.cloud/pinning/unpin/${hashToUnpin}`;
+   return axios
+       .delete(url, {
+           headers: {
+               pinata_api_key: key,
+               pinata_secret_api_key: secret
+           }
+       })
+       .then(function (response) {
+           return {
+               success: true,
+               message: response.message,
+           }
+       })
+       .catch(function (error) {
+           return {
+               success: false,
+               message: error.message,
+           }
+       });
+};
+
 const io = socketIO(server);
 
 io.on('connection', (socket) => {
    socket.emit('Greeting', 'Welcome');
    socket.on('minted', async (mint_tx) => {
-      const res = await pinata.pinFileToIPFS(mint_tx, key, secret);
+      const res = await pinFileToIPFS(mint_tx, key, secret);
    });
 });
 
@@ -51,14 +116,14 @@ function rejectedMint(token_name){
 async function txMined(req) {
    const tx = JSON.stringify(req.body);
    const tx_hash = tx.fullTransaction.hash;
-   const pinata_tx = await pinata.getPinList("status=pinned&metadata[name]="+tx_hash, key, secret);
+   const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx_hash, key, secret);
    let res;
    if(pinata_tx.length > 0){
-      const pinata_tx_data = await pinata.getPinataJSON(pinata_tx[0].ipfs_pin_hash);
+      const pinata_tx_data = await getPinataJSON(pinata_tx[0].ipfs_pin_hash);
       switch(pinata_tx_data.type){
          case "mint":
             minedMint(pinata_tx_data.token_name);
-            res = await pinata.removePinFromIPFS(pinata_tx[0].ipfs_pin_hash, key, secret);
+            res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash, key, secret);
             break;
       }
    }
@@ -67,14 +132,14 @@ async function txMined(req) {
 async function txRejected(req) {
    const tx = JSON.stringify(req.body);
    const tx_hash = tx.fullTransaction.hash;
-   const pinata_tx = await pinata.getPinList("status=pinned&metadata[name]="+tx_hash, key, secret);
+   const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx_hash, key, secret);
    let res;
    if(pinata_tx.length > 0){
-      const pinata_tx_data = await pinata.getPinataJSON(pinata_tx[0].ipfs_pin_hash);
+      const pinata_tx_data = await pinatagetPinataJSON(pinata_tx[0].ipfs_pin_hash);
       switch(pinata_tx_data.type){
          case "mint":
             rejectedMint(pinata_tx_data.token_name);
-            res = await pinata.removePinFromIPFS(pinata_tx[0].ipfs_pin_hash, key, secret);
+            res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash, key, secret);
             break;
       }
    }

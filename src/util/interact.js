@@ -1,13 +1,10 @@
+import { pinFileToIPFS } from "./pinata";
 import {getTokenUri} from "./contract-interactions";
 import {usedName} from "./validations";
 require("dotenv").config();
-const key = process.env.REACT_APP_PINATA_KEY;
-const secret = process.env.REACT_APP_PINATA_SECRET;
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const contracts_metadata = require("../contracts/contracts_metadata.json");
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
-const getRevertReason = require('eth-revert-reason');
-const pinata = require("./pinata");
 const web3 = createAlchemyWeb3(alchemyKey);
 var bigInt = require("big-integer");
 const wei = bigInt(1000000000000000000);
@@ -106,7 +103,7 @@ export const mintNFT = async (image, token_name) => {
       status: "❗ This name has already been used"
     }    
   }
-  const file_res = await pinata.pinFileToIPFS(image, token_name, key, secret);
+  const file_res = await pinFileToIPFS(image, token_name);
   if (!file_res.success){
     return {
       success: false,
