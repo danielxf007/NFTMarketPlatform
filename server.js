@@ -12,8 +12,6 @@ const publicPath = path.join(__dirname, 'build');
 const port = process.env.PORT || 3000;
 const fetch = require('node-fetch');
 
-
-
 app.use(express.static(publicPath));
 app.use(express.static("public"));
 app.use(express.json());
@@ -24,7 +22,7 @@ app.post('/tx-mined', async (req, res) => {
 });
 
 app.post('/tx-rejected', async(req, res) => {
-   //const _res = await txRejected(req);
+   const _res = await txRejected(req);
    res.status(200).end(); 
 });
 
@@ -144,17 +142,16 @@ async function txMined(req) {
 }
 
 async function txRejected(req) {
-   const tx = JSON.stringify(req.body);
-   const tx_hash = tx.fullTransaction.hash;
-   const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx_hash);
-   let res;
-   if(pinata_tx.length > 0){
-      const pinata_tx_data = await pinatagetPinataJSON(pinata_tx[0].ipfs_pin_hash);
-      switch(pinata_tx_data.type){
-         case "mint":
-            rejectedMint(pinata_tx_data.token_name);
-            res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
-            break;
-      }
-   }
+    const tx = req.body;
+    const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx.hash);
+    let res;
+    if(pinata_tx.length > 0){
+       const pinata_tx_data = await getPinataJSON(pinata_tx[0].ipfs_pin_hash);
+       switch(pinata_tx_data.type){
+          case "mint":
+             rejectedMint(pinata_tx_data.nft_name);
+             res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
+             break;
+       }
+    }
 }
