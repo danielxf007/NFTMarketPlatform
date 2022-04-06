@@ -5,6 +5,7 @@ const path = require('path');
 const socketIO = require('socket.io');
 const express = require('express');
 const axios = require('axios');
+const fetch = require("node-fetch");
 const app = express();
 const publicPath = path.join(__dirname, 'build');
 const port = process.env.PORT || 3000;
@@ -129,7 +130,7 @@ async function txMined(req) {
    let res;
    if(pinata_tx.length > 0){
       const pinata_tx_data = await getPinataJSON(pinata_tx[0].ipfs_pin_hash);
-      io.emit('mined-tx-mint', pinata_tx_data);
+      io.emit('mined-tx-mint', pinata_tx_data.type);
       switch(pinata_tx_data.type){
          case "mint":
             //minedMint(pinata_tx_data.nft_name);
