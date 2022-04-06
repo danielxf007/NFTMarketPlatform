@@ -1,3 +1,4 @@
+import fetch from "node-fetch";
 require("dotenv").config();
 const key = process.env.PENDING_PINATA_KEY;
 const secret = process.env.PENDING_PINATA_SECRET;
