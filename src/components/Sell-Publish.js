@@ -4,8 +4,6 @@ import { giveRights } from "../util/contract-interactions.js";
 const contracts_metadata = require("../contracts/contracts_metadata.json");
 
 const SellPublisher = (props) => {
-    /*
-    const [status, setStatus] = useState("");
     const [token_name, setTokenName] = useState("");
     const [price, setPrice] = useState(0);
 
@@ -13,16 +11,18 @@ const SellPublisher = (props) => {
     }, [token_name, price]);
 
     const onGiveRights = async() => {
-        const success = await giveRights(token_name, contracts_metadata.shop.address);
+        const {success, status, tx} = await giveRights(token_name, contracts_metadata.shop.address);
+        alert(status);
         if(success){
-            alert("Wait until your transactions is confirmed");
+            props.socket.emit('gave_rights', tx);
         }
     };
 
     const onPublishPressed = async() => {
-        const { success, status } = await publishSell(token_name, price);
-        setStatus(status);
-        if (success) {
+        const { success, status, tx } = await publishSell(token_name, price);
+        alert(status);
+        if (success){
+            props.socket.emit('published_sell', tx);
             setTokenName("");
             setPrice(0);
         }       
@@ -59,13 +59,8 @@ const SellPublisher = (props) => {
             <button onClick={onPublishPressed}>
                 Publish
             </button>
-            <br></br>
-            <p id="status" style={{ color: "red" }}>
-                {status}
-            </p>
         </div>
     );
-    */
 };
 
 export default SellPublisher;
