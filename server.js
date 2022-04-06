@@ -98,25 +98,19 @@ const removePinFromIPFS = (hashToUnpin) => {
 };
 
 const getPinataJSON = (ipfs_pin_hash) => {
-   https.get("https://gateway.pinata.cloud/ipfs/"+ipfs_pin_hash,(res) => {
-         let body = "";
-     
-         res.on("data", (chunk) => {
-             body += chunk;
-         });
-     
-         res.on("end", () => {
-             try {
-                 let json = JSON.parse(body);
-                 return json;
-             } catch (error) {
-                 return error.message;
-             };
-         });
-     
-     }).on("error", (error) => {
-         console.error(error.message);
-     });
+   return axios
+   .get("https://gateway.pinata.cloud/ipfs/"+ipfs_pin_hash, {
+       headers: {
+           pinata_api_key: key,
+           pinata_secret_api_key: secret
+       }
+   })
+   .then(function (response) {
+       return response.data.rows;
+   })
+   .catch(function (error) {
+       return [];
+   });
 
 }
 
