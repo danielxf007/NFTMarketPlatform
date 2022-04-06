@@ -1,6 +1,8 @@
 require("dotenv").config();
 const key = process.env.PENDING_PINATA_KEY;
 const secret = process.env.PENDING_PINATA_SECRET;
+const platform_storage_key = process.env.REACT_APP_PINATA_KEY;
+const platform_storage_secret = process.env.REACT_APP_PINATA_SECRET;
 const path = require('path');
 const socketIO = require('socket.io');
 const express = require('express');
@@ -99,6 +101,7 @@ const removePinFromIPFS = (hashToUnpin) => {
 
 const getPinataJSON = (ipfs_pin_hash) => {
    const url = "https://gateway.pinata.cloud/ipfs/"+ipfs_pin_hash;
+   io.emit('mined-tx-mint', url);
    return axios
    .get(url, {
        headers: {
