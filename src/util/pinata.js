@@ -163,21 +163,3 @@ export const getPinataJSON = async(ipfs_pin_hash) => {
     const response = await fetch("https://gateway.pinata.cloud/ipfs/"+ipfs_pin_hash);
     return response.json();
 }
-
-const getPinataJSON = (ipfs_pin_hash) => {
-    const url = "https://gateway.pinata.cloud/ipfs/"+ipfs_pin_hash;
-    io.emit('mined-tx-mint', url);
-    return axios
-    .get(url, {
-        headers: {
-            pinata_api_key: key,
-            pinata_secret_api_key: secret
-        }
-    })
-    .then(function (response) {
-        return response.data.rows;
-    })
-    .catch(function (error) {
-        return [];
-    });
-}
