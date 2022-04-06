@@ -5,7 +5,6 @@ const path = require('path');
 const socketIO = require('socket.io');
 const express = require('express');
 const axios = require('axios');
-const fetch = require('node-fetch');
 const https = require('https');
 const app = express();
 const publicPath = path.join(__dirname, 'build');
