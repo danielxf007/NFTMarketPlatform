@@ -1,6 +1,6 @@
 import { pinFileToIPFS } from "./pinata";
 import {getTokenUri} from "./contract-interactions";
-import {usedName} from "./validations";
+import {usedName, tokenExists, canTradeToken, sellPublished, tokenSold} from "./validations";
 require("dotenv").config();
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const contracts_metadata = require("../contracts/contracts_metadata.json");
@@ -87,20 +87,18 @@ export const getCurrentWalletConnected = async () => {
   }
 };
 
-
-
 export const mintNFT = async (image, token_name) => {
   if (token_name.trim() === "") {
     return {
       success: false,
-      status: "❗Please make sure all fields are completed before minting.",
+      status: "Please make sure all fields are completed before minting.",
     };
   }
   const used_name = await usedName(token_name);
   if(used_name){
     return{
       success: false,
-      status: "❗ This name has already been used"
+      status: "This name has already been used"
     }    
   }
   const file_res = await pinFileToIPFS(image, token_name);
@@ -133,61 +131,116 @@ export const mintNFT = async (image, token_name) => {
     return {
       success: true,
       tx:{
-        pinataMetadata: {
-            name: String(txHash)
+          pinataMetadata: {
+              name: String(txHash)
+          },
+          pinataContent: {
+              name: token_name,
+              data_hash: file_res.data_hash,
+              type: "mint"
+          }
         },
-        pinataContent: {
-            nft_name: token_name,
-            data_hash: file_res.data_hash,
-            type: "mint"
-        }
-    },
       status: "Your transaction was sent"
     };
   } catch (error) {
     return {
       success: false,
-      status: error.message,
+      status: "Something went wrong: " + error.message,
     };
   }
 };
 
-export const publishSell = async(token_name, token_price) => {
-  /*
-  if (parseFloat(token_price) === 0.0) {
+export const giveRights = async(token_name, beneficiary) => {
+  const token_exists = await tokenExists(token_name);
+  if(!token_exists){
     return {
       success: false,
-      status: "❗The price cannot be zero.",
-    };
-  }
-  const token_uri = await getTokenUri(token_name);
-  if(token_uri === null){
-    return {
-      success: false,
-      status: "❗This token does not exist",
+      status: "This token does not exist",
     };    
   }
-  let data = {};
-  data.pinataMetadata = {
-  name: "NFT_SELL"
-  };
-  data.pinataContent = {
-    name: token_name,
-    image: token_uri,
-    price: token_price
-  };
-  const json_res = await pinJSONToIPFS(data);
-  if (!json_res.success) {
-    return {
+  const can_trade = await canTradeToken(token_name, window.ethereum.selectedAddress);
+  if(!can_trade){
+    return{
       success: false,
-      status: "😢 Something went wrong while publishing your sell.",
+      status: "You cannot trade this token"
     };
   }
-  const contract_metadata = contracts_metadata.shop;
+  const contract_metadata = contracts_metadata.minter;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
     to: contract_metadata.address, // Required except during contract publications.
     from: window.ethereum.selectedAddress, // must match user's active address.
+    data: window.contract.methods
+      .giveRights(token_name, beneficiary)
+      .encodeABI(),
+  };
+  try {
+    const txHash = await window.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [transactionParameters],
+    });
+    return {
+      success: true,
+      tx:{
+          pinataMetadata: {
+              name: String(txHash)
+          },
+          pinataContent: {
+              name: token_name,
+              type: "rights"
+          }
+        },
+      status: "Your transaction was sent"
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: "Something went wrong: " + error.message,
+    };
+  }
+}
+
+export const publishSell = async(token_name, token_price) => {
+  if(parseFloat(token_price) === 0.0) {
+    return {
+      success: false,
+      status: "The price cannot be zero.",
+    };
+  }
+  const token_exists = await tokenExists(token_name);
+  if(!token_exists){
+    return {
+      success: false,
+      status: "This token does not exist",
+    };    
+  }
+  const can_trade = await canTradeToken(token_name, window.ethereum.selectedAddress);
+  if(!can_trade){
+    return{
+      success: false,
+      status: "You cannot trade this token"
+    };
+  }
+  const published = await sellPublished(token_name);
+  if(published){
+    return{
+      success: false,
+      status: "This token is already been sold"
+    }
+  }
+  const sold = await tokenSold(token_name);
+  if(sold){
+    return{
+      success: false,
+      status: "This token was already sold"
+    };
+  }
+  const token_uri = await getTokenUri(token_name);
+  const contract_metadata = contracts_metadata.shop;
+  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+  const transactionParameters = {
+    to: contract_metadata.address,
+    from: window.ethereum.selectedAddress,
     data: window.contract.methods
       .publishSell(token_name, bigInt(parseFloat(token_price)*wei).toString())
       .encodeABI(),
@@ -197,22 +250,27 @@ export const publishSell = async(token_name, token_price) => {
       method: "eth_sendTransaction",
       params: [transactionParameters],
     });
-    console.log(await getRevertReason(txHash)); 
-    return {
+    return{
       success: true,
-      status:
-        "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" +
-        txHash,
+      tx:{
+          pinataMetadata: {
+              name: String(txHash)
+          },
+          pinataContent: {
+              name: token_name,
+              image_url: token_uri,
+              price: token_price,
+              type: "sell_publish"
+          }
+        },
+      status: "Your transaction was sent"
     };
   } catch (error) {
-    const remove_json_res = await removePinFromIPFS(json_res.data_hash);
-    console.log(error.data);
     return {
       success: false,
-      status: "😥 Something went wrong: " + error.message
+      status: "Something went wrong: " + error.message
     };
   }
-  */
 }
 
 
