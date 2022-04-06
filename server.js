@@ -11,7 +11,7 @@ const app = express();
 const publicPath = path.join(__dirname, 'build');
 const port = process.env.PORT || 3000;
 const IPFS = require('ipfs')
-const makeIpfsFetch = require('ipfs-fetch')
+const makeIpfsFetch = require('fetch-ipfs')
 
 
 
