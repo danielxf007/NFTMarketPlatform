@@ -98,8 +98,9 @@ const removePinFromIPFS = (hashToUnpin) => {
 };
 
 const getPinataJSON = (ipfs_pin_hash) => {
+   const url = "https://gateway.pinata.cloud/ipfs/"+ipfs_pin_hash;
    return axios
-   .get("https://gateway.pinata.cloud/ipfs/"+ipfs_pin_hash, {
+   .get(url, {
        headers: {
            pinata_api_key: key,
            pinata_secret_api_key: secret
@@ -111,7 +112,6 @@ const getPinataJSON = (ipfs_pin_hash) => {
    .catch(function (error) {
        return [];
    });
-
 }
 
 const io = socketIO(server);
