@@ -19,7 +19,7 @@
     "ipfs": "^0.62.2",
     "js-ipfs": "^0.0.301",
     "js-ipfs-fetch": "^3.5.1",
-    "node-fetch": "^3.2.3",
+    "node-fetch": "^2.6.7",
     "react": "^17.0.2",
     "react-context-hook": "^3.0.7",
     "react-dom": "^17.0.2",

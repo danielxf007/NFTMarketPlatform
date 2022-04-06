@@ -10,8 +10,7 @@ const axios = require('axios');
 const app = express();
 const publicPath = path.join(__dirname, 'build');
 const port = process.env.PORT || 3000;
-const IPFS = require('ipfs')
-const makeIpfsFetch = require('fetch-ipfs')
+const fetch = require('node-fetch');
 
 
 
@@ -104,11 +103,8 @@ const removePinFromIPFS = (hashToUnpin) => {
 
 const getPinataJSON = async (ipfs_pin_hash) => {
     try{
-        const ipfs = await IPFS.create();
-        const fetch = await makeIpfsFetch({ipfs});
-        const response = await fetch('ipfs://'+ipfs_pin_hash);
-        const text = await response.text();
-        return text;
+        const response = await fetch("https://gateway.pinata.cloud/ipfs/"+ipfs_pin_hash);
+        return response.json();
     }catch(error){
         return error.message;
     }
