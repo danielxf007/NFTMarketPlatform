@@ -1,22 +1,41 @@
 import { useEffect, useState } from "react";
 import './Board.css';
 
-
 import {
-    BuyNFTOnMarket,
-    getJSON
+    buyNFT
 } from "../util/interact";
+
+import {tokenSold} from "./validations";
+import { getPinList, getPinataJSON } from "./pinata";
+
 
 import ReactPaginate from 'react-paginate';
 
-const BoardCell = (props) => {
-  /*
+require("dotenv").config();
+const publish_storage_key = process.env.PENDING_PINATA_KEY;
+const publish_storage_secret = process.env.PENDING_PINATA_SECRET;
 
+const BoardCell = (props) => {
     const onBuyPressed = async() => {
-      const {success, status} = await BuyNFTOnMarket(props.name, props.token_price);
+      const {success, status, tx} = await buyNFT(props.name, props.token_price);
+      alert(status);
       if(success){
-        alert(status);
-        const unpin_response = await removePinFromIPFS(props.pin_hash);
+        props.socket.emit('made_tx', tx);
+      }
+    };
+
+    const onCheckOffer = async() => {
+      const data = await getPinList('metadata[keyvalues][name]'+props.name,
+       publish_storage_key, publish_storage_secret);
+      if(data.length > 0){
+        alert("Someone has already made an offer fot this NFT");
+      }
+    };
+
+    const onCheckSold = async() => {
+      const sold = await tokenSold(props.name);
+      if(sold){
+        alert("This NFT has already been sold");
       }
     };
 
@@ -29,15 +48,16 @@ const BoardCell = (props) => {
           <div className="nft_price">
             {props.price}
           </div>
+          <button onClick={onCheckOffer}>Check Offer</button>
+          <button onClick={onCheckSold}>Check Sold</button>
           <button onClick={onBuyPressed}>Buy</button>
         </div>
     );
-    */
 }
 
 const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
-function Items({ currentItems }) {
+function Items({ currentItems, socket }) {
   return (
     <>
       {
@@ -49,31 +69,31 @@ function Items({ currentItems }) {
                   token_price={item.price}
                   name={item.name}
                   link={item.link}
-                  price={item.price + " ETH"}/>
+                  price={item.price + " ETH"}
+                  socket={socket}/>
         })
       }
     </>
   );
 }
 
-function PaginatedItems({ itemsPerPage }) {
+function PaginatedItems({ itemsPerPage, socket }) {
 
   const [currentItems, setCurrentItems] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
 
   useEffect(() => {
-    /*
     const endOffset = itemOffset + itemsPerPage;
     const fetchSellData = async() => {
-      const { success, data } = await getMarketOffers();
+      const data = await getPinList('status=pinned&metadata[name]=NFT_SELL&pageLimit=140',
+      publish_storage_key, publish_storage_secret);
       let items = [];
-      if(success){
-        const url = "https://gateway.pinata.cloud/ipfs/";
+      if(data.length > 0){
         let sell_data = null;
         for(let i=0; i<data.length; i++){
           items.push({});
-          sell_data = await getJSON(url+data[i].ipfs_pin_hash);
+          sell_data = await getPinataJSON(data[i].ipfs_pin_hash);
           items[i].pin_hash = data[i].ipfs_pin_hash;
           items[i].link = sell_data.image;
           items[i].name = sell_data.name;
@@ -85,7 +105,6 @@ function PaginatedItems({ itemsPerPage }) {
       setPageCount(Math.ceil(items.length / itemsPerPage));
     }
     fetchSellData();
-    */
   }, [itemOffset, itemsPerPage]);
 
   const handlePageClick = (event) => {
@@ -96,7 +115,7 @@ function PaginatedItems({ itemsPerPage }) {
   return (
     <>
     <div className="nft-item-container">
-    <Items currentItems={currentItems} />
+    <Items currentItems={currentItems} socket={socket}/>
     </div>
       <ReactPaginate
         nextLabel="next >"
@@ -125,7 +144,7 @@ function PaginatedItems({ itemsPerPage }) {
 const MarketPlace = (props) => {
     return (
         <div>
-              <PaginatedItems itemsPerPage={10} />
+              <PaginatedItems itemsPerPage={10} socket={props.socket}/>
         </div>
     );
 }

@@ -273,6 +273,55 @@ export const publishSell = async(token_name, token_price) => {
   }
 }
 
+export const buyNFT = async(token_name, token_price) => {
+  const sold = await tokenSold(token_name);
+  if(sold){
+    return{
+      success: false,
+      status: "This token was already sold"
+    };
+  }
+  const contract_metadata = contracts_metadata.shop;
+  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+  const transactionParameters = {
+    to: contract_metadata.address, // Required except during contract publications.
+    from: window.ethereum.selectedAddress, // must match user's active address.
+    value: bigInt(parseFloat(token_price)*wei).toString(16),
+    data: window.contract.methods
+      .buy(token_name)
+      .encodeABI(),
+  };
+  try {
+    const txHash = await window.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [transactionParameters],
+    });
+    return {
+      success: true,
+      tx:{
+          pinataMetadata: {
+              name: String(txHash),
+              keyvalues: {
+                name: token_name
+              }
+          },
+          pinataContent: {
+              name: token_name,
+              image_url: token_uri,
+              price: token_price,
+              type: "sell_publish"
+          }
+        },
+      status: "Your transaction was sent"
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: "😥 Something went wrong "
+    };
+  }
+}
+
 
 export const publishAuction = async(token_name, end_date, active_time) => {
   /*
@@ -330,38 +379,7 @@ export const publishAuction = async(token_name, end_date, active_time) => {
   */
 }
 
-export const BuyNFTOnMarket = async(token_name, token_price) => {
-  /*
-  console.log(token_name)
-  const contract_metadata = contracts_metadata.shop;
-  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
-  const transactionParameters = {
-    to: contract_metadata.address, // Required except during contract publications.
-    from: window.ethereum.selectedAddress, // must match user's active address.
-    value: bigInt(parseFloat(token_price)*wei).toString(16),
-    data: window.contract.methods
-      .buy(token_name)
-      .encodeABI(),
-  };
-  try {
-    const txHash = await window.ethereum.request({
-      method: "eth_sendTransaction",
-      params: [transactionParameters],
-    });
-    
-    return {
-      success: true,
-      status:
-        "Purchased"
-    };
-  } catch (error) {
-    return {
-      success: false,
-      status: "😥 Something went wrong "
-    };
-  } 
-  */
-}
+
 
 export const bidNFT = async(token_name, bid) => {
   /*

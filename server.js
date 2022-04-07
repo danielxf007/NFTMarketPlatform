@@ -113,13 +113,7 @@ const io = socketIO(server);
 io.on('connection', (socket) => {
     socket.emit('Greeting', 'Welcome');
     socket.on('disconnect', () => console.log('Client disconnected'));
-    socket.on('minted', async (tx) => {
-        const res = await pinJSONToIPFS(tx);
-    });
-    socket.on('gave_rights', async (tx) => {
-        const res = await pinJSONToIPFS(tx);
-    });
-    socket.on('published_sell', async (tx) => {
+    socket.on('made_tx', async (tx) => {
         const res = await pinJSONToIPFS(tx);
     });
 });
@@ -142,11 +136,19 @@ function rejectedGaveRights(token_name){
 
 function minedSellPublish(token_name, price){
     io.emit('mined-tx-sell_publish', 'Your NFT ' + token_name + ' was published on the market by: ' + price + ' ETH');
- }
+}
  
  function rejectedSellPublish(token_name){
     io.emit('rejected-tx-sell_publish', 'Your NFT ' + token_name + 'could not be published on the market');
- }
+}
+
+function minedBuy(token_name, price){
+    io.emit('mined-tx-buy', 'Your offer of '+ price + ' ETH for '+ token_name + ' was accepted');
+}
+ 
+ function rejectedBuy(token_name){
+    io.emit('rejected-tx-buy', 'Your offer for ' + token_name + 'was rejected');
+}
 
 async function txMined(req) {
    const tx = req.body;
@@ -154,6 +156,7 @@ async function txMined(req) {
    if(pinata_tx.length > 0){
       const pinata_tx_data = await getPinataJSON(pinata_tx[0].ipfs_pin_hash);
       let res;
+      let data;
       res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
       switch(pinata_tx_data.type){
             case "mint":  
@@ -165,7 +168,10 @@ async function txMined(req) {
             case "sell_publish":
                 res = await pinJSONToIPFS({
                     pinataMetadata: {
-                        name: "NFT_SELL"
+                        name: "NFT_SELL",
+                        keyvalues: {
+                            name: pinata_tx_data.name
+                        }
                     },
                     pinataContent:{
                         name: pinata_tx_data.name,
@@ -174,6 +180,15 @@ async function txMined(req) {
                     }
                 });
                 minedSellPublish(pinata_tx_data.name, pinata_tx_data.price);
+                break;
+            case 'buy_nft':
+                res = await getPinList("status=pinned&metadata[name]=NFT_SELL"+
+                "&metadata[keyvalues][name]="+pinata_tx_data.name);
+                if(res.length > 0){
+                    data = await getPinataJSON(res[0].ipfs_pin_hash);
+                    res = await removePinFromIPFS(res[0].ipfs_pin_hash);
+                    minedBuy(data.name, data.price);
+                }
       }
    }
 }
@@ -181,10 +196,10 @@ async function txMined(req) {
 async function txRejected(req) {
     const tx = req.body;
     const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx.hash);
-    
     if(pinata_tx.length > 0){
        const pinata_tx_data = await getPinataJSON(pinata_tx[0].ipfs_pin_hash);
        let res;
+       let data;
        res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
        switch(pinata_tx_data.type){
             case "mint":
@@ -194,7 +209,10 @@ async function txRejected(req) {
                 rejectedGaveRights(pinata_tx_data.name);
                 break;
             case "sell_publish":
-                rejectedSellPublish(pinata_tx_data.name);       
+                rejectedSellPublish(pinata_tx_data.name);
+                break;
+            case 'buy_nft':
+                rejectedBuy(pinata_tx_data.name);
        }
     }
 }

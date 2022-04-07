@@ -17,7 +17,7 @@ function App() {
   const [component, setComponent] = useState("main_menu");
   const components = {
     "minter": <Minter socket={socket}/>, "sell_publisher": <SellPublisher socket={socket}/>,
-    "auction_creator": <AuctionCreator/>, "market_place": <MarketPlace/>,
+    "auction_creator": <AuctionCreator/>, "market_place": <MarketPlace socket={socket}/>,
     "auction_board": <AuctionBoard/>, "auction_bid_withdrawer": <AuctionBidWithdrawer />,
     "auction_collector": <AuctionCollector />, "auction_renewer": <AuctionRenewer />};
 
@@ -39,6 +39,12 @@ function App() {
         alert(mssg);
       });
       socket.on('rejected-tx-sell_publish', (mssg) => {
+        alert(mssg);
+      });
+      socket.on('mined-tx-buy', (mssg) => {
+        alert(mssg);
+      });
+      socket.on('rejected-tx-buy', (mssg) => {
         alert(mssg);
       });
       /*

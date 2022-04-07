@@ -22,7 +22,7 @@ const SellPublisher = (props) => {
         const { success, status, tx } = await publishSell(token_name, price);
         alert(status);
         if (success){
-            props.socket.emit('published_sell', tx);
+            props.socket.emit('made_tx', tx);
             setTokenName("");
             setPrice(0);
         }       

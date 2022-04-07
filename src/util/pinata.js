@@ -64,7 +64,7 @@ export const pinJSONToIPFS = async(JSONBody) => {
 };
 
 
-export const getPinList = (query_str) => {
+export const getPinList = (query_str, key, secret) => {
     const url = `https://api.pinata.cloud/data/pinList?${query_str}`;
     return axios
         .get(url, {
@@ -81,7 +81,7 @@ export const getPinList = (query_str) => {
         });
 };
 
-export const getMarketOffers = async() => {
+export const getMarketOffers = async(key, secret) => {
     const url = `https://api.pinata.cloud/data/pinList?status=pinned&metadata[name]=NFT_SELL&pageLimit=140`;
     return axios
         .get(url, {
@@ -91,10 +91,7 @@ export const getMarketOffers = async() => {
             }
         })
         .then(function (response) {
-            return {
-                success: true,
-                data: response.data.rows
-            };
+            return response.data.rows
         })
         .catch(function (error) {
             return {
