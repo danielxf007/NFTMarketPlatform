@@ -307,7 +307,6 @@ export const buyNFT = async(token_name, token_price) => {
           },
           pinataContent: {
               name: token_name,
-              image_url: token_uri,
               price: token_price,
               type: "sell_publish"
           }
