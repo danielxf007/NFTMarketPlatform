@@ -26,6 +26,21 @@ function App() {
       socket.on('mined-tx-mint', (mssg) => {
         alert(mssg);
       });
+      socket.on('rejected-tx-minted', (mssg) => {
+        alert(mssg);
+      });
+      socket.on('mined-tx-give-rights', (mssg) => {
+        alert(mssg);
+      });
+      socket.on('rejected-tx-give-rights', (mssg) => {
+        alert(mssg);
+      });
+      socket.on('mined-tx-sell_publish', (mssg) => {
+        alert(mssg);
+      });
+      socket.on('rejected-tx-sell_publish', (mssg) => {
+        alert(mssg);
+      });
       /*
       socket.on('connect_error', ()=>{
         setTimeout(()=>socket.connect(),'https://salty-everglades-98832.herokuapp.com/')
