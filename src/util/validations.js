@@ -19,7 +19,7 @@ export const tokenExists = async(token_name) => {
 export const canTradeToken = async(token_name, user_address) => {
     const contract_metadata = contracts_metadata.minter;
     const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
-    return contract.methods.exists(token_name, user_address).call();   
+    return contract.methods.canTradeToken(token_name, user_address).call();   
 }
 
 export const sellPublished = async(token_name) => {
