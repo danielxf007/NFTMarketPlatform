@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { giveRights } from "../util/contract-interactions.js";
+import { giveRights, publishSell } from "../util/interact.js";
 
 const contracts_metadata = require("../contracts/contracts_metadata.json");
 
