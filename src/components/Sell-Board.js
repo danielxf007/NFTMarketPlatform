@@ -5,8 +5,8 @@ import {
     buyNFT
 } from "../util/interact";
 
-import {tokenSold} from "./validations";
-import { getPinList, getPinataJSON } from "./pinata";
+import {tokenSold} from "../util/validations";
+import { getPinList, getPinataJSON } from "../util/pinata";
 
 
 import ReactPaginate from 'react-paginate';
