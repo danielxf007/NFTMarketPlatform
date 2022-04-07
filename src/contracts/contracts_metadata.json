@@ -1,6 +1,6 @@
 {
     "minter": {
-        "address": "0x3A883d0313EE0233a36AA6d3A1A659eF43a0681c",
+        "address": "0x85fE16Efdf13717509308d5758Fec25062912c63",
 		"abi": [
 			{
 				"inputs": [],
@@ -481,7 +481,7 @@
 		]
     },
     "shop": {
-        "address": "0x4B47aFae3B86A8B8B8E4b096B8Ca46519aCf27cd",
+        "address": "0xe812cB7b721207092aF2E1D887B4a2843D9e9A70",
 		"abi": [
 			{
 				"inputs": [
