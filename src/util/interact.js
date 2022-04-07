@@ -151,7 +151,7 @@ export const mintNFT = async (image, token_name) => {
 };
 
 export const giveRights = async(token_name, beneficiary) => {
-  const token_exists = await tokenExists(token_name);
+  const token_exists = await usedName(token_name);
   if(!token_exists){
     return {
       success: false,
@@ -207,7 +207,7 @@ export const publishSell = async(token_name, token_price) => {
       status: "The price cannot be zero.",
     };
   }
-  const token_exists = await tokenExists(token_name);
+  const token_exists = await usedName(token_name);
   if(!token_exists){
     return {
       success: false,
