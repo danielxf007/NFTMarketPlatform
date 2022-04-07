@@ -1,6 +1,6 @@
 {
     "minter": {
-        "address": "0x68ABE7e45cB4D9E6009BCd69030c4B8A0BC379A6",
+        "address": "0x3A883d0313EE0233a36AA6d3A1A659eF43a0681c",
 		"abi": [
 			{
 				"inputs": [],
@@ -481,7 +481,7 @@
 		]
     },
     "shop": {
-        "address": "0x957E6C334945C2745C652826ed2717f27d26181d",
+        "address": "0x4B47aFae3B86A8B8B8E4b096B8Ca46519aCf27cd",
 		"abi": [
 			{
 				"inputs": [
@@ -505,6 +505,30 @@
 				"name": "buy",
 				"outputs": [],
 				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "token_name",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "offer",
+						"type": "uint256"
+					}
+				],
+				"name": "isEnough",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -557,6 +581,44 @@
 				"name": "publishSell",
 				"outputs": [],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "token_name",
+						"type": "string"
+					}
+				],
+				"name": "published",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "token_name",
+						"type": "string"
+					}
+				],
+				"name": "sold",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			}
 		]
