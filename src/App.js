@@ -47,11 +47,6 @@ function App() {
       socket.on('rejected-tx-buy', (mssg) => {
         alert(mssg);
       });
-      /*
-      socket.on('connect_error', ()=>{
-        setTimeout(()=>socket.connect(),'https://salty-everglades-98832.herokuapp.com/')
-      });
-      socket.on('notification', (notificationBody)=>console.log(notificationBody));*/
       return () => socket.disconnect();
     }, []);
 
