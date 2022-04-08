@@ -6,7 +6,7 @@ import {
 } from "../util/interact";
 
 import {tokenSold} from "../util/validations";
-import { getMarketOffers, getPinataJSON } from "../util/pinata";
+import { getMarketOffers, getOfferMadeForNFT, getPinataJSON } from "../util/pinata";
 import ReactPaginate from 'react-paginate';
 
 
@@ -20,8 +20,7 @@ const BoardCell = (props) => {
     };
 
     const onCheckOffer = async() => {
-      const data = await getPinList('metadata[keyvalues][name]'+props.name,
-       publish_storage_key, publish_storage_secret);
+      const data = await getOfferMadeForNFT(prop.name);
       if(data.length > 0){
         alert("Someone has already made an offer fot this NFT");
       }
