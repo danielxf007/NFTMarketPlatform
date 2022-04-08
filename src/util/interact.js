@@ -1,4 +1,4 @@
-import { pinFileToIPFS } from "./pinata";
+import { pinFileToIPFS, getOfferMadeForNFT } from "./pinata";
 import {getTokenUri} from "./contract-interactions";
 import {usedName, tokenExists, canTradeToken, sellPublished, tokenSold} from "./validations";
 require("dotenv").config();
@@ -279,6 +279,13 @@ export const buyNFT = async(token_name, token_price) => {
     return{
       success: false,
       status: "This token was already sold"
+    };
+  }
+  const offer_made = await getOfferMadeForNFT(token_name);
+  if(offer_made){
+    return{
+      success: false,
+      status: "Someone has already made an offer fot this NFT, try again later if the offer made was rejected"
     };
   }
   const contract_metadata = contracts_metadata.shop;
