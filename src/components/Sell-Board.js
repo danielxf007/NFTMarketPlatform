@@ -62,7 +62,7 @@ function Items({ currentItems, socket }) {
                   key={String(index)}
                   token_price={item.price}
                   name={item.name}
-                  link={item.image_url}
+                  image_url={item.image_url}
                   price={item.price + " ETH"}
                   socket={socket}/>
         })
