@@ -61,7 +61,6 @@ const pinJSONToIPFS = async(JSONBody) => {
 
 const getPinList = (query_str) => {
    const url = 'https://api.pinata.cloud/data/pinList?'+query_str;
-   io.emit('mined-tx-buy', typeof(key) + ' ' + typeof(secret));
    return axios
        .get(url, {
            headers: {
