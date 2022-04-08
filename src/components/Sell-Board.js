@@ -44,7 +44,7 @@ const BoardCell = (props) => {
           <div className="nft-name">
             {props.name}
           </div>
-          <img className="nft-image" src={props.link}/>
+          <img className="nft-image" src={props.image_url}/>
           <div className="nft_price">
             {props.price}
           </div>
@@ -64,11 +64,9 @@ function Items({ currentItems, socket }) {
         currentItems && currentItems.map((item, index) =>{
           return <BoardCell
                   key={String(index)}
-                  pin_hash={item.pin_hash}
-                  token_id={item.token_id}
                   token_price={item.price}
                   name={item.name}
-                  link={item.link}
+                  link={item.image_url}
                   price={item.price + " ETH"}
                   socket={socket}/>
         })
@@ -95,10 +93,9 @@ function PaginatedItems({ itemsPerPage, socket }) {
           items.push({});
           sell_data = await getPinataJSON(data[i].ipfs_pin_hash);
           items[i].pin_hash = data[i].ipfs_pin_hash;
-          items[i].link = sell_data.image;
+          items[i].image_url = sell_data.image_url;
           items[i].name = sell_data.name;
           items[i].price = sell_data.price;
-          items[i].token_id = sell_data.id;
         }
       }
       setCurrentItems(items.slice(itemOffset, endOffset));
