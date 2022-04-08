@@ -1,8 +1,8 @@
 require("dotenv").config();
 const key = process.env.REACT_APP_PINATA_KEY;
 const secret = process.env.REACT_APP_PINATA_SECRET;
-const publish_storage_key = process.env.PENDING_PINATA_KEY;
-const publish_storage_secret = process.env.PENDING_PINATA_SECRET;
+const publish_storage_key = "d06bce897807d4bfb874";
+const publish_storage_secret = "2486212df0e46d664db0614cd7f9ff2a4790156a7b5e885a5f55a84a3941974d";
 const FormData = require('form-data');
 const axios = require('axios');
 
