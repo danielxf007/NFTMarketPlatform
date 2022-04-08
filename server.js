@@ -155,6 +155,7 @@ async function txMined(req) {
    if(pinata_tx.length > 0){
       const pinata_tx_data = await getPinataJSON(pinata_tx[0].ipfs_pin_hash);
       let res;
+      let sell_data;
       let data;
       res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
       switch(pinata_tx_data.type){
@@ -181,12 +182,13 @@ async function txMined(req) {
                 minedSellPublish(pinata_tx_data.name, pinata_tx_data.price);
                 break;
             case 'buy_nft':
-                res = await getPinList("status=pinned&metadata[name]=NFT_SELL"+
+                sell_data = await getPinList("status=pinned&metadata[name]=NFT_SELL"+
                 "&metadata[keyvalues][name]="+pinata_tx_data.name);
-                io.emit('mined-tx-buy', res.length);
-                if(res.length > 0){
-                    data = await getPinataJSON(res[0].ipfs_pin_hash);
-                    res = await removePinFromIPFS(res[0].ipfs_pin_hash);
+                io.emit('mined-tx-buy', 'https://api.pinata.cloud/data/pinList?' + "status=pinned&metadata[name]=NFT_SELL"+
+                "&metadata[keyvalues][name]="+pinata_tx_data.name);                
+                if(sell_data.length > 0){
+                    data = await getPinataJSON(sell_data[0].ipfs_pin_hash);
+                    res = await removePinFromIPFS(sell_data[0].ipfs_pin_hash);
                     minedBuy(data.name, data.price);
                 }
       }
