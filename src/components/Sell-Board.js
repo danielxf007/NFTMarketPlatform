@@ -86,7 +86,7 @@ function PaginatedItems({ itemsPerPage, socket }) {
     const fetchSellData = async() => {
       const data = await getPinList('status=pinned&metadata[name]=NFT_SELL&pageLimit=140',
       publish_storage_key, publish_storage_secret);
-      alert(data);
+      alert(publish_storage_key, publish_storage_secret);
       let items = [];
       if(data.length > 0){
         let sell_data = null;

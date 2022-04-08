@@ -64,13 +64,13 @@ export const pinJSONToIPFS = async(JSONBody) => {
 };
 
 
-export const getPinList = (query_str, key, secret) => {
+export const getPinList = (query_str, pinata_key, pinata_secret) => {
     const url = `https://api.pinata.cloud/data/pinList?${query_str}`;
     return axios
         .get(url, {
             headers: {
-                pinata_api_key: key,
-                pinata_secret_api_key: secret
+                pinata_api_key: pinata_key,
+                pinata_secret_api_key: pinata_secret
             }
         })
         .then(function (response) {
