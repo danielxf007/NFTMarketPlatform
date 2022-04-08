@@ -19,20 +19,6 @@ const BoardCell = (props) => {
       }
     };
 
-    const onCheckOffer = async() => {
-      const data = await getOfferMadeForNFT(props.name);
-      if(data.length > 0){
-        alert("Someone has already made an offer fot this NFT");
-      }
-    };
-
-    const onCheckSold = async() => {
-      const sold = await tokenSold(props.name);
-      if(sold){
-        alert("This NFT has already been sold");
-      }
-    };
-
     return (
         <div className="nft-item">
           <div className="nft-name">
@@ -42,9 +28,6 @@ const BoardCell = (props) => {
           <div className="nft_price">
             {props.price}
           </div>
-          <button onClick={onCheckOffer}>Check Offer</button>
-          <br></br>
-          <button onClick={onCheckSold}>Check Sold</button>
           <br></br>
           <button onClick={onBuyPressed}>Buy</button>
         </div>
