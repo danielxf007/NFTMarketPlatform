@@ -61,12 +61,12 @@ const pinJSONToIPFS = async(JSONBody) => {
 
 const getPinList = (query_str) => {
    const url = 'https://api.pinata.cloud/data/pinList?'+query_str;
-   io.emit('mined-tx-buy', url + ' ' + key + ' ' + secret);
+   io.emit('mined-tx-buy', typeof(key) + ' ' + typeof(secret));
    return axios
        .get(url, {
            headers: {
-               pinata_api_key: key,
-               pinata_secret_api_key: secret
+               pinata_api_key: String(key),
+               pinata_secret_api_key: String(secret)
            }
        })
        .then(function (response) {
