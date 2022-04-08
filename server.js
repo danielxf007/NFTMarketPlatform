@@ -71,7 +71,7 @@ const getPinList = (query_str) => {
        .then(function (response) {
            return response.data.rows;
        })
-       .catch(function (error) {
+       .catch(function (_error) {
            return [];
        });
 };
@@ -118,7 +118,7 @@ io.on('connection', (socket) => {
 });
 
 function minedMint(token_name){
-   io.emit('mined-tx-mint', 'Your NFT ' + token_name + ' was successfully minted');
+   io.emit('mined-tx-mint', 'Your NFT ' + token_name + ' was successfully minted' + platform_storage_key);
 }
 
 function rejectedMint(token_name){
@@ -183,6 +183,7 @@ async function txMined(req) {
             case 'buy_nft':
                 res = await getPinList("status=pinned&metadata[name]=NFT_SELL"+
                 "&metadata[keyvalues][name]="+pinata_tx_data.name);
+                io.emit(res.length);
                 if(res.length > 0){
                     data = await getPinataJSON(res[0].ipfs_pin_hash);
                     res = await removePinFromIPFS(res[0].ipfs_pin_hash);

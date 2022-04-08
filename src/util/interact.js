@@ -282,7 +282,6 @@ export const buyNFT = async(token_name, token_price) => {
     };
   }
   const offer_made = await getOfferMadeForNFT(token_name);
-  alert(offer_made);
   if(offer_made.length > 0){
     return{
       success: false,
