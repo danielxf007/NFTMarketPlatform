@@ -14,7 +14,7 @@ const SellPublisher = (props) => {
         const {success, status, tx} = await giveRights(token_name, contracts_metadata.shop.address);
         alert(status);
         if(success){
-            props.socket.emit('gave_rights', tx);
+            props.socket.emit('made_tx', tx);
         }
     };
 
