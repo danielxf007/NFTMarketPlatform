@@ -1,8 +1,8 @@
 require("dotenv").config();
 const key = process.env.PENDING_PINATA_KEY;
 const secret = process.env.PENDING_PINATA_SECRET;
-const platform_storage_key = process.env.REACT_APP_PINATA_KEY;
-const platform_storage_secret = process.env.REACT_APP_PINATA_SECRET;
+const nft_storage_key = process.env.REACT_APP_PINATA_KEY;
+const nft_storage_secret = process.env.REACT_APP_PINATA_SECRET;
 const path = require('path');
 const socketIO = require('socket.io');
 const express = require('express');
@@ -64,14 +64,15 @@ const getPinList = (query_str) => {
    return axios
        .get(url, {
            headers: {
-               pinata_api_key: String(key),
-               pinata_secret_api_key: String(secret)
+               pinata_api_key: key,
+               pinata_secret_api_key: secret
            }
        })
        .then(function (response) {
            return response.data.rows;
        })
        .catch(function (_error) {
+        io.emit('mined-tx-buy', JSON.stringify(_error));
            return [];
        });
 };
