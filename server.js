@@ -11,6 +11,7 @@ const app = express();
 const publicPath = path.join(__dirname, 'build');
 const port = process.env.PORT || 3000;
 const fetch = require('node-fetch');
+const { json } = require("express/lib/response");
 
 app.use(express.static(publicPath));
 app.use(express.static("public"));
@@ -72,8 +73,7 @@ const getPinList = (query_str) => {
            return response.data.rows;
        })
        .catch(function (_error) {
-        io.emit('mined-tx-buy', JSON.stringify(_error));
-           return [];
+           return [_error];
        });
 };
 
@@ -185,13 +185,15 @@ async function txMined(req) {
             case 'buy_nft':
                 sell_data = await getPinList("status=pinned&metadata[name]=NFT_SELL"+
                 "&metadata[keyvalues][name]="+pinata_tx_data.name);
-                io.emit('mined-tx-buy', 'https://api.pinata.cloud/data/pinList?' + "status=pinned&metadata[name]=NFT_SELL"+
+                io.emit('mined-tx-buy', JSON.stringify(sell_data[0]));
+                /*
                 "&metadata[keyvalues][name]="+pinata_tx_data.name);                
                 if(sell_data.length > 0){
                     data = await getPinataJSON(sell_data[0].ipfs_pin_hash);
                     res = await removePinFromIPFS(sell_data[0].ipfs_pin_hash);
                     minedBuy(data.name, data.price);
                 }
+                */
       }
    }
 }
