@@ -1,6 +1,8 @@
 require("dotenv").config();
 const key = process.env.REACT_APP_PINATA_KEY;
 const secret = process.env.REACT_APP_PINATA_SECRET;
+const publish_storage_key = process.env.PENDING_PINATA_KEY;
+const publish_storage_secret = process.env.PENDING_PINATA_SECRET;
 const FormData = require('form-data');
 const axios = require('axios');
 
@@ -77,18 +79,17 @@ export const getPinList = (query_str, pinata_key, pinata_secret) => {
             return response.data.rows;
         })
         .catch(function (error) {
-            alert(error.message);
             return [];
         });
 };
 
-export const getMarketOffers = async(key, secret) => {
+export const getMarketOffers = async() => {
     const url = `https://api.pinata.cloud/data/pinList?status=pinned&metadata[name]=NFT_SELL&pageLimit=140`;
     return axios
         .get(url, {
             headers: {
-                pinata_api_key: key,
-                pinata_secret_api_key: secret
+                pinata_api_key: publish_storage_key,
+                pinata_secret_api_key: publish_storage_secret
             }
         })
         .then(function (response) {
