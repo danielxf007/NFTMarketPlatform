@@ -72,6 +72,7 @@ const getPinList = (query_str) => {
            return response.data.rows;
        })
        .catch(function (_error) {
+        io.emit('mined-tx-buy', _error.message);
            return [];
        });
 };
@@ -118,7 +119,7 @@ io.on('connection', (socket) => {
 });
 
 function minedMint(token_name){
-   io.emit('mined-tx-mint', 'Your NFT ' + token_name + ' was successfully minted' + platform_storage_key);
+   io.emit('mined-tx-mint', 'Your NFT ' + token_name + ' was successfully minted');
 }
 
 function rejectedMint(token_name){
