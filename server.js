@@ -183,7 +183,7 @@ async function txMined(req) {
             case 'buy_nft':
                 res = await getPinList("status=pinned&metadata[name]=NFT_SELL"+
                 "&metadata[keyvalues][name]="+pinata_tx_data.name);
-                io.emit(res.length);
+                io.emit('mined-tx-buy', res.length);
                 if(res.length > 0){
                     data = await getPinataJSON(res[0].ipfs_pin_hash);
                     res = await removePinFromIPFS(res[0].ipfs_pin_hash);
