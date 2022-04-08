@@ -77,6 +77,7 @@ export const getPinList = (query_str, key, secret) => {
             return response.data.rows;
         })
         .catch(function (error) {
+            alert(error.message);
             return [];
         });
 };
