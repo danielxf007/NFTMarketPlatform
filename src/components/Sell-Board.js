@@ -20,7 +20,7 @@ const BoardCell = (props) => {
     };
 
     const onCheckOffer = async() => {
-      const data = await getOfferMadeForNFT(prop.name);
+      const data = await getOfferMadeForNFT(props.name);
       if(data.length > 0){
         alert("Someone has already made an offer fot this NFT");
       }
