@@ -302,13 +302,14 @@ export const buyNFT = async(token_name, token_price) => {
           pinataMetadata: {
               name: String(txHash),
               keyvalues: {
-                name: token_name
+                name: token_name,
+                type: "buy_nft"
               }
           },
           pinataContent: {
               name: token_name,
               price: token_price,
-              type: "sell_publish"
+              type: "buy_nft"
           }
         },
       status: "Your transaction was sent"
