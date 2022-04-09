@@ -19,14 +19,16 @@ const BoardCell = (props) => {
 const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
 function Items({ currentItems }) {
+  const name = 0;
+  const image_url = 1;
   return (
     <>
       {
         currentItems && currentItems.map((item, index) =>{
           return <BoardCell
                   key={String(index)}
-                  name={item.name}
-                  image_url={item.image_url}
+                  name={item[name]}
+                  image_url={item[image_url]}
                   />
         })
       }
@@ -44,9 +46,8 @@ function PaginatedItems({ itemsPerPage, socket }) {
     const endOffset = itemOffset + itemsPerPage;
     const getNFTs= async() => {
       const items = await getTokens();
-      console.log(items);
-      setCurrentItems([].slice(itemOffset, endOffset));
-      setPageCount(Math.ceil([].length / itemsPerPage));
+      setCurrentItems(items.slice(itemOffset, endOffset));
+      setPageCount(Math.ceil(items.length / itemsPerPage));
     }
     getNFTs();
   }, [itemOffset, itemsPerPage]);
