@@ -1,4 +1,4 @@
-import { pinFileToIPFS, getOfferMadeForNFT } from "./pinata";
+import { pinFileToIPFS, getOfferMadeForNFT, getPublishedOffer} from "./pinata";
 import {getTokenUri} from "./contract-interactions";
 import {usedName, tokenExists, canTradeToken, sellPublished, tokenSold} from "./validations";
 require("dotenv").config();
@@ -288,6 +288,10 @@ export const buyNFT = async(token_name, token_price) => {
       status: "Someone has already made an offer fot this NFT, try again later if the offer made was rejected"
     };
   }
+  const sell_data = await getPublishedOffer(token_name);
+  if(sell_data.length > 0){
+    alert(sell_data[0].ipfs_pin_hash);
+  }
   const contract_metadata = contracts_metadata.shop;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
@@ -324,7 +328,7 @@ export const buyNFT = async(token_name, token_price) => {
   } catch (error) {
     return {
       success: false,
-      status: "😥 Something went wrong "
+      status: "😥 Something went wrong " + error.message
     };
   }
 }

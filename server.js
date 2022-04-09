@@ -65,7 +65,7 @@ const getPinList = (query_str) => {
    return axios
        .get(url, {
            headers: {
-               
+
                pinata_api_key: key,
                pinata_secret_api_key: secret
            }
@@ -74,7 +74,7 @@ const getPinList = (query_str) => {
            return response.data.rows;
        })
        .catch(function (_error) {
-           return [_error];
+           return [];
        });
 };
 
@@ -159,7 +159,6 @@ async function txMined(req) {
       let res;
       let sell_data;
       let data;
-      res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
       switch(pinata_tx_data.type){
             case "mint":  
                 minedMint(pinata_tx_data.name);
@@ -184,10 +183,11 @@ async function txMined(req) {
                 minedSellPublish(pinata_tx_data.name, pinata_tx_data.price);
                 break;
             case 'buy_nft':
+                break;
+                /*
                 sell_data = await getPinList("status=pinned&metadata[name]=NFT_SELL"+
                 "&metadata[keyvalues][name]="+pinata_tx_data.name);
                 io.emit('mined-tx-buy', JSON.stringify(sell_data[0]));
-                /*
                 "&metadata[keyvalues][name]="+pinata_tx_data.name);                
                 if(sell_data.length > 0){
                     data = await getPinataJSON(sell_data[0].ipfs_pin_hash);
@@ -197,6 +197,7 @@ async function txMined(req) {
                 */
       }
    }
+   res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
 }
 
 async function txRejected(req) {

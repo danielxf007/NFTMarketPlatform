@@ -100,6 +100,23 @@ export const getMarketOffers = async() => {
         });
 };
 
+export const getPublishedOffer = async(token_name) => {
+    const url = 'https://api.pinata.cloud/data/pinList?status=pinned&metadata[name]=NFT_SELL&metadata[keyvalues][name]='+ token_name;
+    return axios
+        .get(url, {
+            headers: {
+                pinata_api_key: publish_storage_key,
+                pinata_secret_api_key: publish_storage_secret
+            }
+        })
+        .then(function (response) {
+            return response.data.rows
+        })
+        .catch(function (_error) {
+            return []
+        });
+};
+
 export const getOfferMadeForNFT = async(token_name) => {
     let url = 'https://api.pinata.cloud/data/pinList?status=pinned&metadata[keyvalues][name]='+ token_name;
     url += '&metadata[keyvalues][type]=buy_nft';
