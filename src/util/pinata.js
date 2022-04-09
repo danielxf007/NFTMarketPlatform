@@ -101,7 +101,8 @@ export const getMarketOffers = async() => {
 };
 
 export const getPublishedOffer = async(token_name) => {
-    const url = `https://api.pinata.cloud/data/pinList?status=pinned&metadata[name]=NFT_SELL&metadata[keyvalues][name]={"value":${token_name},"op":"like"}`;
+    const url = 'https://api.pinata.cloud/data/pinList?status=pinned&metadata[name]=NFT_SELL&metadata[keyvalues][name]={"value":'+token_name+'",op":"eq"}';
+    alert(url);
     return axios
         .get(url, {
             headers: {
