@@ -207,7 +207,6 @@ async function txRejected(req) {
        const pinata_tx_data = await getPinataJSON(pinata_tx[0].ipfs_pin_hash);
        let res;
        let data;
-       res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
        switch(pinata_tx_data.type){
             case "mint":
                 rejectedMint(pinata_tx_data.name);
@@ -221,5 +220,6 @@ async function txRejected(req) {
             case 'buy_nft':
                 rejectedBuy(pinata_tx_data.name);
        }
+       res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
     }
 }
