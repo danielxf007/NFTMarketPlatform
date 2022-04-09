@@ -113,6 +113,7 @@ export const getPublishedOffer = async(token_name) => {
             return response.data.rows
         })
         .catch(function (_error) {
+            alert(_error.message);
             return []
         });
 };
