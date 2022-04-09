@@ -5,12 +5,19 @@ import {
     buyNFT
 } from "../util/interact";
 
-import {tokenSold} from "../util/validations";
-import { getMarketOffers, getOfferMadeForNFT, getPinataJSON } from "../util/pinata";
+import { getMarketOffers, getOfferMadeForNFT, getPinataJSON, getPublishedOffer } from "../util/pinata";
 import ReactPaginate from 'react-paginate';
 
 
 const BoardCell = (props) => {
+  const onPublished = async() => {
+    const {success, status, data} = await getPublishedOffer(props.name);
+    if(success){
+      alert(data[0]);
+    }else{
+      alert(status);
+    }
+  };
     const onBuyPressed = async() => {
       const {success, status, tx} = await buyNFT(props.name, props.token_price);
       alert(status);
@@ -28,6 +35,7 @@ const BoardCell = (props) => {
           <div className="nft_price">
             {props.price}
           </div>
+          <button onClick={onPublished}>Published</button>
           <br></br>
           <button onClick={onBuyPressed}>Buy</button>
         </div>

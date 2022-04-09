@@ -110,11 +110,16 @@ export const getPublishedOffer = async(token_name) => {
             }
         })
         .then(function (response) {
-            return response.data.rows
+            return {
+                success: true,
+                data: response.data.rows
+            };
         })
         .catch(function (_error) {
-            alert(_error.message);
-            return []
+            return {
+                success: false,
+                status: _error.message
+            };
         });
 };
 
