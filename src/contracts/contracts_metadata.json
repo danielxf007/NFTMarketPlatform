@@ -1,6 +1,6 @@
 {
     "minter": {
-        "address": "0x85fE16Efdf13717509308d5758Fec25062912c63",
+        "address": "0xFd1322C815C0DBcD97F6160AB7547D378850d630",
 		"abi": [
 			{
 				"inputs": [],
@@ -222,6 +222,42 @@
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "wallet",
+						"type": "address"
+					}
+				],
+				"name": "getTokens",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "_name",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "_image_url",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "_id",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct TokenStorage.TokenData[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "string",
 						"name": "token_name",
 						"type": "string"
@@ -269,14 +305,14 @@
 						"type": "string"
 					},
 					{
+						"internalType": "string",
+						"name": "image_url",
+						"type": "string"
+					},
+					{
 						"internalType": "address",
 						"name": "recipient",
 						"type": "address"
-					},
-					{
-						"internalType": "string",
-						"name": "token_uri",
-						"type": "string"
 					}
 				],
 				"name": "mintNFT",
