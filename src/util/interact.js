@@ -88,10 +88,10 @@ export const getCurrentWalletConnected = async () => {
 };
 
 export const mintNFT = async (image, token_name) => {
-  if (token_name.trim() === "") {
+  if (token_name === "") {
     return {
       success: false,
-      status: "Please make sure all fields are completed before minting.",
+      status: "You need to gave a name to your NFT.",
     };
   }
   const used_name = await usedName(token_name);
@@ -120,7 +120,7 @@ export const mintNFT = async (image, token_name) => {
     to: contract_metadata.address,
     from: window.ethereum.selectedAddress,
     data: window.contract.methods
-      .mintNFT(token_name, window.ethereum.selectedAddress, file_res.pinata_url)
+      .mintNFT(token_name, file_res.pinata_url, window.ethereum.selectedAddress)
       .encodeABI(),
   };
   try {
@@ -148,6 +148,17 @@ export const mintNFT = async (image, token_name) => {
       status: "Something went wrong: " + error.message,
     };
   }
+};
+
+export const getTokens = async() => {
+  const contract_metadata = contracts_metadata.minter;
+  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+  const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+  try{
+    return contract.methods.getTokens(window.ethereum.selectedAddress).call();
+  }catch(_err){
+    return [];
+  }  
 };
 
 export const giveRights = async(token_name, beneficiary) => {
