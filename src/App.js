@@ -24,28 +24,10 @@ function App() {
 
     useEffect(() => {
       socket.on('connect', ()=>console.log(socket.id));
-      socket.on('mined-tx-mint', (mssg) => {
+      socket.on('mined-tx', (mssg) => {
         alert(mssg);
       });
-      socket.on('rejected-tx-minted', (mssg) => {
-        alert(mssg);
-      });
-      socket.on('mined-tx-give-rights', (mssg) => {
-        alert(mssg);
-      });
-      socket.on('rejected-tx-give-rights', (mssg) => {
-        alert(mssg);
-      });
-      socket.on('mined-tx-sell_publish', (mssg) => {
-        alert(mssg);
-      });
-      socket.on('rejected-tx-sell_publish', (mssg) => {
-        alert(mssg);
-      });
-      socket.on('mined-tx-buy', (mssg) => {
-        alert(mssg);
-      });
-      socket.on('rejected-tx-buy', (mssg) => {
+      socket.on('rejected-tx', (mssg) => {
         alert(mssg);
       });
       return () => socket.disconnect();
