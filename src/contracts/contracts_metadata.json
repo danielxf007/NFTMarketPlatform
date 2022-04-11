@@ -1,6 +1,6 @@
 {
     "minter": {
-        "address": "0xFd1322C815C0DBcD97F6160AB7547D378850d630",
+        "address": "0xcd8280051ac2e70d0669E3fF812F97d825E14168",
 		"abi": [
 			{
 				"inputs": [],
@@ -240,11 +240,6 @@
 								"internalType": "string",
 								"name": "_image_url",
 								"type": "string"
-							},
-							{
-								"internalType": "uint256",
-								"name": "_id",
-								"type": "uint256"
 							}
 						],
 						"internalType": "struct TokenStorage.TokenData[]",

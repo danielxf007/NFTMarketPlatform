@@ -46,6 +46,7 @@ function PaginatedItems({ itemsPerPage, socket }) {
     const endOffset = itemOffset + itemsPerPage;
     const getNFTs= async() => {
       const items = await getTokens();
+      items.shift();
       setCurrentItems(items.slice(itemOffset, endOffset));
       setPageCount(Math.ceil(items.length / itemsPerPage));
     }
