@@ -2,24 +2,17 @@ import { useEffect, useState } from "react";
 import './Board.css';
 
 import {
-    buyNFT
+    buyNFT,
+    getPublishedSells
 } from "../util/interact";
 
-import { getMarketOffers, getOfferMadeForNFT, getPinataJSON, getPublishedOffer } from "../util/pinata";
 import ReactPaginate from 'react-paginate';
 
 
 const BoardCell = (props) => {
-  const onPublished = async() => {
-    const {success, status, data} = await getPublishedOffer(props.name);
-    if(success){
-      alert(data[0]);
-    }else{
-      alert(status);
-    }
-  };
+
     const onBuyPressed = async() => {
-      const {success, status, tx} = await buyNFT(props.name, props.token_price);
+      const {success, status, tx} = await buyNFT(props.name, props.price);
       alert(status);
       if(success){
         props.socket.emit('made_tx', tx);
@@ -35,7 +28,6 @@ const BoardCell = (props) => {
           <div className="nft_price">
             {props.price}
           </div>
-          <button onClick={onPublished}>Published</button>
           <br></br>
           <button onClick={onBuyPressed}>Buy</button>
         </div>
@@ -45,16 +37,19 @@ const BoardCell = (props) => {
 const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
 function Items({ currentItems, socket }) {
+  const name = 0;
+  const image_url = 1;
+  const price = 2;
+
   return (
     <>
       {
         currentItems && currentItems.map((item, index) =>{
           return <BoardCell
                   key={String(index)}
-                  token_price={item.price}
-                  name={item.name}
-                  image_url={item.image_url}
-                  price={item.price + " ETH"}
+                  name = {item[name]}
+                  image_url = {item[image_url]}
+                  price = {item[price] + " ETH"}
                   socket={socket}/>
         })
       }
@@ -71,19 +66,7 @@ function PaginatedItems({ itemsPerPage, socket }) {
   useEffect(() => {
     const endOffset = itemOffset + itemsPerPage;
     const fetchSellData = async() => {
-      const data = await getMarketOffers();
-      let items = [];
-      if(data.length > 0){
-        let sell_data = null;
-        for(let i=0; i<data.length; i++){
-          items.push({});
-          sell_data = await getPinataJSON(data[i].ipfs_pin_hash);
-          items[i].pin_hash = data[i].ipfs_pin_hash;
-          items[i].image_url = sell_data.image_url;
-          items[i].name = sell_data.name;
-          items[i].price = sell_data.price;
-        }
-      }
+      const items = await getPublishedSells();
       setCurrentItems(items.slice(itemOffset, endOffset));
       setPageCount(Math.ceil(items.length / itemsPerPage));
     }
