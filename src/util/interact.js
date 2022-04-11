@@ -284,6 +284,17 @@ export const publishSell = async(token_name, token_price) => {
   }
 }
 
+export const getPublishedSells = async() => {
+  const contract_metadata = contracts_metadata.shop;
+  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+  const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+  try{
+    return contract.methods.getPublishedSells().call();
+  }catch(_err){
+    return [];
+  }    
+}
+
 export const buyNFT = async(token_name, token_price) => {
   const sold = await tokenSold(token_name);
   if(sold){
