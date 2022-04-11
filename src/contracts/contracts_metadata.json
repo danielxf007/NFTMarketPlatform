@@ -1,6 +1,6 @@
 {
     "minter": {
-        "address": "0xcd8280051ac2e70d0669E3fF812F97d825E14168",
+        "address": "0xA3c427d77bd4f1fF94D14935Ce73890450034cB6",
 		"abi": [
 			{
 				"inputs": [],
@@ -512,7 +512,7 @@
 		]
     },
     "shop": {
-        "address": "0xe812cB7b721207092aF2E1D887B4a2843D9e9A70",
+        "address": "0x9A20F7a72025aAB0DD84Dfeef22EdDadE65f52C9",
 		"abi": [
 			{
 				"inputs": [
@@ -536,6 +536,41 @@
 				"name": "buy",
 				"outputs": [],
 				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getPublishedSells",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "_name",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "_image_url",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "_price",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "_seller",
+								"type": "address"
+							}
+						],
+						"internalType": "struct NFTShop.Item[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -631,6 +666,19 @@
 					}
 				],
 				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "token_name",
+						"type": "string"
+					}
+				],
+				"name": "removeItem",
+				"outputs": [],
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
