@@ -27,7 +27,7 @@ const BoardCell = (props) => {
           </div>
           <img className="nft-image" src={props.image_url}/>
           <div className="nft_price">
-            {props.price}
+            {props.price + ' ETH'}
           </div>
           <br></br>
           <button onClick={onBuyPressed}>Buy</button>
@@ -50,7 +50,7 @@ function Items({ currentItems, socket }) {
                   key={String(index)}
                   name = {item[name]}
                   image_url = {item[image_url]}
-                  price = {(bigInt(item[price])/wei).toString() + " ETH"}
+                  price = {(bigInt(item[price])/wei).toString()}
                   socket={socket}/>
         })
       }
