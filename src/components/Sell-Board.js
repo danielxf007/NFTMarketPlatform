@@ -7,7 +7,8 @@ import {
 } from "../util/interact";
 
 import ReactPaginate from 'react-paginate';
-
+var bigInt = require("big-integer");
+const wei = bigInt(1000000000000000000);
 
 const BoardCell = (props) => {
 
@@ -49,7 +50,7 @@ function Items({ currentItems, socket }) {
                   key={String(index)}
                   name = {item[name]}
                   image_url = {item[image_url]}
-                  price = {item[price] + " ETH"}
+                  price = {(bigInt(item[price])/wei).toString() + " ETH"}
                   socket={socket}/>
         })
       }
