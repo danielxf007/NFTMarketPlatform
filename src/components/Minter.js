@@ -87,7 +87,7 @@ const Minter = (props) => {
           setFile(event.target.files[0])
           setImageURL(URL.createObjectURL(event.target.files[0]))}}
         />
-        <h2>🤔 Name: </h2>
+        <h2>Name: </h2>
         <input
           type="text"
           value={name}
