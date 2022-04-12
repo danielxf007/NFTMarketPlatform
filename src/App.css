@@ -25,7 +25,7 @@
 
 .main-menu-options-container {
   display: grid;
-  grid-template-rows: 100px 300px;
+  grid-template-rows: 50px 50px;
   grid-row-gap: 30px;
   padding: 5px;
   margin: 5%;
