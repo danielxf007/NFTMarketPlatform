@@ -21,7 +21,7 @@ code {
   margin: auto;
   text-align: left;
   border: 1px solid black;
-
+  justify-content: center;
 }
 
 .Sell-Publisher {
@@ -31,6 +31,7 @@ code {
   margin: 0 auto;
   text-align: left;
   border: 1px solid black;
+  justify-content: center;
 }
 
 .Auction-Publisher{
@@ -40,6 +41,7 @@ code {
   margin: 0 auto;
   text-align: left;
   border: 1px solid black;
+  justify-content: center;
 }
 
 .Auction-Renewer{
@@ -49,6 +51,7 @@ code {
   margin: 0 auto;
   text-align: left;
   border: 1px solid black;
+  justify-content: center;
 }
 
 .Auction-Collector{
@@ -58,6 +61,7 @@ code {
   margin: 0 auto;
   text-align: left;
   border: 1px solid black;
+  justify-content: center;
 }
 
 .Bid-Withdrawer{
@@ -67,6 +71,7 @@ code {
   margin: 0 auto;
   text-align: left;
   border: 1px solid black;
+  justify-content: center;
 }
 
 input {
