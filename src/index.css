@@ -87,6 +87,7 @@ input:focus {
 
 button {
   padding: 9px 16px;
+  max-width: 100px;
   max-height: 80px;
   border-color: #254cdd;
   color: #254cdd;
