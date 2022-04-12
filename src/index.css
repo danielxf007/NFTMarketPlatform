@@ -18,11 +18,10 @@ code {
   max-width: 80vh;
   max-height: 80vh;
   padding: 60px 100px;
-  margin: auto;
+  margin: 50%;
   text-align: left;
   border: 1px solid black;
   justify-content: center;
-  top: 50%;
 }
 
 .Sell-Publisher {
