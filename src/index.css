@@ -18,8 +18,9 @@ code {
   max-width: 80vh;
   max-height: 80vh;
   padding: 60px 100px;
-  margin-right: auto;
-  margin-left: auto;
+  margin-right: center;
+  margin-left: center;
+  margin-top: center;
   text-align: left;
   border: 1px solid black;
   justify-content: center;
