@@ -239,13 +239,6 @@ export const publishSell = async(token_name, token_price) => {
       status: "This token is already been sold"
     }
   }
-  const sold = await tokenSold(token_name);
-  if(sold){
-    return{
-      success: false,
-      status: "This token was already sold"
-    };
-  }
   const token_uri = await getTokenUri(token_name);
   const contract_metadata = contracts_metadata.shop;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
