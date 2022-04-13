@@ -144,6 +144,7 @@ async function txMined(req) {
                 break;
       }
    }
+   //
    res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
 }
 
