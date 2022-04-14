@@ -1,6 +1,6 @@
 {
     "minter": {
-        "address": "0xA3c427d77bd4f1fF94D14935Ce73890450034cB6",
+        "address": "0xd015284AaB4ab3E18ef466D806F0757B0855D55C",
 		"abi": [
 			{
 				"inputs": [],
@@ -512,7 +512,7 @@
 		]
     },
     "shop": {
-        "address": "0x9A20F7a72025aAB0DD84Dfeef22EdDadE65f52C9",
+        "address": "0xD9B1776325505Bd422D51aeE9c34DCcD18EF402d",
 		"abi": [
 			{
 				"inputs": [
@@ -703,7 +703,7 @@
 		]
     },
 	"auction":{
-		"address": "0xF954DEE5233CedbF503D1B60bd78ad120131A2d9",
+		"address": "0xa622548cd3064D8652a73B37ed7196368f641e3D",
 		"abi": [
 			{
 				"inputs": [
@@ -715,6 +715,25 @@
 				],
 				"stateMutability": "nonpayable",
 				"type": "constructor"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "token_name",
+						"type": "string"
+					}
+				],
+				"name": "auctionFinished",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
 			},
 			{
 				"inputs": [
@@ -750,38 +769,67 @@
 						"type": "string"
 					}
 				],
-				"name": "collectedMoney",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "string",
-						"name": "token_name",
-						"type": "string"
-					}
-				],
-				"name": "collectedNFT",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "string",
-						"name": "token_name",
-						"type": "string"
-					}
-				],
 				"name": "getAuctionSeller",
 				"outputs": [
 					{
 						"internalType": "address",
 						"name": "",
 						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getAuctions",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "_name",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "_image_url",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "_end_date",
+								"type": "string"
+							},
+							{
+								"internalType": "address",
+								"name": "_seller",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "_highest_bidder",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "_highest_bid",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "_active_time",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "_active",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct NFTAuction.AuctionData[]",
+						"name": "",
+						"type": "tuple[]"
 					}
 				],
 				"stateMutability": "view",
@@ -838,15 +886,111 @@
 						"type": "address"
 					}
 				],
-				"name": "getReturn",
+				"name": "hasBidded",
 				"outputs": [
 					{
-						"internalType": "uint256",
+						"internalType": "bool",
 						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "token_name",
+						"type": "string"
+					}
+				],
+				"name": "hasWinner",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "token_name",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "isAuctionSeller",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "token_name",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "bidder",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "bid_offer",
 						"type": "uint256"
 					}
 				],
-				"stateMutability": "nonpayable",
+				"name": "isBidEnough",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "token_name",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "isHighestBidder",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -891,6 +1035,11 @@
 						"type": "string"
 					},
 					{
+						"internalType": "string",
+						"name": "end_date",
+						"type": "string"
+					},
+					{
 						"internalType": "uint256",
 						"name": "active_time",
 						"type": "uint256"
@@ -907,16 +1056,17 @@
 						"internalType": "string",
 						"name": "token_name",
 						"type": "string"
-					},
-					{
-						"internalType": "uint256",
-						"name": "active_time",
-						"type": "uint256"
 					}
 				],
-				"name": "renew",
-				"outputs": [],
-				"stateMutability": "nonpayable",
+				"name": "published",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -925,9 +1075,19 @@
 						"internalType": "string",
 						"name": "token_name",
 						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "end_date",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "active_time",
+						"type": "uint256"
 					}
 				],
-				"name": "withdraw",
+				"name": "renew",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
