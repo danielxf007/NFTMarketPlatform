@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 
 import {
-    publishAuction
+    giveRights, publishAuction
 } from "../util/interact";
-
-import { giveRights } from "../util/contract-interactions.js";
 
 const contracts_metadata = require("../contracts/contracts_metadata.json");
 
@@ -13,12 +11,13 @@ const AuctionCreator = (props) => {
     const [token_name, setTokenName] = useState("");
 
     useEffect(() => {
-    }, [token_name]);
+    }, [date, token_name]);
 
     const onGiveRights = async() => {
-        const success = await giveRights(token_name, contracts_metadata.auction.address);
+        const {success, status, tx} = await giveRights(token_name, contracts_metadata.auction.address);
+        alert(status);
         if(success){
-            alert("Wait until your transactions is confirmed");
+            props.socket.emit('made_tx', tx);
         }
     };
 
@@ -28,13 +27,14 @@ const AuctionCreator = (props) => {
         if(date_2 - date_1 < 0){
             alert("This date has already expired");
         }else{
-            const active_time = parseInt(Math.abs(date_2 - date_1)/1000);
-            const { success, status } = await publishAuction(token_name, date, active_time);
+            const active_time = parseInt(Math.abs(date_2 - date_1)/1000).toString(16);
+            const { success, status, tx } = await publishAuction(token_name, String(date), active_time);
+            alert(status);
             if(success){
-                setDate("");     
+                props.socket.emit('made_tx', tx);
+                setDate("");
                 setTokenName("");
-                alert(status);
-            }
+            }       
         }
     };
     
@@ -48,14 +48,12 @@ const AuctionCreator = (props) => {
                     <input
                     type="Text"
                     value={token_name}
-                    required
                     onChange={(event) => setTokenName(event.target.value)}
                     />
                 <h2>Set Up When the Auction Finishes</h2>
                 <br></br>
                     <input
                         type="datetime-local"
-                        required
                         onChange={(event) => setDate(event.target.value)}
                     />
             </form>
