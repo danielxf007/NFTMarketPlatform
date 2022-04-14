@@ -20,7 +20,7 @@ contract TokenStorage is ERC721URIStorage{
     /*
     *@dev initializes the TokenStorage
     */
-    constructor() public ERC721("NFTMarket", "NFTMarket"){
+    constructor() public ERC721("TokensUdea", "UdeaToken"){
         _token_ids.increment();
     }
 
