@@ -39,3 +39,9 @@ export const offersEnough = async(token_name, offer) => {
     const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
     return contract.methods.isEnough(token_name, offer).call();      
 }
+
+export const auctionPublished = async(token_name) => {
+    const contract_metadata = contracts_metadata.auction;
+    const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+    return contract.methods.published(token_name).call();  
+}
