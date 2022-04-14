@@ -7,7 +7,6 @@ body {
   color: #254cdd;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: black;
 }
 
 code {
@@ -21,7 +20,7 @@ code {
   padding: 60px 100px;
   margin: auto;
   text-align: left;
-  border: 1px solid black;
+  border: 1px solid white;
   justify-content: center;
 }
 
@@ -31,7 +30,7 @@ code {
   padding: 60px 100px;
   margin: 0 auto;
   text-align: left;
-  border: 1px solid black;
+  border: 1px solid white;
   justify-content: center;
 }
 
@@ -41,7 +40,7 @@ code {
   padding: 60px 100px;
   margin: 0 auto;
   text-align: left;
-  border: 1px solid black;
+  border: 1px solid white;
   justify-content: center;
 }
 
@@ -51,7 +50,7 @@ code {
   padding: 60px 100px;
   margin: 0 auto;
   text-align: left;
-  border: 1px solid black;
+  border: 1px solid white;
   justify-content: center;
 }
 
@@ -61,7 +60,7 @@ code {
   padding: 60px 100px;
   margin: 0 auto;
   text-align: left;
-  border: 1px solid black;
+  border: 1px solid white;
   justify-content: center;
 }
 
@@ -71,7 +70,7 @@ code {
   padding: 60px 100px;
   margin: 0 auto;
   text-align: left;
-  border: 1px solid black;
+  border: 1px solid white;
   justify-content: center;
 }
 
