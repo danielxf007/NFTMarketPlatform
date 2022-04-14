@@ -143,11 +143,13 @@ async function txMined(req){
                 case 'buy_nft':
                     minedTx('Your offer of '+ pinata_tx_data.price + ' ETH for '+ pinata_tx_data.name + ' was accepted');
                     break;
+                case 'auction_publish':
+                    minedTx('Your NFT ' + pinata_tx_data.name + ' was published on the auction board until: ' + pinata_tx_data.expire_date);
             }
         }
         res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
     }catch(err){
-        minedTx('Something went wrong: '+ err.message);
+        console.log(err.message);
     }
 }
 
@@ -158,23 +160,25 @@ async function txRejected(req){
         if(pinata_tx.length > 0){
            const pinata_tx_data = await getPinataJSON(pinata_tx[0].ipfs_pin_hash);
            switch(pinata_tx_data.type){
-                 case "mint":  
-                     rejectedTx('You could not mint ' + pinata_tx_data.name + ' try again');
-                     break;
-                 case "rights":
-                     rejectedTx('You could not give rights to sell ' + pinata_tx_data.name + ' try again');
-                     break;
-                 case "sell_publish":
-                     rejectedTx('Your could not publish a sell for ' + pinata_tx_data.name + ' try again');
-                     break;
-                 case 'buy_nft':
-                     rejectedTx('Your could not buy ' + pinata_tx_data.name + ' try again');
-                     break;
+                case "mint":  
+                    rejectedTx('You could not mint ' + pinata_tx_data.name + ' try again');
+                    break;
+                case "rights":
+                    rejectedTx('You could not give rights to sell ' + pinata_tx_data.name + ' try again');
+                    break;
+                case "sell_publish":
+                    rejectedTx('Your could not publish a sell for ' + pinata_tx_data.name + ' try again');
+                    break;
+                case 'buy_nft':
+                    rejectedTx('Your could not buy ' + pinata_tx_data.name + ' try again');
+                    break;
+                case 'auction_publish':
+                    rejectedTx('Your could not publish the auction for ' + pinata_tx_data.name + ' try again');
            }
         }
         res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
     }catch(err){
-        rejectedTx('Something went wrong: '+ err.message);
+        console.log(err.message);
     }
 
 }
