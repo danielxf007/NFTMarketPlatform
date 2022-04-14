@@ -1,6 +1,8 @@
 import { pinFileToIPFS, getOfferMadeForNFT, getPublishedOffer} from "./pinata";
 import {getTokenUri} from "./contract-interactions";
-import {usedName, tokenExists, canTradeToken, sellPublished, tokenSold} from "./validations";
+import {
+  usedName, tokenExists, canTradeToken,
+  sellPublished, tokenSold, auctionPublished} from "./validations";
 require("dotenv").config();
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const contracts_metadata = require("../contracts/contracts_metadata.json");
@@ -262,7 +264,6 @@ export const publishSell = async(token_name, token_price) => {
           },
           pinataContent: {
               name: token_name,
-              image_url: token_uri,
               price: token_price,
               type: "sell_publish"
           }
@@ -348,64 +349,63 @@ export const buyNFT = async(token_name, token_price) => {
   }
 }
 
-
 export const publishAuction = async(token_name, end_date, active_time) => {
-  /*
-  console.log(active_time);
-  let data = {};
-  data.pinataMetadata = {
-  name: "NFT_AUCTION"
-  };
-  const token_uri = await getTokenUri(token_name);
-  if(token_uri === null){
+  const token_exists = await tokenExists(token_name);
+  if(!token_exists){
     return {
       success: false,
-      status: "❗This token does not exist",
+      status: "This token does not exist",
     };    
   }
-  data.pinataContent = {
-    name: token_name,
-    image: token_uri,
-    date: end_date,
-  };
-  const pinataJsonPinResponse = await pinJSONToIPFS(data);
-  if (!pinataJsonPinResponse.success) {
-    return {
+  const can_trade = await canTradeToken(token_name, window.ethereum.selectedAddress);
+  if(!can_trade){
+    return{
       success: false,
-      status: "😢 Something went wrong while publishing your auction.",
+      status: "You cannot trade this token"
     };
+  }
+  const published = await auctionPublished(token_name);
+  if(published){
+    return{
+      success: false,
+      status: "This auction has been already published"
+    }
   }
   const contract_metadata = contracts_metadata.auction;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
-    to: contract_metadata.address, 
+    to: contract_metadata.address,
     from: window.ethereum.selectedAddress,
     data: window.contract.methods
-      .publish(token_name, active_time)
+      .publish(token_name, end_date, active_time)
       .encodeABI(),
   };
-
   try {
     const txHash = await window.ethereum.request({
       method: "eth_sendTransaction",
       params: [transactionParameters],
     });
-    return {
+    return{
       success: true,
-      status:
-        "Your auction was accepted, wait until the transaction finishes" +
-        txHash,
+      tx:{
+          pinataMetadata: {
+              name: String(txHash)
+          },
+          pinataContent: {
+              name: token_name,
+              expire_date: end_date,
+              type: "auction_publish"
+          }
+        },
+      status: "Your transaction was sent"
     };
   } catch (error) {
     return {
       success: false,
-      status: "😥 Something went wrong: " + error.message,
+      status: "Something went wrong: " + error.message
     };
   }
-  */
 }
-
-
 
 export const bidNFT = async(token_name, bid) => {
   /*
