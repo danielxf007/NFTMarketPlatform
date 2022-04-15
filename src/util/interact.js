@@ -580,7 +580,7 @@ export const withdrawBid = async(token_name) => {
   }
 }
 
-export const collectAuction = async(token_id) => {
+export const collectAuction = async(token_name) => {
   const published = await auctionPublished(token_name);
   if(!published){
     return{
