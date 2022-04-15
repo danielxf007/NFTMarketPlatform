@@ -11,9 +11,10 @@ const AuctionBidWithdrawer = (props) => {
     }, [token_name]);
 
     const onWithdrawPressed = async() => {
-        const { success, status } = await withdrawBid(token_name);
-        setStatus(status);
+        const { success, status, tx} = await withdrawBid(token_name);
+        alert(status);
         if(success){
+            props.socket.emit('made_tx', tx);
             setTokenName("");
         }
     };
