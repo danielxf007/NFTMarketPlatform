@@ -40,6 +40,24 @@ const BoardCell = (props) => {
     }
   };
 
+  const onWithdrawBidPressed = async() => {
+    const {success, status, tx} = await bidNFT(props.name, bid);
+    alert(status);
+    if(success){
+      props.socket.emit('made_tx', tx);
+      setHighestBid(bid);
+    }
+  };
+
+  const onCollectPressed= async() => {
+    const {success, status, tx} = await bidNFT(props.name, bid);
+    alert(status);
+    if(success){
+      props.socket.emit('made_tx', tx);
+      setHighestBid(bid);
+    }
+  };
+
   const formatTimeLeft = (secs) => {
     let hours = Math.floor(secs / (60 * 60));
     let hours_str = hours < 10? "0"+hours.toString(): hours.toString();
@@ -78,7 +96,7 @@ const BoardCell = (props) => {
         </div>
         <img className="nft-image" src={props.image_url}/>
         <div className="nft-bid">
-          Highest Bid: {weiToETH(item[highest_bid]).toString() + " ETH"}
+          Highest Bid: {weiToETH(highest_bid).toString() + " ETH"}
         </div>
         <div className="nft-time-left">
           {formatTimeLeft(date)}
@@ -93,12 +111,14 @@ const BoardCell = (props) => {
           </form>
         <div>
           <button onClick={onBidPressed}>Bid</button>
+          <button onClick={onWithdrawBidPressed}>Withdraw Bid</button>
+          <button onClick={onCollectPressed}>Collect</button>
         </div>
       </div>
   );    
 }
 
-function Items({ currentItems }) {
+function Items({ currentItems, socket }) {
   const name = 0;
   const image_url = 1;
   const end_date = 2;
@@ -112,6 +132,7 @@ function Items({ currentItems }) {
                     name={item[name]}
                     image_url={item[image_url]}
                     end_date={item[end_date]}
+                    socket={socket}
                   />
         })
       }
@@ -119,7 +140,7 @@ function Items({ currentItems }) {
   );
 }
 
-function PaginatedItems({ itemsPerPage }) {
+function PaginatedItems({ itemsPerPage, socket }) {
 
   const [currentItems, setCurrentItems] = useState([]);
   const [pageCount, setPageCount] = useState(0);
@@ -144,7 +165,7 @@ function PaginatedItems({ itemsPerPage }) {
   return (
     <>
     <div className="nft-item-container">
-    <Items currentItems={currentItems} />
+    <Items currentItems={currentItems} socket={socket}/>
     </div>
       <ReactPaginate
         nextLabel="next >"
@@ -173,7 +194,8 @@ function PaginatedItems({ itemsPerPage }) {
 const AuctionBoard = (props) => {
     return (
       <div>
-        <PaginatedItems itemsPerPage={10} />
+        <h1>Auction Board</h1>
+        <PaginatedItems itemsPerPage={10} socket={props.socket}/>
       </div>
   );
 }
