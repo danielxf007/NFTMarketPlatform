@@ -440,6 +440,7 @@ export const getActiveAuctions = async() => {
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   try{
+    
     return contract.methods.getAuctions().call();
   }catch(_err){
     return [];
