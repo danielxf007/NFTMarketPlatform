@@ -257,8 +257,14 @@ export const publishSell = async(token_name, token_price) => {
       status: "This token is already been sold"
     }
   }
-  const token_uri = await getTokenUri(token_name);
   const contract_metadata = contracts_metadata.shop;
+  const shop_has_rights = await canTradeToken(token_name, contract_metadata.address);
+  if(!shop_has_rights){
+    return{
+      success: false,
+      status: "You have not given rights to the shop to sell your NFT"
+    };
+  }
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
     to: contract_metadata.address,
@@ -388,6 +394,13 @@ export const publishAuction = async(token_name, end_date, active_time) => {
     }
   }
   const contract_metadata = contracts_metadata.auction;
+  const has_rights = await canTradeToken(token_name, contract_metadata.address);
+  if(!has_rights){
+    return{
+      success: false,
+      status: "You have not given rights to auction your NFT"
+    };
+  }
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
     to: contract_metadata.address,
