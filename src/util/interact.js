@@ -484,6 +484,7 @@ export const bidNFT = async(token_name, bid) => {
       status: "Highest bidders cannot bid again"
     }
   }
+  /*
   const enough = await isBidEnough(token_name, window.ethereum.selectedAddress, bigInt(parseFloat(bid)*wei));
   if(enough){
     return{
@@ -491,6 +492,7 @@ export const bidNFT = async(token_name, bid) => {
       status: "The bid is not enough"
     }
   }
+  */
   const contract_metadata = contracts_metadata.auction;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
