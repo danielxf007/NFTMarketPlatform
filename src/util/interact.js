@@ -1,5 +1,4 @@
 import { pinFileToIPFS, getOfferMadeForNFT, getPublishedOffer} from "./pinata";
-import {getTokenUri} from "./contract-interactions";
 import {
   usedName, tokenExists, canTradeToken,
   sellPublished, tokenSold, auctionPublished,
