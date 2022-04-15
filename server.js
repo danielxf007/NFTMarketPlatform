@@ -133,7 +133,6 @@ async function txMined(req){
             switch(pinata_tx_data.type){
                 case "mint":  
                     minedTx('Your NFT ' + pinata_tx_data.name + ' was successfully minted');
-                    res = await removePinFromIPFS(pinata_tx_data.data_hash);
                     break;
                 case "rights":
                     minedTx('Your NFT ' + pinata_tx_data.name + ' can be published on the market now');
