@@ -27,8 +27,8 @@ const AuctionCreator = (props) => {
         if(date_2 - date_1 < 0){
             alert("This date has already expired");
         }else{
-            const active_time = parseInt(Math.abs(date_2 - date_1)/1000).toString(16);
-            const { success, status, tx } = await publishAuction(token_name, String(date), active_time);
+            const active_time = parseInt(Math.abs(date_2 - date_1)/1000);
+            const { success, status, tx } = await publishAuction(token_name, String(date), String(active_time));
             alert(status);
             if(success){
                 props.socket.emit('made_tx', tx);
