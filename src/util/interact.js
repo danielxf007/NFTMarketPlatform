@@ -435,7 +435,7 @@ export const publishAuction = async(token_name, end_date, active_time) => {
   }
 }
 
-export const getAuctions = async() => {
+export const getActiveAuctions = async() => {
   const contract_metadata = contracts_metadata.auction;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
