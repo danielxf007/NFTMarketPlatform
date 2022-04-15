@@ -1,40 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
     collectAuction
 } from "../util/interact";
 
 const AuctionCollector = (props) => {
-    const [status, setStatus] = useState("");
-    const [token_id, setTokenId] = useState(0);
+    const [token_name, setTokenName] = useState("");
+
+    useEffect(() => {
+    }, [token_name]);
 
     const onCollectPressed = async() => {
-        const { success, status } = await collectAuction(token_id);
-        setStatus(status);
+        const { success, status, tx } = await collectAuction(token_name);
+        alert(status);
         if(success){
-            setTokenId(0);
+            props.socket.emit('made_tx', tx);
+            setTokenName("");
         }
     };
-    
+
     return (
         <div className="Auction-Collector">
             <h1 id="title">Collect Auction</h1>
             <br></br>
             <form>
-                <h2>Token ID: </h2>
+                <h2>Token Name: </h2>
                 <br></br>
                     <input
-                    type="number"
-                    onChange={(event) => setTokenId(event.target.value)}
+                    type="Text"
+                    onChange={(event) => setTokenName(event.target.value)}
                     />
             </form>
             <br></br>
-            <button id="PublishButton" onClick={onCollectPressed}>
+            <button onClick={onCollectPressed}>
                 Collect
-            </button><br></br>
-            <p id="status" style={{ color: "red" }}>
-                {status}
-            </p>
+            </button>
         </div>        
 
     );
