@@ -18,9 +18,9 @@ function App() {
   const [component, setComponent] = useState("main_menu");
   const components = {
     "minter": <Minter socket={socket}/>, "owned_board": <OwnedBoard/>, "sell_publisher": <SellPublisher socket={socket}/>,
-    "auction_creator": <AuctionCreator/>, "market_place": <MarketPlace socket={socket}/>,
-    "auction_board": <AuctionBoard/>, "auction_bid_withdrawer": <AuctionBidWithdrawer />,
-    "auction_collector": <AuctionCollector />, "auction_renewer": <AuctionRenewer />};
+    "auction_creator": <AuctionCreator socket={socket}/>, "market_place": <MarketPlace socket={socket}/>,
+    "auction_board": <AuctionBoard socket={socket}/>, "auction_bid_withdrawer": <AuctionBidWithdrawer socket={socket}/>,
+    "auction_collector": <AuctionCollector socket={socket}/>, "auction_renewer": <AuctionRenewer socket={socket}/>};
 
     useEffect(() => {
       socket.on('connect', ()=>console.log(socket.id));
