@@ -1,15 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import {
+    withdrawBid
+} from "../util/interact";
 
 const AuctionBidWithdrawer = (props) => {
-    /*
-    const [status, setStatus] = useState("");
-    const [token_id, setTokenId] = useState(0);
+    const [token_name, setTokenName] = useState("");
+
+    useEffect(() => {
+    }, [token_name]);
 
     const onWithdrawPressed = async() => {
-        const { success, status } = await withdrawBid(token_id);
+        const { success, status } = await withdrawBid(token_name);
         setStatus(status);
         if(success){
-            setTokenId(0);
+            setTokenName("");
         }
     };
     
@@ -18,24 +23,20 @@ const AuctionBidWithdrawer = (props) => {
             <h1 id="title">Withdraw Your Bid</h1>
             <br></br>
             <form>
-                <h2>Token ID: </h2>
+                <h2>Token Name </h2>
                 <br></br>
                     <input
-                    type="number"
-                    onChange={(event) => setTokenId(event.target.value)}
+                    type="Text"
+                    onChange={(event) => setTokenName(event.target.value)}
                     />
             </form>
             <br></br>
-            <button id="PublishButton" onClick={onWithdrawPressed}>
+            <button onClick={onWithdrawPressed}>
                 Withdraw
-            </button><br></br>
-            <p id="status" style={{ color: "red" }}>
-                {status}
-            </p>
+            </button>
         </div>        
 
     );
-    */
 };
 
 export default AuctionBidWithdrawer;
