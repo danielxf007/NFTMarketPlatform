@@ -45,3 +45,39 @@ export const auctionPublished = async(token_name) => {
     const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
     return contract.methods.published(token_name).call();  
 }
+
+export const auctionFinished = async(token_name) => {
+    const contract_metadata = contracts_metadata.auction;
+    const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+    return contract.methods.auctionFinished(token_name).call();  
+}
+
+export const isAuctionSeller = async(token_name, user_address) => {
+    const contract_metadata = contracts_metadata.auction;
+    const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+    return contract.methods.isAuctionSeller(token_name, user_address).call();
+}
+
+export const isHighestBidder = async(token_name, user_address) => {
+    const contract_metadata = contracts_metadata.auction;
+    const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+    return contract.methods.isHighestBidder(token_name, user_address).call();
+}
+
+export const isBidEnough = async(token_name, user_address, value) => {
+    const contract_metadata = contracts_metadata.auction;
+    const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+    return contract.methods.isBidEnough(token_name, user_address, value).call();
+}
+
+export const hasBidded = async(token_name, user_address) => {
+    const contract_metadata = contracts_metadata.auction;
+    const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+    return contract.methods.hasBidded(token_name, user_address).call();
+}
+
+export const hasWinner = async(token_name) => {
+    const contract_metadata = contracts_metadata.auction;
+    const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+    return contract.methods.hasWinner(token_name).call();
+}
