@@ -484,7 +484,7 @@ export const bidNFT = async(token_name, bid) => {
       status: "Highest bidders cannot bid again"
     }
   }
-  const enough = await isBidEnough(token_name, window.ethereum.selectedAddress, bigInt(parseFloat(bid)*wei).toString(16));
+  const enough = await isBidEnough(token_name, window.ethereum.selectedAddress, bigInt(parseFloat(bid)*wei));
   if(enough){
     return{
       success: false,
