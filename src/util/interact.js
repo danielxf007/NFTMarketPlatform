@@ -435,13 +435,12 @@ export const publishAuction = async(token_name, end_date, active_time) => {
   }
 }
 
-export const getActiveAuctions = async() => {
+export const getAuctions = async() => {
   const contract_metadata = contracts_metadata.auction;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   try{
-    const active = 7;
-    return (contract.methods.getAuctions().call()).filter((auction) => {auction[active] == true});
+    return contract.methods.getAuctions().call();
   }catch(_err){
     return [];
   }     
