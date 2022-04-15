@@ -28,7 +28,7 @@ const AuctionCreator = (props) => {
             alert("This date has already expired");
         }else{
             const active_time = parseInt(Math.abs(date_2 - date_1)/1000);
-            const { success, status, tx } = await publishAuction(token_name, String(date), String(active_time));
+            const { success, status, tx } = await publishAuction(token_name, String(date), active_time);
             alert(status);
             if(success){
                 props.socket.emit('made_tx', tx);
@@ -61,7 +61,7 @@ const AuctionCreator = (props) => {
             <button onClick={onGiveRights}>
                 Give Rights
             </button>
-            <button id="PublishButton" onClick={onPublishPressed}>
+            <button onClick={onPublishPressed}>
                 Publish
             </button><br></br>
         </div>        
