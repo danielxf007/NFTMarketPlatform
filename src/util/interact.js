@@ -2,7 +2,9 @@ import { pinFileToIPFS, getOfferMadeForNFT, getPublishedOffer} from "./pinata";
 import {getTokenUri} from "./contract-interactions";
 import {
   usedName, tokenExists, canTradeToken,
-  sellPublished, tokenSold, auctionPublished} from "./validations";
+  sellPublished, tokenSold, auctionPublished,
+  auctionFinished, isAuctionSeller, isHighestBidder,
+  isBidEnough, hasBidded, hasWinner} from "./validations";
 require("dotenv").config();
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const contracts_metadata = require("../contracts/contracts_metadata.json");
@@ -162,6 +164,20 @@ export const getTokens = async() => {
     return [];
   }  
 };
+
+export const checkNFTStatus = async(token_name) => {
+  let published;
+  published = await sellPublished(token_name);
+  if(published){
+    return "Your NFT is being sold";
+  }
+  published = await auctionPublished(token_name);
+  if(published){
+    return "Your NFT is being auctioned"
+  }
+  return "Your NFT is idle"
+};
+
 
 export const giveRights = async(token_name, beneficiary) => {
   const token_exists = await tokenExists(token_name);
@@ -431,7 +447,41 @@ export const getAuctionHighestBid = async() => {
 } 
 
 export const bidNFT = async(token_name, bid) => {
-  /*
+  const published = await auctionPublished(token_name);
+  if(published){
+    return{
+      success: false,
+      status: "This auction has been already published"
+    }
+  }
+  const auction_finished = await auctionFinished(token_name);
+  if(auction_finished){
+    return{
+      success: false,
+      status: "This auction has finished"
+    }
+  }
+  const auction_seller = await isAuctionSeller(token_name, window.ethereum.selectedAddress);
+  if(auction_seller){
+    return{
+      success: false,
+      status: "Sellers cannot bid"
+    }
+  }
+  const highest_bidder = await isHighestBidder(token_name, window.ethereum.selectedAddress);
+  if(highest_bidder){
+    return{
+      success: false,
+      status: "Highest bidders cannot bid again"
+    }
+  }
+  const enough = await isBidEnough(token_name, window.ethereum.selectedAddress, bigInt(parseFloat(bid)*wei).toString(16));
+  if(enough){
+    return{
+      success: false,
+      status: "The bid is not enough"
+    }
+  }
   const contract_metadata = contracts_metadata.auction;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
@@ -447,30 +497,107 @@ export const bidNFT = async(token_name, bid) => {
       method: "eth_sendTransaction",
       params: [transactionParameters],
     });
-    
-    return {
+    return{
       success: true,
-      status:
-        "Your bid was accepted wait until is confirmed"
+      tx:{
+          pinataMetadata: {
+              name: String(txHash)
+          },
+          pinataContent: {
+              name: token_name,
+              type: "bid"
+          }
+        },
+      status: "Your transaction was sent"
     };
   } catch (error) {
     return {
       success: false,
-      status: "😥 Something went wrong",
+      status: "Something went wrong: " + error.message
     };
-  } 
-*/
+  }
+}
+
+export const withdrawBid = async(token_name) => {
+  const has_bid = await hasBidded(token_name, window.ethereum.selectedAddress);
+  if(!has_bid){
+    return{
+      success: false,
+      status: "You did not bid for this NFT"
+    }
+  }
+  const highest_bidder = await isHighestBidder(token_name, window.ethereum.selectedAddress);
+  if(highest_bidder){
+    return{
+      success: false,
+      status: "Highest bidders cannot withdraw their bid"
+    }
+  }
+  const contract_metadata = contracts_metadata.auction;
+  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
+  const transactionParameters = {
+    to: contract_metadata.address,
+    from: window.ethereum.selectedAddress,
+    data: window.contract.methods
+      .withdrawBid(token_name)
+      .encodeABI()
+  };
+  try {
+    const txHash = await window.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [transactionParameters],
+    });
+    return{
+      success: true,
+      tx:{
+          pinataMetadata: {
+              name: String(txHash)
+          },
+          pinataContent: {
+              name: token_name,
+              type: "withdraw_bid"
+          }
+        },
+      status: "Your transaction was sent"
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: "Something went wrong: " + error.message
+    };
+  }
 }
 
 export const collectAuction = async(token_id) => {
-  /*
+  const published = await auctionPublished(token_name);
+  if(!published){
+    return{
+      success: false,
+      status: "This auction has been retired"
+    }
+  }
+  const auction_finished = await auctionFinished(token_name);
+  if(!auction_finished){
+    return{
+      success: false,
+      status: "This auction has not finished"
+    }
+  }
+  const auction_seller = await isAuctionSeller(token_name, window.ethereum.selectedAddress);
+  const highest_bidder = await isHighestBidder(token_name, window.ethereum.selectedAddress);
+  if(!auction_seller && !highest_bidder){
+    return{
+      success: false,
+      status: "You cannot collect because you are not the seller nor the highest bidder of this NFT"
+    }
+  }
   const contract_metadata = contracts_metadata.auction;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
     to: contract_metadata.address,
     from: window.ethereum.selectedAddress,
     data: window.contract.methods
-      .collectAuction(token_id)
+      .collectAuction(token_name)
       .encodeABI()
   };
   try {
@@ -478,28 +605,63 @@ export const collectAuction = async(token_id) => {
       method: "eth_sendTransaction",
       params: [transactionParameters],
     });
-    return {
+    return{
       success: true,
-      status:
-        "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" +
-        txHash,
+      tx:{
+          pinataMetadata: {
+              name: String(txHash)
+          },
+          pinataContent: {
+              name: token_name,
+              type: "collect_auction"
+          }
+        },
+      status: "Your transaction was sent"
     };
   } catch (error) {
     return {
       success: false,
-      status: "😥 Something went wrong: " + error.message,
+      status: "Something went wrong: " + error.message
     };
   }
 }
 
-export const withdrawBid = async(token_id) => {
+export const renewAuction = async(token_name, end_date, active_time) => {
+  const token_exists = await tokenExists(token_name);
+  if(!token_exists){
+    return {
+      success: false,
+      status: "This token does not exist",
+    };    
+  }
+  const published = await auctionPublished(token_name);
+  if(!published){
+    return{
+      success: false,
+      status: "This auction has not been published"
+    }
+  }
+  const auction_finished = await auctionFinished(token_name);
+  if(!auction_finished){
+    return{
+      success: false,
+      status: "This auction has not finished"
+    }
+  }
+  const has_winner = await hasWinner(token_name);
+  if(has_winner){
+    return{
+      success: false,
+      status: "Someone has won the auction"
+    }
+  }
   const contract_metadata = contracts_metadata.auction;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
     to: contract_metadata.address,
     from: window.ethereum.selectedAddress,
     data: window.contract.methods
-      .withdrawBid(token_id)
+      .renew(token_name, end_date, active_time)
       .encodeABI()
   };
   try {
@@ -507,57 +669,23 @@ export const withdrawBid = async(token_id) => {
       method: "eth_sendTransaction",
       params: [transactionParameters],
     });
-    return {
+    return{
       success: true,
-      status:
-        "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" +
-        txHash,
+      tx:{
+          pinataMetadata: {
+              name: String(txHash)
+          },
+          pinataContent: {
+              name: token_name,
+              type: "renew_auction"
+          }
+        },
+      status: "Your transaction was sent"
     };
   } catch (error) {
     return {
       success: false,
-      status: "😥 Something went wrong: " + error.message,
+      status: "Something went wrong: " + error.message
     };
   }
-  */
 }
-
-export const renewAuction = async(token_id, active_time) => {
-  /*
-  const contract_metadata = contracts_metadata.auction;
-  window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
-  const transactionParameters = {
-    to: contract_metadata.address,
-    from: window.ethereum.selectedAddress,
-    data: window.contract.methods
-      .renew(token_id, active_time)
-      .encodeABI()
-  };
-  try {
-    const txHash = await window.ethereum.request({
-      method: "eth_sendTransaction",
-      params: [transactionParameters],
-    });
-    return {
-      success: true,
-      status:
-        "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" +
-        txHash,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      status: "😥 Something went wrong: " + error.message,
-    };
-  }
-  */
-}
-
-
-export const getJSON = async(ipfs_pin_hash) => {
-  /*
-  const response = await fetch("https://gateway.pinata.cloud/ipfs/"+ipfs_pin_hash);
-  return response.json(); // get JSON from the response
-  */ 
-}
-
