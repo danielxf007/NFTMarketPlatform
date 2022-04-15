@@ -5,11 +5,6 @@ import {
     getActiveAuctions, getAuctionHighestBid
 } from "../util/interact";
 
-import {
-  getAuctionHighestBid
-} from "../util/contract-interactions";
-
-
 import ReactPaginate from 'react-paginate';
 
 
