@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import './Board.css';
 
 import {
-    getActiveAuctions, getAuctionHighestBid
+    getActiveAuctions, getAuctionHighestBid, bidNFT
 } from "../util/interact";
 
 import ReactPaginate from 'react-paginate';
