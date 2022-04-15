@@ -133,6 +133,7 @@ async function txMined(req){
             switch(pinata_tx_data.type){
                 case "mint":  
                     minedTx('Your NFT ' + pinata_tx_data.name + ' was successfully minted');
+                    res = await removePinFromIPFS(pinata_tx_data.data_hash);
                     break;
                 case "rights":
                     minedTx('Your NFT ' + pinata_tx_data.name + ' can be published on the market now');
@@ -148,6 +149,16 @@ async function txMined(req){
                     break;
                 case 'bid':
                     minedTx('Your bid for: ' + pinata_tx_data.name + ' has been accepted');
+                    break;
+                case 'withdraw_bid':
+                    minedTx('Your bid for: ' + pinata_tx_data.name + ' has been withdrawed');
+                    break;
+                case 'collect_auction':
+                    minedTx('Your have collected the auction for ' + pinata_tx_data.name);
+                    break;
+                case 'renew_auction':
+                    minedTx('Your auction for ' + pinata_tx_data.name + 'has been renewed');
+                    break;                
             }
         }
         res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
@@ -180,6 +191,14 @@ async function txRejected(req){
                     break;
                 case 'bid':
                     rejectedTx('Your bid for: ' + pinata_tx_data.name + ' has been rejected');
+                case 'withdraw_bid':
+                    rejectedTx('You could not withdraw your bid for: ' + pinata_tx_data.name + ' try again');
+                    break;
+                case 'collect_auction':
+                    rejectedTx('Your could not collect the auction for ' + pinata_tx_data.name + ' try again');
+                    break;
+                case 'renew_auction':
+                    rejectedTx('Your could not renew the auction for ' + pinata_tx_data.name + ' try again'); 
            }
         }
         res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
