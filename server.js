@@ -145,6 +145,9 @@ async function txMined(req){
                     break;
                 case 'auction_publish':
                     minedTx('Your NFT ' + pinata_tx_data.name + ' was published on the auction board until: ' + pinata_tx_data.expire_date);
+                    break;
+                case 'bid':
+                    minedTx('Your bid for: ' + pinata_tx_data.name + ' has been accepted');
             }
         }
         res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
@@ -174,6 +177,9 @@ async function txRejected(req){
                     break;
                 case 'auction_publish':
                     rejectedTx('Your could not publish the auction for ' + pinata_tx_data.name + ' try again');
+                    break;
+                case 'bid':
+                    rejectedTx('Your bid for: ' + pinata_tx_data.name + ' has been rejected');
            }
         }
         res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);

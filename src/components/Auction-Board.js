@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import './Board.css';
 
 import {
-    getJSON, bidNFT
+    getActiveAuctions, getAuctionHighestBid
 } from "../util/interact";
 
 import {
@@ -16,20 +16,27 @@ import ReactPaginate from 'react-paginate';
 var bigInt = require("big-integer");
 const wei = bigInt(1000000000000000000);
 const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-  /*
+
 const BoardCell = (props) => {
 
   const [date, setDate] = useState(0);
+  const [highest_bid, setHighestBid] = useState(0);
   const [bid, setBid] = useState(0);
 
+  const weiToETH = (n_wei) => {
+    return parseFloat(bigInt(n_wei)) / parseFloat(wei);
+  }
+
   const fetchDate = () => {
-    console.log(props.end_date);
     setDate(parseInt(Math.abs(new Date(props.end_date) - new Date())/1000));
   };
 
   const onBidPressed = async() => {
-    const {success, status} = await bidNFT(props.name, bid);
+    const {success, status, tx} = await bidNFT(props.name, bid);
+    alert(status);
     if(success){
+      props.socket.emit('made_tx', tx);
+      setHighestBid(bid);
     }
   };
 
@@ -49,6 +56,11 @@ const BoardCell = (props) => {
   };
 
   useEffect(() => {
+    const update = async() => {
+      const _highest_bid = await getAuctionHighestBid(props.name);
+      setHighestBid(_highest_bid);
+    }
+    update();
     setTimeout(fetchDate, 1000);
   }, []);
 
@@ -56,14 +68,17 @@ const BoardCell = (props) => {
     setTimeout(fetchDate, 1000);
   }, [date]);
 
+  useEffect(() => {
+  }, [highest_bid]);
+
   return (
       <div className="nft-item">
         <div className="nft-name">
           {props.name}
         </div>
-        <img className="nft-image" src={props.link}/>
+        <img className="nft-image" src={props.image_url}/>
         <div className="nft-bid">
-          Highest Bid: {props.highest_bid}
+          Highest Bid: {weiToETH(item[highest_bid]).toString() + " ETH"}
         </div>
         <div className="nft-time-left">
           {formatTimeLeft(date)}
@@ -84,18 +99,19 @@ const BoardCell = (props) => {
 }
 
 function Items({ currentItems }) {
+  const name = 0;
+  const image_url = 1;
+  const end_date = 2;
+
   return (
     <>
       {
         currentItems && currentItems.map((item, index) =>{
           return <BoardCell
                     key={String(index)}
-                    pin_hash={item.pin_hash}
-                    token_id={item.token_id}
-                    name={item.name}
-                    link={item.link}
-                    highest_bid={item.highest_bid + " ETH"}
-                    end_date={item.end_date}
+                    name={item[name]}
+                    image_url={item[image_url]}
+                    end_date={item[end_date]}
                   />
         })
       }
@@ -109,29 +125,10 @@ function PaginatedItems({ itemsPerPage }) {
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
 
-  const weiToETH = (n_wei) => {
-    return parseFloat(bigInt(n_wei)) / parseFloat(wei);
-  } 
-
   useEffect(() => {
     const endOffset = itemOffset + itemsPerPage;
     const fetchAuctionData = async() => {
-      const { success, data } = await getAuctionOffers();
-      let items = [];
-      if(success){
-        const url = "https://gateway.pinata.cloud/ipfs/";
-        let nft_auction_data = null;
-        for(let i=0; i<data.length; i++){
-          items.push({});
-          nft_auction_data = await getJSON(url+data[i].ipfs_pin_hash);
-          items[i].pin_hash = data[i].ipfs_pin_hash;
-          items[i].name = nft_auction_data.name;
-          items[i].link = nft_auction_data.image;
-          items[i].highest_bid = await getAuctionHighestBid(nft_auction_data.name);
-          items[i].highest_bid = weiToETH(items[i].highest_bid);
-          items[i].end_date = nft_auction_data.date;
-        }
-      }
+      const items = await getActiveAuctions();
       setCurrentItems(items.slice(itemOffset, endOffset));
       setPageCount(Math.ceil(items.length / itemsPerPage));
     }
@@ -172,18 +169,13 @@ function PaginatedItems({ itemsPerPage }) {
     </>
   );
 }
-*/
+
 const AuctionBoard = (props) => {
-  return (
-    <div></div>
-  );
-  /*
     return (
       <div>
         <PaginatedItems itemsPerPage={10} />
       </div>
   );
-  */
 }
 
 export default AuctionBoard;
