@@ -457,10 +457,10 @@ export const getAuctionHighestBid = async() => {
 
 export const bidNFT = async(token_name, bid) => {
   const published = await auctionPublished(token_name);
-  if(published){
+  if(!published){
     return{
       success: false,
-      status: "This auction has been already published"
+      status: "This auction has been retired"
     }
   }
   const auction_finished = await auctionFinished(token_name);
