@@ -1,19 +1,26 @@
 import { useEffect, useState } from "react";
 import './Board.css';
-import { getTokens} from "../util/interact";
+import { getTokens, checkNFTStatus } from "../util/interact";
 import ReactPaginate from 'react-paginate';
 
 
 const BoardCell = (props) => {
 
-    return (
-        <div className="nft-item">
-          <div className="nft-name">
-            {props.name}
-          </div>
-          <img className="nft-image" src={props.image_url}/>
+  const onCheckStatusPressed = async() => {
+    const status = await checkNFTStatus(props.name);
+    alert(status)
+  }
+
+  return (
+      <div className="nft-item">
+        <div className="nft-name">
+          {props.name}
         </div>
-    );
+        <img className="nft-image" src={props.image_url}/>
+        <br></br>
+        <button onClick={onCheckStatusPressed}>Check Status</button>          
+      </div>
+  );
 }
 
 const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
