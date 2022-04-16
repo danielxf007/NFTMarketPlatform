@@ -97,7 +97,7 @@ export const mintNFT = async (image, token_name) => {
       status: "You need to gave a name to your NFT.",
     };
   }
-  const token_exists = tokenExists(token_name);
+  const token_exists = await tokenExists(token_name);
   if(token_exists){
     return {
       success: false,
