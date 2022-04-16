@@ -58,6 +58,7 @@ const Minter = (props) => {
     const { success, tx} = await mintNFT(file, name);
     if(success) {
       tx.socket_id = props.socket.id;
+      console.log(tx.socket_id);
       props.socket.emit('made-tx', tx);
       setName("");
       setImageURL("");
