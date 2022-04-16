@@ -116,14 +116,15 @@ const getPinataJSON = async (ipfs_pin_hash) => {
 }
 */
 const io = socketIO(server);
-/*
 io.on('connection', (socket) => {
     socket.on('disconnect', () => console.log('Client disconnected'));
+    /*
     socket.on('made_tx', async (tx) => {
         const res = await pinJSONToIPFS(tx);
     });
+    */
 });
-
+/*
 function minedTx(message){
     io.emit('mined-tx', message);
 }
