@@ -128,6 +128,7 @@ function PaginatedItems({ itemsPerPage }) {
     const endOffset = itemOffset + itemsPerPage;
     const fetchAuctionData = async() => {
       const items = await getActiveAuctions();
+      console.log(items);
       setCurrentItems(items.slice(itemOffset, endOffset));
       setPageCount(Math.ceil(items.length / itemsPerPage));
     }
