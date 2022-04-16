@@ -32,8 +32,10 @@ const BoardCell = (props) => {
   };
 
   const onBidPressed = async() => {
-    const {success, status, tx} = await bidNFT(props.name, bid);
-    alert(status);
+    const {success, tx} = await bidNFT(props.name, bid);
+    if(success){
+      props.socket.emit('made-tx', tx);
+    }
   };
 
   const formatTimeLeft = (secs) => {
@@ -96,7 +98,7 @@ const BoardCell = (props) => {
   );    
 }
 
-function Items({ currentItems}) {
+function Items({ currentItems, socket}) {
   const name = 0;
   const image_url = 1;
   const end_date = 2;
@@ -111,6 +113,7 @@ function Items({ currentItems}) {
                     name={item[name]}
                     image_url={item[image_url]}
                     end_date={item[end_date]}
+                    socket={socket}
                   />
         })
       }
@@ -118,7 +121,7 @@ function Items({ currentItems}) {
   );
 }
 
-function PaginatedItems({ itemsPerPage }) {
+function PaginatedItems({ itemsPerPage, socket }) {
 
   const [currentItems, setCurrentItems] = useState([]);
   const [pageCount, setPageCount] = useState(0);
@@ -128,7 +131,6 @@ function PaginatedItems({ itemsPerPage }) {
     const endOffset = itemOffset + itemsPerPage;
     const fetchAuctionData = async() => {
       const items = await getActiveAuctions();
-      console.log(items);
       setCurrentItems(items.slice(itemOffset, endOffset));
       setPageCount(Math.ceil(items.length / itemsPerPage));
     }
@@ -144,7 +146,7 @@ function PaginatedItems({ itemsPerPage }) {
   return (
     <>
     <div className="nft-item-container">
-    <Items currentItems={currentItems}/>
+    <Items currentItems={currentItems} socket={socket}/>
     </div>
       <ReactPaginate
         nextLabel="next >"
@@ -174,7 +176,7 @@ const AuctionBoard = (props) => {
     return (
       <div>
         <h1>Auction Board</h1>
-        <PaginatedItems itemsPerPage={10}/>
+        <PaginatedItems itemsPerPage={10} socket={props.socket}/>
       </div>
   );
 }

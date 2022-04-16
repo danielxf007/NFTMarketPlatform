@@ -12,8 +12,8 @@ const AuctionCollector = (props) => {
 
     const onCollectPressed = async() => {
         const { success, status, tx } = await collectAuction(token_name);
-        alert(status);
         if(success){
+            props.socket.emit('made-tx', tx);
             setTokenName("");
         }
     };

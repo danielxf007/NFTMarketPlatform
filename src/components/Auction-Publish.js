@@ -14,8 +14,10 @@ const AuctionCreator = (props) => {
     }, [date, token_name]);
 
     const onGiveRights = async() => {
-        const {success, status, tx} = await giveRights(token_name, contracts_metadata.auction.address);
-        alert(status);
+        const {success, tx} = await giveRights(token_name, contracts_metadata.auction.address);
+        if(success){
+            props.socket.emit('made-tx', tx);
+        }
     };
 
     const onPublishPressed = async() => {
@@ -25,9 +27,9 @@ const AuctionCreator = (props) => {
             alert("This date has already expired");
         }else{
             const active_time = parseInt(Math.abs(date_2 - date_1)/1000);
-            const { success, status, tx } = await publishAuction(token_name, String(date), active_time);
-            alert(status);
+            const { success, tx } = await publishAuction(token_name, String(date), active_time);
             if(success){
+                props.socket.emit('made-tx', tx);
                 setDate("");
                 setTokenName("");
             }       
