@@ -23,32 +23,18 @@ const BoardCell = (props) => {
   }
 
   const fetchDate = () => {
-    setDate(parseInt(Math.abs(new Date(props.end_date) - new Date())/1000));
+    const date_2 =  new Date(props.end_date);
+    const date_1 = new Date();
+    if(date_2-date_1 > 0)
+      setDate(parseInt(Math.abs(new Date(props.end_date) - new Date())/1000));
+    else
+      setDate(0);
   };
 
   const onBidPressed = async() => {
     const {success, status, tx} = await bidNFT(props.name, bid);
     alert(status);
     if(success){
-      props.socket.emit('made_tx', tx);
-      setHighestBid(bid);
-    }
-  };
-
-  const onWithdrawBidPressed = async() => {
-    const {success, status, tx} = await bidNFT(props.name, bid);
-    alert(status);
-    if(success){
-      props.socket.emit('made_tx', tx);
-      setHighestBid(bid);
-    }
-  };
-
-  const onCollectPressed= async() => {
-    const {success, status, tx} = await bidNFT(props.name, bid);
-    alert(status);
-    if(success){
-      props.socket.emit('made_tx', tx);
       setHighestBid(bid);
     }
   };
@@ -71,6 +57,7 @@ const BoardCell = (props) => {
   useEffect(() => {
     const update = async() => {
       const _highest_bid = await getAuctionHighestBid(props.name);
+      console.log(_highest_bid);
       setHighestBid(_highest_bid);
     }
     update();
@@ -106,8 +93,6 @@ const BoardCell = (props) => {
           </form>
         <div>
           <button onClick={onBidPressed}>Bid</button>
-          <button onClick={onWithdrawBidPressed}>Withdraw Bid</button>
-          <button onClick={onCollectPressed}>Collect</button>
         </div>
       </div>
   );    
