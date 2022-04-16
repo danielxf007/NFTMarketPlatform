@@ -20,7 +20,6 @@ const Minter = (props) => {
     }
     fetchData();
     addWalletListener();
-    return () => props.socket.disconnect();
   }, []);
 
   function addWalletListener() {
@@ -57,8 +56,6 @@ const Minter = (props) => {
   const onMintPressed = async () => {
     const { success, tx} = await mintNFT(file, name);
     if(success) {
-      tx.socket_id = props.socket.id;
-      console.log(tx.socket_id);
       props.socket.emit('made-tx', tx);
       setName("");
       setImageURL("");
