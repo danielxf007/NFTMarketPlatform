@@ -1,18 +1,24 @@
+/*
 require("dotenv").config();
 const key = process.env.PENDING_PINATA_KEY;
 const secret = process.env.PENDING_PINATA_SECRET;
-const path = require('path');
 const socketIO = require('socket.io');
-const express = require('express');
 const axios = require('axios');
+const fetch = require('node-fetch');
+*/
+const path = require('path');
+
+const express = require('express');
+
 const app = express();
 const publicPath = path.join(__dirname, 'build');
 const port = process.env.PORT || 3000;
-const fetch = require('node-fetch');
 
 app.use(express.static(publicPath));
 app.use(express.static("public"));
 app.use(express.json());
+
+/*
 
 app.post('/tx-mined', async (req, res) => {
    const _res = await txMined(req);
@@ -23,6 +29,7 @@ app.post('/tx-rejected', async(req, res) => {
    const _res = await txRejected(req);
    res.status(200).end(); 
 });
+*/
 
 app.get('/', (req, res) => {
    res.sendFile(path.join(publicPath, 'index.html'));
@@ -31,7 +38,7 @@ app.get('/', (req, res) => {
 const server = app.listen(port, () => {
    console.log('Server is up!');
 });
-
+/*
 const pinJSONToIPFS = async(JSONBody) => {
    const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
    return axios 
@@ -206,3 +213,4 @@ async function txRejected(req){
     }
 
 }
+*/
