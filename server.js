@@ -121,8 +121,8 @@ io.on('connection', (socket) => {
     });
 });
 
-function minedTx(message){
-    io.emit('mined-tx', message);
+function minedTx(socket_id, message){
+    io.to(socket_id).emit('mined-tx', message);
 }
 
 function rejectedTx(message){
@@ -137,7 +137,7 @@ async function txMined(req){
             const pinata_tx_data = await getPinataJSON(pinata_tx[0].ipfs_pin_hash);
             switch(pinata_tx_data.type){
                 case "mint":  
-                    minedTx('Your NFT ' + pinata_tx_data.name + ' was successfully minted');
+                    minedTx(pinata_tx_data.socket_id, 'Your NFT ' + pinata_tx_data.name + ' was successfully minted');
                     break;
                 case "rights":
                     minedTx('Your NFT ' + pinata_tx_data.name + ' can be published on the market now');
