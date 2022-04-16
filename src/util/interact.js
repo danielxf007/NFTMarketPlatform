@@ -1,4 +1,4 @@
-import { pinFileToIPFS, removePinFromIPFS,  getOfferMadeForNFT, getPublishedOffer} from "./pinata";
+import { pinFileToIPFS, getPinList, removePinFromIPFS,  getOfferMadeForNFT, getPublishedOffer} from "./pinata";
 import {
   usedName, tokenExists, canTradeToken,
   sellPublished, tokenSold, auctionPublished,
@@ -97,8 +97,8 @@ export const mintNFT = async (image, token_name) => {
       status: "You need to gave a name to your NFT.",
     };
   }
-  const used_name = await usedName(token_name);
-  if(used_name){
+  const name = await getPinList('status=pinned'+ '&metadata[name]=' + token_name);
+  if(name[0].length > 0){
     return{
       success: false,
       status: "This name has already been used"
