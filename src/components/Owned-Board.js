@@ -96,6 +96,7 @@ function PaginatedItems({ itemsPerPage }) {
 const OwnedBoard = (props) => {
     return (
         <div>
+          <h1>Your NFTs</h1>
               <PaginatedItems itemsPerPage={10}/>
         </div>
     );
