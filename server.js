@@ -1,11 +1,11 @@
-/*
+
 require("dotenv").config();
 const key = process.env.PENDING_PINATA_KEY;
 const secret = process.env.PENDING_PINATA_SECRET;
 const socketIO = require('socket.io');
 const axios = require('axios');
 const fetch = require('node-fetch');
-*/
+
 const path = require('path');
 
 const express = require('express');
