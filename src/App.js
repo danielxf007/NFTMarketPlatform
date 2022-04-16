@@ -23,9 +23,11 @@ function App() {
     "auction_collector": <AuctionCollector />, "auction_renewer": <AuctionRenewer />};
 
     useEffect(() => {
+      socket.on('connect', ()=>console.log(socket.id));
       socket.on('mined-tx', (body) => {
         alert(body);
       })
+      return () => socket.disconnect();
     }, []);
 
   if(component === "main_menu"){
