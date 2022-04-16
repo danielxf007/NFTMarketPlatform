@@ -1,6 +1,6 @@
 {
     "minter": {
-        "address": "0xfb33F91aA1c2d93cA80af97e5f222798aD7aCb3b",
+        "address": "0xC9C3Fb102577cEa5de2D2F27F58CaF938ed939da",
 		"abi": [
 			{
 				"inputs": [],
@@ -489,30 +489,11 @@
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "string",
-						"name": "token_name",
-						"type": "string"
-					}
-				],
-				"name": "usedName",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
 			}
 		]
     },
     "shop": {
-        "address": "0x7f67A75ad26Cd9523e3EF5FC8477f905AaE8A785",
+        "address": "0x291b816cf3A0C1f8eE4DAfBCc64c7e91476014D7",
 		"abi": [
 			{
 				"inputs": [
