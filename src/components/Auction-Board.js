@@ -58,9 +58,6 @@ const BoardCell = (props) => {
     setTimeout(fetchDate, 1000);
   }, [date]);
 
-  useEffect(() => {
-  }, [highest_bid]);
-
   return (
       <div className="nft-item">
         <div className="nft-name">
