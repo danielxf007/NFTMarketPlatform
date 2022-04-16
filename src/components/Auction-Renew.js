@@ -21,7 +21,6 @@ const AuctionRenewer = (props) => {
             const { success, status, tx } = await renewAuction(token_name, String(date), active_time);
             alert(status);
             if(success){
-                props.socket.emit('made_tx', tx);
                 setDate("");
                 setTokenName("");
             }

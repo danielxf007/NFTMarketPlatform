@@ -9,7 +9,6 @@ import AuctionCollector from './components/Auction-Collect';
 import AuctionCreator  from './components/Auction-Publish';
 import AuctionRenewer from './components/Auction-Renew';
 import AuctionBidWithdrawer from './components/Auction-Withdraw-Bid';
-import {socket} from './components/sockets';
 import { clearPinata } from './util/pinata.js';
 
 const pinata = require("./util/pinata.js");
@@ -17,20 +16,12 @@ const pinata = require("./util/pinata.js");
 function App() {
   const [component, setComponent] = useState("main_menu");
   const components = {
-    "minter": <Minter socket={socket}/>, "owned_board": <OwnedBoard/>, "sell_publisher": <SellPublisher socket={socket}/>,
-    "auction_creator": <AuctionCreator socket={socket}/>, "market_place": <MarketPlace socket={socket}/>,
-    "auction_board": <AuctionBoard socket={socket}/>, "auction_bid_withdrawer": <AuctionBidWithdrawer socket={socket}/>,
-    "auction_collector": <AuctionCollector socket={socket}/>, "auction_renewer": <AuctionRenewer socket={socket}/>};
+    "minter": <Minter />, "owned_board": <OwnedBoard/>, "sell_publisher": <SellPublisher />,
+    "auction_creator": <AuctionCreator />, "market_place": <MarketPlace />,
+    "auction_board": <AuctionBoard />, "auction_bid_withdrawer": <AuctionBidWithdrawer />,
+    "auction_collector": <AuctionCollector />, "auction_renewer": <AuctionRenewer />};
 
     useEffect(() => {
-      socket.on('connect', ()=>console.log(socket.id));
-      socket.on('mined-tx', (mssg) => {
-        alert(mssg);
-      });
-      socket.on('rejected-tx', (mssg) => {
-        alert(mssg);
-      });
-      return () => socket.disconnect();
     }, []);
 
   if(component === "main_menu"){

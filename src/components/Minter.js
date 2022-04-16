@@ -59,7 +59,6 @@ const Minter = (props) => {
     if(success) {
       setName("");
       setImageURL("");
-      props.socket.emit('made_tx', tx);
     }
   };
 

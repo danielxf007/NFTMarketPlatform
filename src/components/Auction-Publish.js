@@ -16,9 +16,6 @@ const AuctionCreator = (props) => {
     const onGiveRights = async() => {
         const {success, status, tx} = await giveRights(token_name, contracts_metadata.auction.address);
         alert(status);
-        if(success){
-            props.socket.emit('made_tx', tx);
-        }
     };
 
     const onPublishPressed = async() => {
@@ -31,7 +28,6 @@ const AuctionCreator = (props) => {
             const { success, status, tx } = await publishAuction(token_name, String(date), active_time);
             alert(status);
             if(success){
-                props.socket.emit('made_tx', tx);
                 setDate("");
                 setTokenName("");
             }       

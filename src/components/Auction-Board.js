@@ -52,14 +52,20 @@ const BoardCell = (props) => {
   };
 
   useEffect(() => {
-    const _highest_bid = await getAuctionHighestBid(props.name);
-    setHighestBid(_highest_bid);
+    const updateHighestBid = async() => {
+      const _highest_bid = await getAuctionHighestBid(props.name);
+      setHighestBid(weiToETH(_highest_bid));
+    }
+    updateHighestBid();
     setTimeout(fetchDate, 1000);
   }, []);
 
   useEffect(() => {
-    const _highest_bid = await getAuctionHighestBid(props.name);
-    setHighestBid(_highest_bid);
+    const updateHighestBid = async() => {
+      const _highest_bid = await getAuctionHighestBid(props.name);
+      setHighestBid(weiToETH(_highest_bid));
+    }
+    updateHighestBid();
     setTimeout(fetchDate, 1000);
   }, [date]);
 
@@ -70,7 +76,7 @@ const BoardCell = (props) => {
         </div>
         <img className="nft-image" src={props.image_url}/>
         <div className="nft-bid">
-          Highest Bid: {weiToETH(highest_bid).toString() + " ETH"}
+          Highest Bid: {highest_bid.toString() + " ETH"}
         </div>
         <div className="nft-time-left">
           {formatTimeLeft(date)}

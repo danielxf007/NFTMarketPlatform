@@ -15,9 +15,6 @@ const BoardCell = (props) => {
     const onBuyPressed = async() => {
       const {success, status, tx} = await buyNFT(props.name, props.price);
       alert(status);
-      if(success){
-        props.socket.emit('made_tx', tx);
-      }
     };
 
     return (
@@ -37,7 +34,7 @@ const BoardCell = (props) => {
 
 const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
-function Items({ currentItems, socket }) {
+function Items({ currentItems }) {
   const name = 0;
   const image_url = 1;
   const price = 2;
@@ -51,14 +48,14 @@ function Items({ currentItems, socket }) {
                   name = {item[name]}
                   image_url = {item[image_url]}
                   price = {(bigInt(item[price])/wei).toString()}
-                  socket={socket}/>
+                  />
         })
       }
     </>
   );
 }
 
-function PaginatedItems({ itemsPerPage, socket }) {
+function PaginatedItems({ itemsPerPage }) {
 
   const [currentItems, setCurrentItems] = useState([]);
   const [pageCount, setPageCount] = useState(0);
@@ -82,7 +79,7 @@ function PaginatedItems({ itemsPerPage, socket }) {
   return (
     <>
     <div className="nft-item-container">
-    <Items currentItems={currentItems} socket={socket}/>
+    <Items currentItems={currentItems}/>
     </div>
       <ReactPaginate
         nextLabel="next >"
@@ -111,7 +108,7 @@ function PaginatedItems({ itemsPerPage, socket }) {
 const MarketPlace = (props) => {
     return (
         <div>
-              <PaginatedItems itemsPerPage={10} socket={props.socket}/>
+              <PaginatedItems itemsPerPage={10}/>
         </div>
     );
 }
