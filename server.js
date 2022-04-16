@@ -135,33 +135,34 @@ async function txMined(req){
         const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx.hash);
         if(pinata_tx.length > 0){
             const pinata_tx_data = await getPinataJSON(pinata_tx[0].ipfs_pin_hash);
+            const socket_id = pinata_tx_data.socket_id;
             switch(pinata_tx_data.type){
                 case "mint":  
-                    minedTx(pinata_tx_data.socket_id, 'Your NFT ' + pinata_tx_data.name + ' was successfully minted');
+                    minedTx(socket_id, 'Your NFT ' + pinata_tx_data.name + ' was successfully minted');
                     break;
                 case "rights":
-                    minedTx('Your NFT ' + pinata_tx_data.name + ' can be published on the market now');
+                    minedTx(socket_id, 'Your NFT ' + pinata_tx_data.name + ' can be published on the market now');
                     break;
                 case "sell_publish":
-                    minedTx('Your NFT ' + pinata_tx_data.name + ' was published on the market by: ' + pinata_tx_data.price + ' ETH' );
+                    minedTx(socket_id, 'Your NFT ' + pinata_tx_data.name + ' was published on the market by: ' + pinata_tx_data.price + ' ETH' );
                     break;
                 case 'buy_nft':
-                    minedTx('Your offer of '+ pinata_tx_data.price + ' ETH for '+ pinata_tx_data.name + ' was accepted');
+                    minedTx(socket_id, 'Your offer of '+ pinata_tx_data.price + ' ETH for '+ pinata_tx_data.name + ' was accepted');
                     break;
                 case 'auction_publish':
-                    minedTx('Your NFT ' + pinata_tx_data.name + ' was published on the auction board until: ' + pinata_tx_data.expire_date);
+                    minedTx(socket_id, 'Your NFT ' + pinata_tx_data.name + ' was published on the auction board until: ' + pinata_tx_data.expire_date);
                     break;
                 case 'bid':
-                    minedTx('Your bid for: ' + pinata_tx_data.name + ' has been accepted');
+                    minedTx(socket_id, 'Your bid for: ' + pinata_tx_data.name + ' has been accepted');
                     break;
                 case 'withdraw_bid':
-                    minedTx('Your bid for: ' + pinata_tx_data.name + ' has been withdrawed');
+                    minedTx(socket_id, 'Your bid for: ' + pinata_tx_data.name + ' has been withdrawed');
                     break;
                 case 'collect_auction':
-                    minedTx('Your have collected the auction for ' + pinata_tx_data.name);
+                    minedTx(socket_id, 'Your have collected the auction for ' + pinata_tx_data.name);
                     break;
                 case 'renew_auction':
-                    minedTx('Your auction for ' + pinata_tx_data.name + 'has been renewed');
+                    minedTx(socket_id, 'Your auction for ' + pinata_tx_data.name + 'has been renewed');
                     break;                
             }
         }
