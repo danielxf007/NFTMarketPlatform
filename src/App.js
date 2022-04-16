@@ -27,7 +27,6 @@ function App() {
       socket.on('mined-tx', (body) => {
         alert(body);
       })
-      return () => socket.disconnect();
     }, []);
 
   if(component === "main_menu"){
