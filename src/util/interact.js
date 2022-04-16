@@ -1,4 +1,4 @@
-import { pinFileToIPFS, getOfferMadeForNFT, getPublishedOffer} from "./pinata";
+import { pinFileToIPFS, removePinFromIPFS,  getOfferMadeForNFT, getPublishedOffer} from "./pinata";
 import {
   usedName, tokenExists, canTradeToken,
   sellPublished, tokenSold, auctionPublished,
@@ -146,6 +146,7 @@ export const mintNFT = async (image, token_name) => {
       status: "Your transaction was sent"
     };
   } catch (error) {
+    const _res = await removePinFromIPFS(file_res.data_hash);
     return {
       success: false,
       status: "Something went wrong: " + error.message,
