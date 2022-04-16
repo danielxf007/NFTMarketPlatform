@@ -98,7 +98,7 @@ export const mintNFT = async (image, token_name) => {
     };
   }
   const name = await getPinList('status=pinned'+ '&metadata[name]=' + token_name);
-  if(name[0].length > 0){
+  if(name.length > 0){
     return{
       success: false,
       status: "This name has already been used"
