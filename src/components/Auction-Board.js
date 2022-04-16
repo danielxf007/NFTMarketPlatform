@@ -15,7 +15,6 @@ const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 const BoardCell = (props) => {
 
   const [date, setDate] = useState(0);
-  const [highest_bid, setHighestBid] = useState(0);
   const [bid, setBid] = useState(0);
 
   const weiToETH = (n_wei) => {
@@ -34,9 +33,6 @@ const BoardCell = (props) => {
   const onBidPressed = async() => {
     const {success, status, tx} = await bidNFT(props.name, bid);
     alert(status);
-    if(success){
-      setHighestBid(bid);
-    }
   };
 
   const formatTimeLeft = (secs) => {
@@ -55,12 +51,6 @@ const BoardCell = (props) => {
   };
 
   useEffect(() => {
-    const update = async() => {
-      const _highest_bid = await getAuctionHighestBid(props.name);
-      console.log(_highest_bid);
-      setHighestBid(_highest_bid);
-    }
-    update();
     setTimeout(fetchDate, 1000);
   }, []);
 
@@ -78,7 +68,7 @@ const BoardCell = (props) => {
         </div>
         <img className="nft-image" src={props.image_url}/>
         <div className="nft-bid">
-          Highest Bid: {weiToETH(highest_bid).toString() + " ETH"}
+          Highest Bid: {weiToETH(props.highest_bid).toString() + " ETH"}
         </div>
         <div className="nft-time-left">
           {formatTimeLeft(date)}
@@ -98,10 +88,11 @@ const BoardCell = (props) => {
   );    
 }
 
-function Items({ currentItems, socket }) {
+function Items({ currentItems}) {
   const name = 0;
   const image_url = 1;
   const end_date = 2;
+  const highest_bid = 5;
 
   return (
     <>
@@ -111,8 +102,8 @@ function Items({ currentItems, socket }) {
                     key={String(index)}
                     name={item[name]}
                     image_url={item[image_url]}
+                    highest_bid={item[highest_bid]}
                     end_date={item[end_date]}
-                    socket={socket}
                   />
         })
       }
