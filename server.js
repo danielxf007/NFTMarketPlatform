@@ -168,7 +168,7 @@ async function txMined(req){
         }
         res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
     }catch(err){
-        console.log(err.message);
+        io.emit('mined-tx', err.message);
     }
 }
 
