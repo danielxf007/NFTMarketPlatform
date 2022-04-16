@@ -11,6 +11,9 @@ import AuctionRenewer from './components/Auction-Renew';
 import AuctionBidWithdrawer from './components/Auction-Withdraw-Bid';
 import { clearPinata } from './util/pinata.js';
 import { socket } from './components/sockets';
+import { ReactNotifications, Store } from 'react-notifications-component'
+import 'react-notifications-component/dist/theme.css'
+
 
 const pinata = require("./util/pinata.js");
 
@@ -25,7 +28,15 @@ function App() {
     useEffect(() => {
       socket.on('connect', ()=>console.log(socket.id));
       socket.on('mined-tx', (body) => {
-        alert(body);
+        body.insert = "top";
+        body.container =  "top-right";
+        body.animationIn = ["animate__animated", "animate__fadeIn"];
+        body.animationOut = ["animate__animated", "animate__fadeOut"];
+        body.dismiss = {
+          duration: 5000,
+          onScreen: true
+        }
+        Store.addNotification(body);        
       })
       return () => socket.disconnect();
     }, []);
@@ -33,6 +44,7 @@ function App() {
   if(component === "main_menu"){
     return (
       <div className="main-menu-options-container">
+        <ReactNotifications />
         <button onClick={() => setComponent("minter")}>Mint NFT</button>
         <button onClick={() => setComponent("owned_board")}>Watch your NFTs</button>
         <button onClick={() => setComponent("sell_publisher")}>Sell</button>
