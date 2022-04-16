@@ -36,8 +36,8 @@ function App() {
           duration: 5000,
           onScreen: true
         }
-        Store.addNotification(body); 
-        alert(JSON.stringify(body));       
+        console.log(body);
+        Store.addNotification(body);       
       })
       return () => socket.disconnect();
     }, []);

@@ -139,7 +139,7 @@ async function txMined(req){
             switch(pinata_tx_data.type){
                 case "mint":
                     body.title = 'Mint'
-                    body.message =   'The NFT ' + pinata_tx_data.name + ' was successfully minted';
+                    body.message = 'The NFT ' + pinata_tx_data.name + ' was successfully minted';
                     body.type = 'success"';
                     minedTx(body);
                     break;
