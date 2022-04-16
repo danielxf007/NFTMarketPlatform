@@ -1,6 +1,6 @@
 import { pinFileToIPFS, getPinList, removePinFromIPFS,  getOfferMadeForNFT, getPublishedOffer} from "./pinata";
 import {
-  usedName, tokenExists, canTradeToken,
+  tokenExists, canTradeToken,
   sellPublished, tokenSold, auctionPublished,
   auctionFinished, isAuctionSeller, isHighestBidder,
   isBidEnough, hasBidded, hasWinner} from "./validations";
@@ -97,6 +97,14 @@ export const mintNFT = async (image, token_name) => {
       status: "You need to gave a name to your NFT.",
     };
   }
+  const token_exists = tokenExists(token_name);
+  if(token_exists){
+    return {
+      success: false,
+      status: "This token already exists",
+    };
+  }   
+  /*
   const name = await getPinList('status=pinned'+ '&metadata[name]=' + token_name);
   if(name.length > 0){
     return{
@@ -104,6 +112,7 @@ export const mintNFT = async (image, token_name) => {
       status: "This name has already been used"
     }    
   }
+  */
   const file_res = await pinFileToIPFS(image, token_name);
   if (!file_res.success){
     return {
