@@ -14,6 +14,7 @@ const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
 const BoardCell = (props) => {
 
+  const [highest_bid, setHighestBid] = useState(0);
   const [date, setDate] = useState(0);
   const [bid, setBid] = useState(0);
 
@@ -51,10 +52,14 @@ const BoardCell = (props) => {
   };
 
   useEffect(() => {
+    const _highest_bid = await getAuctionHighestBid(props.name);
+    setHighestBid(_highest_bid);
     setTimeout(fetchDate, 1000);
   }, []);
 
   useEffect(() => {
+    const _highest_bid = await getAuctionHighestBid(props.name);
+    setHighestBid(_highest_bid);
     setTimeout(fetchDate, 1000);
   }, [date]);
 
@@ -65,7 +70,7 @@ const BoardCell = (props) => {
         </div>
         <img className="nft-image" src={props.image_url}/>
         <div className="nft-bid">
-          Highest Bid: {weiToETH(props.highest_bid).toString() + " ETH"}
+          Highest Bid: {weiToETH(highest_bid).toString() + " ETH"}
         </div>
         <div className="nft-time-left">
           {formatTimeLeft(date)}
@@ -99,7 +104,6 @@ function Items({ currentItems}) {
                     key={String(index)}
                     name={item[name]}
                     image_url={item[image_url]}
-                    highest_bid={item[highest_bid]}
                     end_date={item[end_date]}
                   />
         })
@@ -108,7 +112,7 @@ function Items({ currentItems}) {
   );
 }
 
-function PaginatedItems({ itemsPerPage, socket }) {
+function PaginatedItems({ itemsPerPage }) {
 
   const [currentItems, setCurrentItems] = useState([]);
   const [pageCount, setPageCount] = useState(0);
@@ -133,7 +137,7 @@ function PaginatedItems({ itemsPerPage, socket }) {
   return (
     <>
     <div className="nft-item-container">
-    <Items currentItems={currentItems} socket={socket}/>
+    <Items currentItems={currentItems}/>
     </div>
       <ReactPaginate
         nextLabel="next >"
@@ -163,7 +167,7 @@ const AuctionBoard = (props) => {
     return (
       <div>
         <h1>Auction Board</h1>
-        <PaginatedItems itemsPerPage={10} socket={props.socket}/>
+        <PaginatedItems itemsPerPage={10}/>
       </div>
   );
 }
