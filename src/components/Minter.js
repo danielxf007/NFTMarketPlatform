@@ -55,6 +55,7 @@ const Minter = (props) => {
 
   const onMintPressed = async () => {
     const { success, status, tx} = await mintNFT(file, name);
+    console.log(props.socket.id);
     if(success) {
       props.socket.emit('made-tx', tx);
       setName("");
