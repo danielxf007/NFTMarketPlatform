@@ -121,8 +121,8 @@ io.on('connection', (socket) => {
     });
 });
 
-function minedTx(socket_id, message){
-    io.to(socket_id).emit('mined-tx', message);
+function minedTx(message){
+    io.emit('mined-tx', message);
 }
 
 function rejectedTx(message){
@@ -135,40 +135,43 @@ async function txMined(req){
         const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx.hash);
         if(pinata_tx.length > 0){
             const pinata_tx_data = await getPinataJSON(pinata_tx[0].ipfs_pin_hash);
-            const socket_id = pinata_tx_data.socket_id;
+            let body = {};
             switch(pinata_tx_data.type){
-                case "mint":  
-                    minedTx(socket_id, 'Your NFT ' + pinata_tx_data.name + ' was successfully minted');
+                case "mint":
+                    body.title = 'Mint'
+                    body.message =   'The NFT ' + pinata_tx_data.name + ' was successfully minted';
+                    body.type = 'success"';
+                    minedTx(body);
                     break;
                 case "rights":
-                    minedTx(socket_id, 'Your NFT ' + pinata_tx_data.name + ' can be published on the market now');
+                    minedTx(body);
                     break;
                 case "sell_publish":
-                    minedTx(socket_id, 'Your NFT ' + pinata_tx_data.name + ' was published on the market by: ' + pinata_tx_data.price + ' ETH' );
+                    minedTx(body);
                     break;
                 case 'buy_nft':
-                    minedTx(socket_id, 'Your offer of '+ pinata_tx_data.price + ' ETH for '+ pinata_tx_data.name + ' was accepted');
+                    minedTx(body);
                     break;
                 case 'auction_publish':
-                    minedTx(socket_id, 'Your NFT ' + pinata_tx_data.name + ' was published on the auction board until: ' + pinata_tx_data.expire_date);
+                    minedTx(body);
                     break;
                 case 'bid':
-                    minedTx(socket_id, 'Your bid for: ' + pinata_tx_data.name + ' has been accepted');
+                    minedTx(body);
                     break;
                 case 'withdraw_bid':
-                    minedTx(socket_id, 'Your bid for: ' + pinata_tx_data.name + ' has been withdrawed');
+                    minedTx(body);
                     break;
                 case 'collect_auction':
-                    minedTx(socket_id, 'Your have collected the auction for ' + pinata_tx_data.name);
+                    minedTx(body);
                     break;
                 case 'renew_auction':
-                    minedTx(socket_id, 'Your auction for ' + pinata_tx_data.name + 'has been renewed');
+                    minedTx(body);
                     break;                
             }
         }
         res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
     }catch(err){
-        io.emit('mined-tx', err.message);
+        console.log(err.message);
     }
 }
 
@@ -187,24 +190,24 @@ async function txRejected(req){
                     rejectedTx('You could not give rights to sell ' + pinata_tx_data.name + ' try again');
                     break;
                 case "sell_publish":
-                    rejectedTx('Your could not publish a sell for ' + pinata_tx_data.name + ' try again');
+                    rejectedTx('The could not publish a sell for ' + pinata_tx_data.name + ' try again');
                     break;
                 case 'buy_nft':
-                    rejectedTx('Your could not buy ' + pinata_tx_data.name + ' try again');
+                    rejectedTx('The could not buy ' + pinata_tx_data.name + ' try again');
                     break;
                 case 'auction_publish':
-                    rejectedTx('Your could not publish the auction for ' + pinata_tx_data.name + ' try again');
+                    rejectedTx('The could not publish the auction for ' + pinata_tx_data.name + ' try again');
                     break;
                 case 'bid':
-                    rejectedTx('Your bid for: ' + pinata_tx_data.name + ' has been rejected');
+                    rejectedTx('The bid for: ' + pinata_tx_data.name + ' has been rejected');
                 case 'withdraw_bid':
-                    rejectedTx('You could not withdraw your bid for: ' + pinata_tx_data.name + ' try again');
+                    rejectedTx('You could not withdraw The bid for: ' + pinata_tx_data.name + ' try again');
                     break;
                 case 'collect_auction':
-                    rejectedTx('Your could not collect the auction for ' + pinata_tx_data.name + ' try again');
+                    rejectedTx('The could not collect the auction for ' + pinata_tx_data.name + ' try again');
                     break;
                 case 'renew_auction':
-                    rejectedTx('Your could not renew the auction for ' + pinata_tx_data.name + ' try again'); 
+                    rejectedTx('The could not renew the auction for ' + pinata_tx_data.name + ' try again'); 
            }
         }
         res = await removePinFromIPFS(pinata_tx[0].ipfs_pin_hash);
