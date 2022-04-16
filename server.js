@@ -20,7 +20,7 @@ app.use(express.json());
 
 
 app.post('/tx-mined', async (req, res) => {
-    minedTx("mined");
+    minedTx(JSON.stringify(req.body));
     res.status(200).end(); 
 });
 
