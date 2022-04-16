@@ -20,9 +20,8 @@ app.use(express.json());
 
 
 app.post('/tx-mined', async (req, res) => {
-    io.emit('mined-tx', JSON.stringify(req));
-   //const _res = await txMined(req);
-   res.status(200).end(); 
+    minedTx(JSON.stringify(req));
+    res.status(200).end(); 
 });
 
 /*
@@ -124,10 +123,11 @@ io.on('connection', (socket) => {
     });
     */
 });
-/*
+
 function minedTx(message){
     io.emit('mined-tx', message);
 }
+/*
 
 function rejectedTx(message){
     io.emit('rejected-tx', message);
