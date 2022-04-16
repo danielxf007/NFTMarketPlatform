@@ -7,6 +7,7 @@ import {
 
 const Minter = (props) => {
   const [walletAddress, setWallet] = useState("");
+  const [status, setStatus] = useState("");
   const [image_url, setImageURL] = useState("");
   const [name, setName] = useState("");
   const [file, setFile] = useState(null);
@@ -15,6 +16,7 @@ const Minter = (props) => {
     async function fetchData(){
       const { address, status } = await getCurrentWalletConnected();
       setWallet(address);
+      setStatus(status);
     }
     fetchData();
     addWalletListener();
