@@ -17,7 +17,7 @@ const pinata = require("./util/pinata.js");
 function App() {
   const [component, setComponent] = useState("main_menu");
   const components = {
-    "minter": <Minter />, "owned_board": <OwnedBoard/>, "sell_publisher": <SellPublisher />,
+    "minter": <Minter socket={socket}/>, "owned_board": <OwnedBoard/>, "sell_publisher": <SellPublisher />,
     "auction_creator": <AuctionCreator />, "market_place": <MarketPlace />,
     "auction_board": <AuctionBoard />, "auction_bid_withdrawer": <AuctionBidWithdrawer />,
     "auction_collector": <AuctionCollector />, "auction_renewer": <AuctionRenewer />};
