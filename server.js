@@ -121,8 +121,8 @@ io.on('connection', (socket) => {
     });
 });
 
-function minedTx(body){
-    io.emit('mined-tx', body);
+function minedTx(message){
+    io.emit('mined-tx', message);
 }
 
 function rejectedTx(message){
@@ -135,37 +135,33 @@ async function txMined(req){
         const pinata_tx = await getPinList("status=pinned&metadata[name]="+tx.hash);
         if(pinata_tx.length > 0){
             const pinata_tx_data = await getPinataJSON(pinata_tx[0].ipfs_pin_hash);
-            let body = {};
             switch(pinata_tx_data.type){
-                case "mint":
-                    body.title = 'Mint'
-                    body.message = 'The NFT ' + pinata_tx_data.name + ' was successfully minted';
-                    body.type = 'success"';
-                    minedTx(body);
+                case "mint":  
+                    minedTx('The NFT ' + pinata_tx_data.name + ' was successfully minted');
                     break;
                 case "rights":
-                    minedTx(body);
+                    minedTx('The NFT ' + pinata_tx_data.name + ' can be published on the market now');
                     break;
                 case "sell_publish":
-                    minedTx(body);
+                    minedTx('The NFT ' + pinata_tx_data.name + ' was published on the market by: ' + pinata_tx_data.price + ' ETH' );
                     break;
                 case 'buy_nft':
-                    minedTx(body);
+                    minedTx('The offer of '+ pinata_tx_data.price + ' ETH for '+ pinata_tx_data.name + ' was accepted');
                     break;
                 case 'auction_publish':
-                    minedTx(body);
+                    minedTx('The NFT ' + pinata_tx_data.name + ' was published on the auction board until: ' + pinata_tx_data.expire_date);
                     break;
                 case 'bid':
-                    minedTx(body);
+                    minedTx('The bid for: ' + pinata_tx_data.name + ' has been accepted');
                     break;
                 case 'withdraw_bid':
-                    minedTx(body);
+                    minedTx('The bid for: ' + pinata_tx_data.name + ' has been withdrawed');
                     break;
                 case 'collect_auction':
-                    minedTx(body);
+                    minedTx('The have collected the auction for ' + pinata_tx_data.name);
                     break;
                 case 'renew_auction':
-                    minedTx(body);
+                    minedTx('The auction for ' + pinata_tx_data.name + 'has been renewed');
                     break;                
             }
         }
