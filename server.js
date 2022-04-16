@@ -69,7 +69,6 @@ const getPinList = (query_str) => {
    return axios
        .get(url, {
            headers: {
-
                pinata_api_key: key,
                pinata_secret_api_key: secret
            }
