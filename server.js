@@ -121,8 +121,8 @@ io.on('connection', (socket) => {
     });
 });
 
-function minedTx(message){
-    io.emit('mined-tx', message);
+function minedTx(body){
+    io.emit('mined-tx', body);
 }
 
 function rejectedTx(message){
