@@ -20,7 +20,7 @@ app.use(express.json());
 
 
 app.post('/tx-mined', async (req, res) => {
-    minedTx(JSON.stringify(req.body));
+    const _res = await txMined(req);
     res.status(200).end(); 
 });
 
@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
 const server = app.listen(port, () => {
    console.log('Server is up!');
 });
-/*
+
 const pinJSONToIPFS = async(JSONBody) => {
    const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
    return axios 
@@ -113,21 +113,18 @@ const getPinataJSON = async (ipfs_pin_hash) => {
         return error.message;
     }
 }
-*/
+
 const io = socketIO(server);
 io.on('connection', (socket) => {
     socket.on('disconnect', () => console.log('Client disconnected'));
-    /*
     socket.on('made_tx', async (tx) => {
         const res = await pinJSONToIPFS(tx);
     });
-    */
 });
 
 function minedTx(message){
     io.emit('mined-tx', message);
 }
-/*
 
 function rejectedTx(message){
     io.emit('rejected-tx', message);
@@ -175,6 +172,7 @@ async function txMined(req){
     }
 }
 
+/*
 async function txRejected(req){
     try{
         const tx = req.body;
