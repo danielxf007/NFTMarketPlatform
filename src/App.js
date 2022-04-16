@@ -10,6 +10,7 @@ import AuctionCreator  from './components/Auction-Publish';
 import AuctionRenewer from './components/Auction-Renew';
 import AuctionBidWithdrawer from './components/Auction-Withdraw-Bid';
 import { clearPinata } from './util/pinata.js';
+import { socket } from './components/sockets';
 
 const pinata = require("./util/pinata.js");
 
@@ -22,6 +23,9 @@ function App() {
     "auction_collector": <AuctionCollector />, "auction_renewer": <AuctionRenewer />};
 
     useEffect(() => {
+      socket.on('tx-mined', (body) => {
+        alert(body);
+      })
     }, []);
 
   if(component === "main_menu"){

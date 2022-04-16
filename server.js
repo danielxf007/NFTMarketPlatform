@@ -18,13 +18,14 @@ app.use(express.static(publicPath));
 app.use(express.static("public"));
 app.use(express.json());
 
-/*
 
 app.post('/tx-mined', async (req, res) => {
-   const _res = await txMined(req);
+    io.emit('mined-tx', JSON.stringify(req));
+   //const _res = await txMined(req);
    res.status(200).end(); 
 });
 
+/*
 app.post('/tx-rejected', async(req, res) => {
    const _res = await txRejected(req);
    res.status(200).end(); 
@@ -113,9 +114,9 @@ const getPinataJSON = async (ipfs_pin_hash) => {
         return error.message;
     }
 }
-
+*/
 const io = socketIO(server);
-
+/*
 io.on('connection', (socket) => {
     socket.on('disconnect', () => console.log('Client disconnected'));
     socket.on('made_tx', async (tx) => {
