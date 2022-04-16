@@ -23,7 +23,7 @@ function App() {
     "auction_collector": <AuctionCollector />, "auction_renewer": <AuctionRenewer />};
 
     useEffect(() => {
-      socket.on('tx-mined', (body) => {
+      socket.on('mined-tx', (body) => {
         alert(body);
       })
     }, []);
