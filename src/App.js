@@ -1,5 +1,6 @@
 import './App.css';
 import {useEffect, useState } from "react";
+import { connectWallet } from './util/interact';
 import Minter from './components/Minter'
 import OwnedBoard from './components/Owned-Board';
 import SellPublisher from './components/Sell-Publish';
