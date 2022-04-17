@@ -55,8 +55,9 @@ function App() {
 
   if(component === "main_menu"){
     return (
-      <div className="main-menu-options-container">
+      <div>
         <h1>NFTS Udea</h1>
+        <div className="main-menu-options-container">
         <br></br>
         <button onClick={connectWalletPressed}>
           {walletAddress.length > 0 ? (
@@ -78,6 +79,8 @@ function App() {
         <button onClick={() => setComponent("auction_collector")} disabled={walletAddress===""}>Collect Auction</button>
         <button onClick={() => setComponent("auction_renewer")} disabled={walletAddress===""}>Renew Auction</button>
       </div>
+      </div>
+
     );    
   }else{
     return (
