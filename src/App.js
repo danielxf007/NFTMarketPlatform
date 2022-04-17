@@ -57,6 +57,7 @@ function App() {
     return (
       <div className="main-menu-options-container">
         <h1>NFTS Udea</h1>
+        <br></br>
         <button onClick={connectWalletPressed}>
           {walletAddress.length > 0 ? (
             "Connected: " +
