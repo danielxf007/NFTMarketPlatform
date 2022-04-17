@@ -40,8 +40,8 @@ function App() {
     }
 
     const connectWalletPressed = async () => {
-      const walletResponse = await connectWallet();
-      setWallet(walletResponse.address);
+      const walle = await connectWallet();
+      setWallet(wallet);
     }; 
 
     useEffect(() => {
