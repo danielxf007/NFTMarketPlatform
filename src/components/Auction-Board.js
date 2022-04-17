@@ -33,6 +33,7 @@ const BoardCell = (props) => {
     const {success, tx} = await bidNFT(props.name, bid);
     if(success){
       props.socket.emit('made-tx', tx);
+      setBid(0);
     }
   };
 
