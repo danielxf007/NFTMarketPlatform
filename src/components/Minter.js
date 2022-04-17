@@ -6,8 +6,6 @@ import {
 } from "../util/interact.js";
 
 const Minter = (props) => {
-  const [walletAddress, setWallet] = useState("");
-  const [status, setStatus] = useState("");
   const [image_url, setImageURL] = useState("");
   const [name, setName] = useState("");
   const [file, setFile] = useState(null);
@@ -18,40 +16,7 @@ const Minter = (props) => {
       setWallet(address);
       setStatus(status);
     }
-    fetchData();
-    addWalletListener();
   }, []);
-
-  function addWalletListener() {
-    if (window.ethereum) {
-      window.ethereum.on("accountsChanged", (accounts) => {
-        if (accounts.length > 0) {
-          setWallet(accounts[0]);
-          setStatus("👆🏽 Write a message in the text-field above.");
-        } else {
-          setWallet("");
-          setStatus("🦊 Connect to Metamask using the top right button.");
-        }
-      });
-    } else {
-      setStatus(
-        <p>
-          {" "}
-          🦊{" "}
-          <a target="_blank" href={`https://metamask.io/download.html`}>
-            You must install Metamask, a virtual Ethereum wallet, in your
-            browser.
-          </a>
-        </p>
-      );
-    }
-  }
-
-  const connectWalletPressed = async () => {
-    const walletResponse = await connectWallet();
-    setStatus(walletResponse.status);
-    setWallet(walletResponse.address);
-  };
 
   const onMintPressed = async () => {
     const { success, tx} = await mintNFT(file, name);
@@ -64,17 +29,7 @@ const Minter = (props) => {
 
   return (
     <div className="Minter">
-      <button id="walletButton" onClick={connectWalletPressed}>
-        {walletAddress.length > 0 ? (
-          "Connected: " +
-          String(walletAddress).substring(0, 6) +
-          "..." +
-          String(walletAddress).substring(38)
-        ) : (
-          <span>Connect Wallet</span>
-        )}
-      </button>
-
+      <h1>Mint NFTs</h1>
       <br></br>
       <form>
       <h2>Upload Image:</h2>

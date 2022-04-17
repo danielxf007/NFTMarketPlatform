@@ -94,6 +94,24 @@ function PaginatedItems({ itemsPerPage }) {
 }
 
 const OwnedBoard = (props) => {
+  const [walletAddress, setWallet] = useState("");
+  
+  function addWalletListener() {
+    if (window.ethereum) {
+      window.ethereum.on("accountsChanged", (accounts) => {
+        if (accounts.length > 0) {
+          setWallet(accounts[0]);
+        } else {
+          setWallet("");
+        }
+      });
+    }
+  }
+
+  useEffect(() => {
+    addWalletListener();
+  }, []);
+
     return (
         <div>
           <h1>Your NFTs</h1>
