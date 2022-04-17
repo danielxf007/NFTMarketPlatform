@@ -73,7 +73,7 @@ function App() {
         <button onClick={() => setComponent("owned_board")} disabled={walletAddress===""}>Watch your NFTs</button>
         <button onClick={() => setComponent("sell_publisher")} disabled={walletAddress===""}>Sell</button>
         <button onClick={() => setComponent("auction_creator")} disabled={walletAddress===""}>Create Auction</button>
-        <button onClick={() => setComponent("market_place")} disabled={walletAddress===""}>Market Place</button>
+        <button onClick={() => setComponent("market_place")} disabled={walletAddress===""}>Sell Board</button>
         <button onClick={() => setComponent("auction_board")} disabled={walletAddress===""}>Auction Board</button>
         <button onClick={() => setComponent("auction_bid_withdrawer")} disabled={walletAddress===""}>Withdraw Auction Bid</button>
         <button onClick={() => setComponent("auction_collector")} disabled={walletAddress===""}>Collect Auction</button>
