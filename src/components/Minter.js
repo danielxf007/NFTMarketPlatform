@@ -11,11 +11,6 @@ const Minter = (props) => {
   const [file, setFile] = useState(null);
 
   useEffect(() => {
-    async function fetchData(){
-      const { address, status } = await getCurrentWalletConnected();
-      setWallet(address);
-      setStatus(status);
-    }
   }, []);
 
   const onMintPressed = async () => {
