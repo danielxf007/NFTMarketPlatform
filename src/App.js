@@ -56,7 +56,7 @@ function App() {
   if(component === "main_menu"){
     return (
       <div className="main-menu-options-container">
-        <button id="walletButton" onClick={connectWalletPressed}>
+        <button onClick={connectWalletPressed}>
           {walletAddress.length > 0 ? (
             "Connected: " +
             String(walletAddress).substring(0, 6) +
