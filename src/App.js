@@ -10,7 +10,6 @@ import AuctionCollector from './components/Auction-Collect';
 import AuctionCreator  from './components/Auction-Publish';
 import AuctionRenewer from './components/Auction-Renew';
 import AuctionBidWithdrawer from './components/Auction-Withdraw-Bid';
-import { clearPinata } from './util/pinata.js';
 import { socket } from './components/sockets';
 
 const pinata = require("./util/pinata.js");
@@ -42,7 +41,6 @@ function App() {
 
     const connectWalletPressed = async () => {
       const walletResponse = await connectWallet();
-      setStatus(walletResponse.status);
       setWallet(walletResponse.address);
     }; 
 
@@ -68,16 +66,15 @@ function App() {
             <span>Connect Wallet</span>
           )}
         </button>
-        <button onClick={() => setComponent("minter")}>Mint NFT</button>
-        <button onClick={() => setComponent("owned_board")}>Watch your NFTs</button>
-        <button onClick={() => setComponent("sell_publisher")}>Sell</button>
-        <button onClick={() => setComponent("auction_creator")}>Create Auction</button>
-        <button onClick={() => setComponent("market_place")}>Market Place</button>
-        <button onClick={() => setComponent("auction_board")}>Auction Board</button>
-        <button onClick={() => setComponent("auction_bid_withdrawer")}>Withdraw Auction Bid</button>
-        <button onClick={() => setComponent("auction_collector")}>Collect Auction</button>
-        <button onClick={() => setComponent("auction_renewer")}>Renew Auction</button>
-        <button onClick={clearPinata}>clearPinata</button>
+        <button onClick={() => setComponent("minter") } disabled={walletAddress===""}>Mint NFT</button>
+        <button onClick={() => setComponent("owned_board")} disabled={walletAddress===""}>Watch your NFTs</button>
+        <button onClick={() => setComponent("sell_publisher")} disabled={walletAddress===""}>Sell</button>
+        <button onClick={() => setComponent("auction_creator")} disabled={walletAddress===""}>Create Auction</button>
+        <button onClick={() => setComponent("market_place")} disabled={walletAddress===""}>Market Place</button>
+        <button onClick={() => setComponent("auction_board")} disabled={walletAddress===""}>Auction Board</button>
+        <button onClick={() => setComponent("auction_bid_withdrawer")} disabled={walletAddress===""}>Withdraw Auction Bid</button>
+        <button onClick={() => setComponent("auction_collector")} disabled={walletAddress===""}>Collect Auction</button>
+        <button onClick={() => setComponent("auction_renewer")} disabled={walletAddress===""}>Renew Auction</button>
       </div>
     );    
   }else{
