@@ -40,7 +40,7 @@ function App() {
     }
 
     const connectWalletPressed = async () => {
-      const walle = await connectWallet();
+      const wallet = await connectWallet();
       setWallet(wallet);
     }; 
 
