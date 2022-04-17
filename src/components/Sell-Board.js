@@ -14,10 +14,12 @@ const wei = bigInt(1000000000000000000);
 const BoardCell = (props) => {
 
     const onBuyPressed = async() => {
-      const {success, tx} = await buyNFT(props.name, props.price);
+      const {success, err_message, tx} = await buyNFT(props.name, props.price);
       if(success){
         props.socket.emit('made-tx', tx);
-      }
+      }else{
+        alert(err_message);
+    }   
     };
 
     return (

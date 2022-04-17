@@ -30,11 +30,13 @@ const BoardCell = (props) => {
   };
 
   const onBidPressed = async() => {
-    const {success, tx} = await bidNFT(props.name, bid);
+    const {success, err_message, tx} = await bidNFT(props.name, bid);
     if(success){
       props.socket.emit('made-tx', tx);
       setBid(0);
-    }
+    }else{
+      alert(err_message);
+    }  
   };
 
   const formatTimeLeft = (secs) => {

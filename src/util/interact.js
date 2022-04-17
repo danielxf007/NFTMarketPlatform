@@ -18,75 +18,10 @@ export const connectWallet = async () => {
       const addressArray = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
-      const obj = {
-        status: "👆🏽 Write a message in the text-field above.",
-        address: addressArray[0],
-      };
-      return obj;
-    } catch (err) {
-      return {
-        address: "",
-        status: "😥 " + err.message,
-      };
+      return addressArray[0];
+    } catch (_err) {
+      return "";
     }
-  } else {
-    return {
-      address: "",
-      status: (
-        <span>
-          <p>
-            {" "}
-            🦊{" "}
-            <a target="_blank" rel="noreferrer" href={`https://metamask.io/download.html`}>
-              You must install Metamask, a virtual Ethereum wallet, in your
-              browser.
-            </a>
-          </p>
-        </span>
-      ),
-    };
-  }
-};
-
-export const getCurrentWalletConnected = async () => {
-  if (window.ethereum) {
-    try {
-      const addressArray = await window.ethereum.request({
-        method: "eth_accounts",
-      });
-      if (addressArray.length > 0) {
-        return {
-          address: addressArray[0],
-          status: "👆🏽 Write a message in the text-field above.",
-        };
-      } else {
-        return {
-          address: "",
-          status: "🦊 Connect to Metamask using the top right button.",
-        };
-      }
-    } catch (err) {
-      return {
-        address: "",
-        status: "😥 " + err.message,
-      };
-    }
-  } else {
-    return {
-      address: "",
-      status: (
-        <span>
-          <p>
-            {" "}
-            🦊{" "}
-            <a target="_blank" rel="noreferrer" href={`https://metamask.io/download.html`}>
-              You must install Metamask, a virtual Ethereum wallet, in your
-              browser.
-            </a>
-          </p>
-        </span>
-      ),
-    };
   }
 };
 
@@ -94,36 +29,27 @@ export const mintNFT = async (image, token_name) => {
   if (token_name === "") {
     return {
       success: false,
-      status: "You need to gave a name to your NFT.",
+      err_message: "You need to gave a name to your NFT.",
     };
   }
   const token_exists = await tokenExists(token_name);
   if(token_exists){
     return {
       success: false,
-      status: "This token already exists",
+      err_message: "This token already exists",
     };
   }   
-  /*
-  const name = await getPinList('status=pinned'+ '&metadata[name]=' + token_name);
-  if(name.length > 0){
-    return{
-      success: false,
-      status: "This name has already been used"
-    }    
-  }
-  */
   const file_res = await pinFileToIPFS(image, token_name);
   if (!file_res.success){
     return {
       success: false,
-      status: "Something went wrong while uploading your file.",
+      err_message: "Something went wrong while uploading your file.",
     };
   }
   if(file_res.duplicated){
     return{
       success: false,
-      status: "This image has already been minted"
+      err_message: "This image has already been minted"
     };
   }
   const contract_metadata = contracts_metadata.minter;
@@ -152,13 +78,12 @@ export const mintNFT = async (image, token_name) => {
               type: "mint"
           }
         },
-      status: "Your transaction was sent"
     };
   } catch (error) {
     const _res = await removePinFromIPFS(file_res.data_hash);
     return {
       success: false,
-      status: "Something went wrong: " + error.message,
+      err_message: "Something went wrong: " + error.message,
     };
   }
 };
@@ -174,7 +99,7 @@ export const getTokens = async() => {
   }  
 };
 
-export const checkNFTStatus = async(token_name) => {
+export const checkNFTerr_message = async(token_name) => {
   let published;
   published = await sellPublished(token_name);
   if(published){
@@ -193,14 +118,14 @@ export const giveRights = async(token_name, beneficiary) => {
   if(!token_exists){
     return {
       success: false,
-      status: "This token does not exist",
+      err_message: "This token does not exist",
     };    
   }
   const can_trade = await canTradeToken(token_name, window.ethereum.selectedAddress);
   if(!can_trade){
     return{
       success: false,
-      status: "You cannot trade this token"
+      err_message: "You cannot trade this token"
     };
   }
   const contract_metadata = contracts_metadata.minter;
@@ -227,13 +152,12 @@ export const giveRights = async(token_name, beneficiary) => {
               name: token_name,
               type: "rights"
           }
-        },
-      status: "Your transaction was sent"
+        }
     };
   } catch (error) {
     return {
       success: false,
-      status: "Something went wrong: " + error.message,
+      err_message: "Something went wrong: " + error.message,
     };
   }
 }
@@ -242,28 +166,28 @@ export const publishSell = async(token_name, token_price) => {
   if(parseFloat(token_price) === 0.0) {
     return {
       success: false,
-      status: "The price cannot be zero.",
+      err_message: "The price cannot be zero.",
     };
   }
   const token_exists = await tokenExists(token_name);
   if(!token_exists){
     return {
       success: false,
-      status: "This token does not exist",
+      err_message: "This token does not exist",
     };    
   }
   const can_trade = await canTradeToken(token_name, window.ethereum.selectedAddress);
   if(!can_trade){
     return{
       success: false,
-      status: "You cannot trade this token"
+      err_message: "You cannot trade this token"
     };
   }
   const published = await sellPublished(token_name);
   if(published){
     return{
       success: false,
-      status: "This token is already been sold"
+      err_message: "This token is already been sold"
     }
   }
   const contract_metadata = contracts_metadata.shop;
@@ -271,7 +195,7 @@ export const publishSell = async(token_name, token_price) => {
   if(!shop_has_rights){
     return{
       success: false,
-      status: "You have not given rights to the shop to sell your NFT"
+      err_message: "You have not given rights to the shop to sell your NFT"
     };
   }
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
@@ -298,13 +222,12 @@ export const publishSell = async(token_name, token_price) => {
               price: token_price,
               type: "sell_publish"
           }
-        },
-      status: "Your transaction was sent"
+        }
     };
   } catch (error) {
     return {
       success: false,
-      status: "Something went wrong: " + error.message
+      err_message: "Something went wrong: " + error.message
     };
   }
 }
@@ -325,17 +248,16 @@ export const buyNFT = async(token_name, token_price) => {
   if(sold){
     return{
       success: false,
-      status: "This token was already sold"
+      err_message: "This token was already sold"
     };
   }
   const offer_made = await getOfferMadeForNFT(token_name);
   if(offer_made.length > 0){
     return{
       success: false,
-      status: "Someone has already made an offer fot this NFT, try again later if the offer made was rejected"
+      err_message: "Someone has already made an offer fot this NFT, try again later if the offer made was rejected"
     };
   }
-  const sell_data = await getPublishedOffer(token_name);
   const contract_metadata = contracts_metadata.shop;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
@@ -366,13 +288,12 @@ export const buyNFT = async(token_name, token_price) => {
               price: token_price,
               type: "buy_nft"
           }
-        },
-      status: "Your transaction was sent"
+        }
     };
   } catch (error) {
     return {
       success: false,
-      status: "😥 Something went wrong " + error.message
+      err_message: "Something went wrong " + error.message
     };
   }
 }
@@ -382,21 +303,21 @@ export const publishAuction = async(token_name, end_date, active_time) => {
   if(!token_exists){
     return {
       success: false,
-      status: "This token does not exist",
+      err_message: "This token does not exist",
     };    
   }
   const can_trade = await canTradeToken(token_name, window.ethereum.selectedAddress);
   if(!can_trade){
     return{
       success: false,
-      status: "You cannot trade this token"
+      err_message: "You cannot trade this token"
     };
   }
   const published = await auctionPublished(token_name);
   if(published){
     return{
       success: false,
-      status: "This auction has been already published"
+      err_message: "This auction has been already published"
     }
   }
   const contract_metadata = contracts_metadata.auction;
@@ -404,7 +325,7 @@ export const publishAuction = async(token_name, end_date, active_time) => {
   if(!has_rights){
     return{
       success: false,
-      status: "You have not given rights to auction your NFT"
+      err_message: "You have not given rights to auction your NFT"
     };
   }
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
@@ -431,13 +352,12 @@ export const publishAuction = async(token_name, end_date, active_time) => {
               expire_date: end_date,
               type: "auction_publish"
           }
-        },
-      status: "Your transaction was sent"
+        }
     };
   } catch (error) {
     return {
       success: false,
-      status: "Something went wrong: " + error.message
+      err_message: "Something went wrong: " + error.message
     };
   }
 }
@@ -470,39 +390,37 @@ export const bidNFT = async(token_name, bid) => {
   if(!published){
     return{
       success: false,
-      status: "This auction has been retired"
+      err_message: "This auction has been retired"
     }
   }
   const auction_finished = await auctionFinished(token_name);
   if(auction_finished){
     return{
       success: false,
-      status: "This auction has finished"
+      err_message: "This auction has finished"
     }
   }
   const auction_seller = await isAuctionSeller(token_name, window.ethereum.selectedAddress);
   if(auction_seller){
     return{
       success: false,
-      status: "Sellers cannot bid"
+      err_message: "Sellers cannot bid"
     }
   }
   const highest_bidder = await isHighestBidder(token_name, window.ethereum.selectedAddress);
   if(highest_bidder){
     return{
       success: false,
-      status: "Highest bidders cannot bid again"
+      err_message: "Highest bidders cannot bid again"
     }
   }
-  /*
-  const enough = await isBidEnough(token_name, window.ethereum.selectedAddress, bigInt(parseFloat(bid)*wei));
+  const enough = await isBidEnough(token_name, window.ethereum.selectedAddress, bigInt(parseFloat(bid)*wei).toString());
   if(enough){
     return{
       success: false,
-      status: "The bid is not enough"
+      err_message: "The bid is not enough"
     }
   }
-  */
   const contract_metadata = contracts_metadata.auction;
   window.contract = await new web3.eth.Contract(contract_metadata.abi, contract_metadata.address);
   const transactionParameters = {
@@ -528,13 +446,12 @@ export const bidNFT = async(token_name, bid) => {
               name: token_name,
               type: "bid"
           }
-        },
-      status: "Your transaction was sent"
+        }
     };
   } catch (error) {
     return {
       success: false,
-      status: "Something went wrong: " + error.message
+      err_message: "Something went wrong: " + error.message
     };
   }
 }
@@ -544,14 +461,14 @@ export const withdrawBid = async(token_name) => {
   if(!has_bid){
     return{
       success: false,
-      status: "You did not bid for this NFT"
+      err_message: "You did not bid for this NFT"
     }
   }
   const highest_bidder = await isHighestBidder(token_name, window.ethereum.selectedAddress);
   if(highest_bidder){
     return{
       success: false,
-      status: "Highest bidders cannot withdraw their bid"
+      err_message: "Highest bidders cannot withdraw their bid"
     }
   }
   const contract_metadata = contracts_metadata.auction;
@@ -578,13 +495,12 @@ export const withdrawBid = async(token_name) => {
               name: token_name,
               type: "withdraw_bid"
           }
-        },
-      status: "Your transaction was sent"
+        }
     };
   } catch (error) {
     return {
       success: false,
-      status: "Something went wrong: " + error.message
+      err_message: "Something went wrong: " + error.message
     };
   }
 }
@@ -594,14 +510,14 @@ export const collectAuction = async(token_name) => {
   if(!published){
     return{
       success: false,
-      status: "This auction has been retired"
+      err_message: "This auction has been retired"
     }
   }
   const auction_finished = await auctionFinished(token_name);
   if(!auction_finished){
     return{
       success: false,
-      status: "This auction has not finished"
+      err_message: "This auction has not finished"
     }
   }
   const auction_seller = await isAuctionSeller(token_name, window.ethereum.selectedAddress);
@@ -609,7 +525,7 @@ export const collectAuction = async(token_name) => {
   if(!auction_seller && !highest_bidder){
     return{
       success: false,
-      status: "You cannot collect because you are not the seller nor the highest bidder of this NFT"
+      err_message: "You cannot collect because you are not the seller nor the highest bidder of this NFT"
     }
   }
   const contract_metadata = contracts_metadata.auction;
@@ -636,13 +552,12 @@ export const collectAuction = async(token_name) => {
               name: token_name,
               type: "collect_auction"
           }
-        },
-      status: "Your transaction was sent"
+        }
     };
   } catch (error) {
     return {
       success: false,
-      status: "Something went wrong: " + error.message
+      err_message: "Something went wrong: " + error.message
     };
   }
 }
@@ -652,28 +567,28 @@ export const renewAuction = async(token_name, end_date, active_time) => {
   if(!token_exists){
     return {
       success: false,
-      status: "This token does not exist",
+      err_message: "This token does not exist",
     };    
   }
   const published = await auctionPublished(token_name);
   if(!published){
     return{
       success: false,
-      status: "This auction has not been published"
+      err_message: "This auction has not been published"
     }
   }
   const auction_finished = await auctionFinished(token_name);
   if(!auction_finished){
     return{
       success: false,
-      status: "This auction has not finished"
+      err_message: "This auction has not finished"
     }
   }
   const has_winner = await hasWinner(token_name);
   if(has_winner){
     return{
       success: false,
-      status: "Someone has won the auction"
+      err_message: "Someone has won the auction"
     }
   }
   const contract_metadata = contracts_metadata.auction;
@@ -700,13 +615,12 @@ export const renewAuction = async(token_name, end_date, active_time) => {
               name: token_name,
               type: "renew_auction"
           }
-        },
-      status: "Your transaction was sent"
+        }
     };
   } catch (error) {
     return {
       success: false,
-      status: "Something went wrong: " + error.message
+      err_message: "Something went wrong: " + error.message
     };
   }
 }

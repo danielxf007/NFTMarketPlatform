@@ -18,12 +18,14 @@ const AuctionRenewer = (props) => {
             alert("This date has already expired");
         }else{
             const active_time = parseInt(Math.abs(date_2 - date_1)/1000);
-            const { success, tx } = await renewAuction(token_name, String(date), active_time);
+            const { success, err_message, tx } = await renewAuction(token_name, String(date), active_time);
             if(success){
                 props.socket.emit('made-tx', tx);
                 setDate("");
                 setTokenName("");
-            }
+            }else{
+                alert(err_message);
+            }  
         }
     };
     

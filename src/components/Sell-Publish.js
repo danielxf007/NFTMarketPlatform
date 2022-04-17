@@ -11,19 +11,23 @@ const SellPublisher = (props) => {
     }, [token_name, price]);
 
     const onGiveRights = async() => {
-        const {success, tx} = await giveRights(token_name, contracts_metadata.shop.address);
+        const {success, err_message, tx} = await giveRights(token_name, contracts_metadata.shop.address);
         if(success){
             props.socket.emit('made-tx', tx);
-        }
+        }else{
+            alert(err_message);
+        }   
     };
 
     const onPublishPressed = async() => {
-        const { success, tx } = await publishSell(token_name, price);
+        const { success, err_message, tx } = await publishSell(token_name, price);
         if (success){
             props.socket.emit('made-tx', tx);
             setTokenName("");
             setPrice(0);
-        }       
+        }else{
+            alert(err_message);
+        }    
     };
 
     return (

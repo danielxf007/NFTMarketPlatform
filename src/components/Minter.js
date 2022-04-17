@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-  connectWallet,
-  getCurrentWalletConnected,
-  mintNFT,
+  mintNFT
 } from "../util/interact.js";
 
 const Minter = (props) => {
@@ -14,12 +12,14 @@ const Minter = (props) => {
   }, []);
 
   const onMintPressed = async () => {
-    const { success, tx} = await mintNFT(file, name);
+    const { success, err_message, tx} = await mintNFT(file, name);
     if(success) {
       props.socket.emit('made-tx', tx);
       setName("");
       setImageURL("");
-    }
+    }else{
+      alert(err_message);
+    }   
   };
 
   return (
