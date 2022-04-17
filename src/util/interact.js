@@ -99,7 +99,7 @@ export const getTokens = async() => {
   }  
 };
 
-export const checkNFTerr_message = async(token_name) => {
+export const checkNFTStatus= async(token_name) => {
   let published;
   published = await sellPublished(token_name);
   if(published){
