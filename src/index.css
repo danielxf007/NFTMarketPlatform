@@ -26,8 +26,8 @@ code {
 }
 
 .Sell-Publisher {
-  max-width: 80vh;
-  max-height: 80vh;
+  max-width: 500px;
+  max-height: 720px;
   padding: 60px 100px;
   margin: 0 auto;
   text-align: left;
@@ -36,8 +36,8 @@ code {
 }
 
 .Auction-Publisher{
-  max-width: 80vh;
-  max-height: 80vh;
+  max-width: 500px;
+  max-height: 720px;
   padding: 60px 100px;
   margin: 0 auto;
   text-align: left;
@@ -46,8 +46,8 @@ code {
 }
 
 .Auction-Renewer{
-  max-width: 80vh;
-  max-height: 80vh;
+  max-width: 500px;
+  max-height: 720px;
   padding: 60px 100px;
   margin: 0 auto;
   text-align: left;
@@ -56,8 +56,8 @@ code {
 }
 
 .Auction-Collector{
-  max-width: 80vh;
-  max-height: 80vh;
+  max-width: 500px;
+  max-height: 720px;
   padding: 60px 100px;
   margin: 0 auto;
   text-align: left;
@@ -66,8 +66,8 @@ code {
 }
 
 .Bid-Withdrawer{
-  max-width: 80vh;
-  max-height: 80vh;
+  max-width: 500px;
+  max-height: 720px;
   padding: 60px 100px;
   margin: 0 auto;
   text-align: left;
