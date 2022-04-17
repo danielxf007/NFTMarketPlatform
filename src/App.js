@@ -15,6 +15,7 @@ import { socket } from './components/sockets';
 const pinata = require("./util/pinata.js");
 
 function App() {
+  const [walletAddress, setWallet] = useState("");
   const [component, setComponent] = useState("main_menu");
   const components = {
     "minter": <Minter socket={socket}/>, "owned_board": <OwnedBoard/>, "sell_publisher": <SellPublisher socket={socket}/>,
@@ -22,17 +23,50 @@ function App() {
     "auction_board": <AuctionBoard socket={socket}/>, "auction_bid_withdrawer": <AuctionBidWithdrawer socket={socket}/>,
     "auction_collector": <AuctionCollector socket={socket}/>, "auction_renewer": <AuctionRenewer socket={socket}/>};
 
+    function addWalletListener() {
+      if (window.ethereum) {
+        window.ethereum.on("accountsChanged", (accounts) => {
+          if (accounts.length > 0) {
+            setWallet(accounts[0]);
+          } else {
+            setWallet("");
+            alert("Connect to Metamask");
+          }
+        });
+      } else {
+        alert(
+              "You must install Metamask, a virtual Ethereum wallet, in your browser")
+      }
+    }
+
+    const connectWalletPressed = async () => {
+      const walletResponse = await connectWallet();
+      setStatus(walletResponse.status);
+      setWallet(walletResponse.address);
+    }; 
+
     useEffect(() => {
       socket.on('connect', ()=>{});
       socket.on('mined-tx', (message) => {
         alert(message)     
       })
+      addWalletListener();
       return () => socket.disconnect();
     }, []);
 
   if(component === "main_menu"){
     return (
       <div className="main-menu-options-container">
+        <button id="walletButton" onClick={connectWalletPressed}>
+          {walletAddress.length > 0 ? (
+            "Connected: " +
+            String(walletAddress).substring(0, 6) +
+            "..." +
+            String(walletAddress).substring(38)
+          ) : (
+            <span>Connect Wallet</span>
+          )}
+        </button>
         <button onClick={() => setComponent("minter")}>Mint NFT</button>
         <button onClick={() => setComponent("owned_board")}>Watch your NFTs</button>
         <button onClick={() => setComponent("sell_publisher")}>Sell</button>
